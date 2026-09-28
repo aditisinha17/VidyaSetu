@@ -21,8 +21,7 @@ import {
   Sliders,
   Award,
   LogOut,
-  User,
-  BookOpen
+  User
 } from 'lucide-react';
 import { I18N } from '../data/i18n';
 
@@ -42,8 +41,7 @@ export function Header({
   onLogout,
   onOpenDeficiency,
   onOpenNotifications,
-  onOpenGrievances,
-  onOpenManual
+  onOpenGrievances
 }) {
   const t = I18N[lang] || I18N.en;
 
@@ -158,16 +156,6 @@ export function Header({
 
         {/* Action Controls & Authenticated User Status */}
         <div className="flex items-center space-x-2.5">
-          {/* Official Governance Manual Button */}
-          <button
-            onClick={onOpenManual}
-            className="flex items-center space-x-1.5 px-3 py-2 bg-gradient-to-r from-blue-900 to-indigo-900 hover:from-blue-800 hover:to-indigo-800 text-white rounded-xl text-xs font-bold shadow-md transition"
-            title="Open National Portal Architecture & Governance Framework"
-          >
-            <BookOpen className="w-4 h-4 text-amber-300" />
-            <span className="hidden sm:inline">Governance Manual</span>
-          </button>
-
           {/* Grievance Desk Button (Student mode) */}
           {isStudent && (
             <button

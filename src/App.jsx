@@ -5,7 +5,6 @@ import { LoginPanel } from './components/LoginPanel';
 import { DocumentViewerModal } from './components/DocumentViewerModal';
 import { AwardLetterModal } from './components/AwardLetterModal';
 import { VidyaMitraChatbot } from './components/VidyaMitraChatbot';
-import { GovernanceManualModal } from './components/GovernanceManualModal';
 import { GrievanceManagementModal } from './components/GrievanceManagementModal';
 import { AuditTrailModal } from './components/AuditTrailModal';
 import { NotificationDrawer } from './components/NotificationDrawer';
@@ -50,7 +49,6 @@ export function App() {
   const [activeDocView, setActiveDocView] = useState(null); // { doc, applicant }
   const [awardLetterApp, setAwardLetterApp] = useState(null);
   const [auditApp, setAuditApp] = useState(null);
-  const [isManualModalOpen, setIsManualModalOpen] = useState(false);
   const [isGrievanceModalOpen, setIsGrievanceModalOpen] = useState(false);
   const [isNotificationDrawerOpen, setIsNotificationDrawerOpen] = useState(false);
 
@@ -234,7 +232,6 @@ export function App() {
         onOpenDeficiency={() => {}}
         onOpenNotifications={() => setIsNotificationDrawerOpen(true)}
         onOpenGrievances={() => setIsGrievanceModalOpen(true)}
-        onOpenManual={() => setIsManualModalOpen(true)}
       />
 
       {/* Global Toast Notification */}
@@ -358,13 +355,6 @@ export function App() {
         <AuditTrailModal
           applicant={auditApp}
           onClose={() => setAuditApp(null)}
-        />
-      )}
-
-      {isManualModalOpen && (
-        <GovernanceManualModal
-          isOpen={isManualModalOpen}
-          onClose={() => setIsManualModalOpen(false)}
         />
       )}
 
