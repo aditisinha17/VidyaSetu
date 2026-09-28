@@ -77,7 +77,31 @@ The **Ministry of Tribal Affairs (MoTA)** implements flagship scholarship and fe
 
 ## 🚀 Key Modules & Functional Capabilities
 
-### 1. 🔐 Dual-Panel Authentication Gateway
+### 1. 🏛️ Public Citizen Portal & Scheme Directory (No Login Required)
+* **Flagship Scheme Directory**:
+  * **NFST (National Fellowship for Scheduled Tribe Students)**: Detailed stipend guidelines (₹37,000–₹42,000/mo), ₹20,500 annual contingency, eligibility rules, and mandatory documents.
+  * **NOS (National Overseas Scholarship)**: Master's and Ph.D. abroad in QS Top 500 universities, 100% actual tuition fee reimbursement, £9,900 / $15,400 maintenance allowance, and annual airfare.
+  * **Top Class Education for ST Students**: 100% tuition fees, ₹45,000 IT equipment grant, and monthly living allowance in notified premier institutes (IITs, IIMs, NITs, AIIMS, NLUs).
+* **Interactive 30-Second Quick Eligibility Pre-Checker**:
+  * Public calculator allowing prospective applicants to input qualification, annual family income, age, target institution, and tribal community to immediately discover which fellowships they qualify for.
+* **National Impact & Disbursal Metrics**:
+  * Live counters showcasing ₹178.4+ Cr disbursed via PFMS, 12,842 active scholars, 14-day turnaround time, and 75 PVTG communities covered.
+* **Official Notification & Gazette Ticker**:
+  * Real-time official circulars, Schedule VI Gazette references, and deadline announcements.
+* **6-Stage Governance Roadmap**:
+  * Transparent step-by-step citizen infographic explaining the end-to-end journey from registration to DBT disbursals.
+* **Citizen FAQ Accordion & Official Ministry Helpdesk**:
+  * Contact addresses, toll-free helpline (`1800-11-7777`), and official division emails.
+
+---
+
+### 2. 📝 New Student Registration & Dual-Panel Authentication Gateway
+* **New Student Registration (Sign-Up Flow)**:
+  * Full Legal Name, 12-Digit Aadhaar Number with simulated NPCI Bank Seeding validation.
+  * Mobile Number with NIC SMS Gateway OTP verification simulation.
+  * Scheduled Tribe Community selector mapped to Central ST Gazette (with automatic PVTG affirmative priority detection).
+  * State of Domicile, Target Scheme selection, and automated DigiLocker document sync.
+  * **Instant 1-Click Profile Onboarding**: Automatically initializes application profile and logs the student directly into their new personal dashboard.
 * **Scholar Authentication**:
   * **MeriPehchaan (National SSO) & DigiLocker**: Direct integration pulling digitally verified Caste Certificates, Class X/XII certificates, and Domicile documents.
   * **Registered Mobile + OTP**: Automated 6-digit OTP delivery through the NIC SMS gateway.
@@ -89,10 +113,11 @@ The **Ministry of Tribal Affairs (MoTA)** implements flagship scholarship and fe
     * `dwo.mayurbhanj@odisha.gov.in` — District Welfare Officer
     * `ddo.pfms@tribal.gov.in` — Drawing & Disbursing Officer (PFMS / DBT)
     * `admin.nic@tribal.gov.in` — Systems Administrator (NIC)
+* **Public Navigation**: Includes a **"← Back to Public Portal"** button for seamless citizen exploration.
 
 ---
 
-### 2. 👨🎓 Dedicated Scholar / Student Workspace
+### 3. 👨🎓 Dedicated Scholar / Student Workspace
 * **Profile Completion Status (92%)**: Displays Aadhaar link, caste gazette status, and bank seeding.
 * **AI Scheme Matching Engine**:
   * Hard Statutory Rule Engine evaluates 14 candidate attributes:
