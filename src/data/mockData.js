@@ -1,4 +1,5 @@
-// Comprehensive Mock Data for Ministry of Tribal Affairs (MoTA) Scholarship & Fellowship System
+// Enhanced Mock Data for Ministry of Tribal Affairs (MoTA) Scholarship & Fellowship System
+// Aligned with Ministry of Tribal Affairs (MoTA) National Guidelines 2026
 
 export const INITIAL_SCHEMES = [
   {
@@ -6,7 +7,7 @@ export const INITIAL_SCHEMES = [
     name: 'National Fellowship for Scheduled Tribe Students',
     shortName: 'NFST',
     category: 'Higher Education (Ph.D. / M.Phil)',
-    description: 'Financial assistance to ST scholars pursuing regular and full-time M.Phil and Ph.D. degrees in Sciences, Humanities, Social Sciences and Engineering & Technology in Indian Universities/Institutes.',
+    description: 'Financial assistance to ST scholars pursuing regular and full-time M.Phil and Ph.D. degrees in Sciences, Humanities, Social Sciences and Engineering in Indian Universities/Institutes.',
     totalSlots: 750,
     filledSlots: 620,
     annualBudgetCr: 95.0,
@@ -33,7 +34,8 @@ export const INITIAL_SCHEMES = [
       'Ph.D./M.Phil Admission Confirmation & Guide Endorsement',
       'Research Synopsis / Proposal (max 10 pages)',
       'Aadhaar Card (Aadhaar Seeded Bank Account)'
-    ]
+    ],
+    workflow: ['Application Submission', 'AI Pre-Verification', 'Institute Verification', 'District Nodal Review', 'MoTA Scrutiny Officer', 'Selection Committee Review', 'Award & DBT Active']
   },
   {
     id: 'NOS',
@@ -70,7 +72,8 @@ export const INITIAL_SCHEMES = [
       'IELTS / TOEFL / GRE Scorecard',
       'Two Academic Recommendations from Indian Faculty',
       'Research / Study Statement of Purpose (SOP)'
-    ]
+    ],
+    workflow: ['Application Submission', 'AI Pre-Verification', 'MoTA Overseas Division Scrutiny', 'Embassy / Visa Clearance', 'Selection Committee', 'Award Sanction & Forex Disbursement']
   },
   {
     id: 'TOP_CLASS',
@@ -104,7 +107,8 @@ export const INITIAL_SCHEMES = [
       'JEE / NEET / CAT / CLAT Allotment Letter',
       'Admission Fee Receipt from Notified Institute',
       'Aadhaar Card'
-    ]
+    ],
+    workflow: ['Application Submission', 'AI Pre-Verification', 'Institutional Registrar Verification', 'MoTA Direct Sanction', 'DBT Direct to Institute & Student']
   }
 ];
 
@@ -152,9 +156,11 @@ export const INITIAL_APPLICANTS = [
     submissionDate: '2026-09-12',
     status: 'Selection Committee Review', // 'Submitted', 'AI Verified', 'Deficiency Pending', 'Selection Committee Review', 'Selected', 'Rejected'
     stage: 4,
+    progressPercent: 85,
     aiScore: 94,
+    triageCategory: 'READY', // 'READY', 'REVIEW', 'DEFICIENT'
     aiRiskLevel: 'LOW',
-    aiVerdict: 'AI Pre-Check Passed. All 6 documents verified with high confidence.',
+    aiVerdict: 'AI Pre-Check Passed. All 6 documents verified with high confidence. Human review recommended for final ranking.',
     documents: [
       {
         name: 'ST Caste Certificate',
@@ -193,6 +199,14 @@ export const INITIAL_APPLICANTS = [
         tamperScore: 0.01
       }
     ],
+    auditTrail: [
+      { time: '10:42 AM', date: '2026-09-12', actor: 'Applicant (Birsa Hemrom)', action: 'Application submitted via DigiLocker Jan Parichay SSO', hash: 'e81a..01' },
+      { time: '10:43 AM', date: '2026-09-12', actor: 'VidyaSetu Document AI', action: 'OCR extraction & biometric UIDAI cross-validation (99.8% match)', hash: 'a42f..99' },
+      { time: '10:44 AM', date: '2026-09-12', actor: 'Rule Engine v2.4', action: 'Evaluated against NFST statutory criteria: Passed all 6 eligibility tests', hash: 'b110..24' },
+      { time: '11:15 AM', date: '2026-09-14', actor: 'Institute Verification Officer', action: 'Enrolment & guide credentials endorsed by IIT Kharagpur Academic Cell', hash: 'c902..51' },
+      { time: '02:30 PM', date: '2026-09-18', actor: 'MoTA Scrutiny Officer', action: 'Level-1 scrutiny approved. Forwarded to National Selection Committee queue', hash: 'd553..18' }
+    ],
+    anomalyFlags: [],
     deficiency: null,
     fellowshipDetails: {
       sanctionNumber: 'MoTA/NFST/2026/JH-041',
@@ -203,8 +217,9 @@ export const INITIAL_APPLICANTS = [
       accountNoMasked: 'SBIN0000166 - ***41203',
       pfmsBatchId: 'PFMS-MOTA-2026-B09',
       disbursementHistory: [
-        { month: 'August 2026', amount: 43660, status: 'Credited', utr: 'RBI2408159982103' },
-        { month: 'September 2026', amount: 43660, status: 'Processing DBT', utr: 'Pending NPCI clearance' }
+        { installment: 'Installment 1 (Aug 2026)', amount: 43660, status: 'Paid', utr: 'RBI2408159982103', date: '2026-08-15' },
+        { installment: 'Installment 2 (Sep 2026)', amount: 43660, status: 'Paid', utr: 'RBI2409158810291', date: '2026-09-15' },
+        { installment: 'Installment 3 (Oct 2026)', amount: 43660, status: 'Processing', utr: 'Queued in PFMS e-FTO', date: 'Pending' }
       ],
       progressReports: [
         { quarter: 'Q1 (Jul-Sep 2026)', status: 'Approved by Supervisor', submissionDate: '2026-09-20', grade: 'Satisfactory' }
@@ -236,9 +251,11 @@ export const INITIAL_APPLICANTS = [
     submissionDate: '2026-08-28',
     status: 'Selected',
     stage: 6,
+    progressPercent: 100,
     aiScore: 98,
+    triageCategory: 'READY',
     aiRiskLevel: 'LOW',
-    aiVerdict: 'Top tier application. PVTG Scholar from Bastar. Unconditional Oxford Offer (QS #3). High priority for award.',
+    aiVerdict: 'Top tier application. PVTG Scholar from Bastar. Unconditional Oxford Offer (QS #3). Final selection confirmed.',
     documents: [
       {
         name: 'ST Caste Certificate',
@@ -268,6 +285,13 @@ export const INITIAL_APPLICANTS = [
         tamperScore: 0.0
       }
     ],
+    auditTrail: [
+      { time: '09:10 AM', date: '2026-08-28', actor: 'Applicant (Shanti Madkam)', action: 'NOS Application submitted online with Oxford offer', hash: 'f102..90' },
+      { time: '09:12 AM', date: '2026-08-28', actor: 'VidyaSetu Document AI', action: 'OCR verified Oxford admission letter & IELTS score (8.0)', hash: 'a119..44' },
+      { time: '11:45 AM', date: '2026-08-30', actor: 'MoTA Overseas Division', action: 'QS Ranking (#3) verified. Embassy visa clearance initiated', hash: 'c881..23' },
+      { time: '03:15 PM', date: '2026-09-02', actor: 'Selection Committee', action: 'Selected under PVTG affirmative quota. Award letter dispatched', hash: 'd994..12' }
+    ],
+    anomalyFlags: [],
     deficiency: null,
     fellowshipDetails: {
       sanctionNumber: 'MoTA/NOS/2026/CG-OXF-003',
@@ -280,8 +304,9 @@ export const INITIAL_APPLICANTS = [
       accountNoMasked: 'BARC-UK - ***9921',
       pfmsBatchId: 'PFMS-NOS-FOREX-2026-B02',
       disbursementHistory: [
-        { month: 'Term 1 Maintenance', amount: 412500, status: 'Credited', utr: 'FEDWIRE-BOI-2026-0901' },
-        { month: 'Tuition Fee Tranche 1', amount: 1625000, status: 'Paid to Oxford University', utr: 'SWIFT-SBI-2026-OXF1' }
+        { installment: 'Term 1 Maintenance (GBP 3,300)', amount: 412500, status: 'Paid', utr: 'FEDWIRE-BOI-2026-0901', date: '2026-09-01' },
+        { installment: 'Tuition Tranche 1 (GBP 16,250)', amount: 1625000, status: 'Paid', utr: 'SWIFT-SBI-2026-OXF1', date: '2026-09-05' },
+        { installment: 'Term 2 Maintenance (GBP 3,300)', amount: 412500, status: 'Processing', utr: 'Scheduled Dec 2026', date: 'Pending' }
       ],
       progressReports: [
         { quarter: 'Michaelmas Term 2026', status: 'In Progress', submissionDate: 'Due Dec 2026', grade: 'Enrolled' }
@@ -312,7 +337,9 @@ export const INITIAL_APPLICANTS = [
     submissionDate: '2026-09-14',
     status: 'Deficiency Pending',
     stage: 3,
+    progressPercent: 50,
     aiScore: 68,
+    triageCategory: 'DEFICIENT',
     aiRiskLevel: 'MEDIUM',
     aiVerdict: 'Deficiency Detected by AI: Income certificate issue date is more than 3 years old. Official seal is smudged. Action required.',
     documents: [
@@ -333,16 +360,34 @@ export const INITIAL_APPLICANTS = [
         confidence: 62.4,
         extractedText: 'Income stated as 3,10,000. WARNING: Date of issue is 15-01-2023. Validity period of 1 year expired.',
         tamperScore: 0.15
+      },
+      {
+        name: 'Research Proposal',
+        fileNumber: 'PENDING_UPLOAD',
+        issuingAuthority: 'Candidate',
+        status: 'DEFICIENT',
+        confidence: 0,
+        extractedText: 'Document Missing: Research synopsis not attached in initial submission.',
+        tamperScore: 0
       }
+    ],
+    auditTrail: [
+      { time: '10:44 AM', date: '2026-09-14', actor: 'Applicant (Mangal Munda)', action: 'Application submitted', hash: 'e991..11' },
+      { time: '10:45 AM', date: '2026-09-14', actor: 'VidyaSetu Document AI', action: 'Deficiency detected: Income certificate expired (Jan 2023) + Missing Research Proposal', hash: 'b883..20' },
+      { time: '10:46 AM', date: '2026-09-14', actor: 'Notification Engine', action: 'Automated Deficiency SMS & Email dispatched with 15-day resolution window', hash: 'a102..77' }
+    ],
+    anomalyFlags: [
+      { type: 'EXPIRED_DOC', label: 'Income Certificate Expired', severity: 'HIGH' },
+      { type: 'MISSING_FILE', label: 'Research Proposal Missing', severity: 'HIGH' }
     ],
     deficiency: {
       code: 'DEF-INC-EXPIRED',
-      title: 'Income Certificate Expired & Unclear Stamp',
-      description: 'The uploaded Income Certificate was issued in January 2023 and has expired. As per MoTA scheme guidelines, income certificate must be valid for financial year 2026-27 or issued within the last 12 months.',
-      actionRequired: 'Upload fresh Income Certificate issued by competent Revenue Authority (Tehsildar/SDM) for current FY.',
+      title: 'Income Certificate Expired & Research Proposal Missing',
+      description: 'The uploaded Income Certificate was issued in January 2023 (>1 yr validity lapsed). Furthermore, the required 10-page research synopsis was not attached.',
+      actionRequired: 'Upload fresh Income Certificate (FY 2026-27) from Tahasildar and attach research proposal.',
       raisedOn: '2026-09-16',
       deadline: '2026-10-05',
-      officerRemarks: 'Please upload the latest certificate with clear digital barcode or official seal before next screening meeting.'
+      officerRemarks: 'Please upload the latest certificate with clear digital barcode before next screening meeting.'
     },
     fellowshipDetails: null
   },
@@ -364,13 +409,15 @@ export const INITIAL_APPLICANTS = [
     nirfRank: 3,
     degree: 'B.Tech in Computer Science and Engineering',
     guideName: 'Faculty Advisor: Prof. S. Sudarshan',
-    pgMarks: 94.5, // 12th Board marks
+    pgMarks: 94.5,
     netScore: 'JEE Advanced ST Category Rank: 14',
     annualIncome: 120000,
     submissionDate: '2026-09-08',
     status: 'AI Verified',
     stage: 2,
+    progressPercent: 40,
     aiScore: 97,
+    triageCategory: 'READY',
     aiRiskLevel: 'LOW',
     aiVerdict: 'Exceptional candidate. PVTG ST Female with JEE Adv Rank 14 at IIT Bombay. Full tuition + living + IT hardware approved for review.',
     documents: [
@@ -393,6 +440,11 @@ export const INITIAL_APPLICANTS = [
         tamperScore: 0.01
       }
     ],
+    auditTrail: [
+      { time: '02:15 PM', date: '2026-09-08', actor: 'Applicant (Ananya Katkari)', action: 'Application submitted for Top Class ST', hash: 'a881..99' },
+      { time: '02:16 PM', date: '2026-09-08', actor: 'VidyaSetu Document AI', action: 'Maharashtra Caste Scrutiny Committee Certificate validated via MahaOnline API', hash: 'e992..31' }
+    ],
+    anomalyFlags: [],
     deficiency: null,
     fellowshipDetails: null
   },
@@ -405,7 +457,7 @@ export const INITIAL_APPLICANTS = [
     age: 29,
     dob: '1997-08-22',
     tribe: 'Baiga',
-    pvtg: true, // PVTG in MP
+    pvtg: true,
     state: 'Madhya Pradesh',
     district: 'Dindori',
     schemeId: 'NOS',
@@ -421,7 +473,9 @@ export const INITIAL_APPLICANTS = [
     submissionDate: '2026-09-18',
     status: 'Submitted',
     stage: 1,
+    progressPercent: 20,
     aiScore: 92,
+    triageCategory: 'REVIEW',
     aiRiskLevel: 'LOW',
     aiVerdict: 'Eligible. Document OCR scanned successfully. Awaiting District Level Scrutiny queue.',
     documents: [
@@ -444,17 +498,139 @@ export const INITIAL_APPLICANTS = [
         tamperScore: 0.01
       }
     ],
+    auditTrail: [
+      { time: '11:00 AM', date: '2026-09-18', actor: 'Applicant (Rameshwar Baiga)', action: 'Application submitted for Melbourne Masters', hash: 'd112..81' }
+    ],
+    anomalyFlags: [],
+    deficiency: null,
+    fellowshipDetails: null
+  },
+  {
+    id: 'MOTA-2026-NFST-0282',
+    name: 'Suresh Kumar Meena',
+    email: 'suresh.meena99@rajasthan.edu.in',
+    phone: '+91 94140 33918',
+    gender: 'Male',
+    age: 27,
+    dob: '1999-01-10',
+    tribe: 'Meena',
+    pvtg: false,
+    state: 'Rajasthan',
+    district: 'Jaipur',
+    schemeId: 'NFST',
+    schemeName: 'National Fellowship for ST Students',
+    institution: 'University of Rajasthan',
+    nirfRank: 45,
+    degree: 'Ph.D. in Botany',
+    guideName: 'Dr. S. C. Sharma',
+    pgMarks: 72.1,
+    netScore: 'UGC-NET Qualified',
+    annualIncome: 520000,
+    submissionDate: '2026-09-20',
+    status: 'Submitted',
+    stage: 1,
+    progressPercent: 20,
+    aiScore: 71,
+    triageCategory: 'REVIEW',
+    aiRiskLevel: 'MEDIUM',
+    aiVerdict: 'ANOMALY DETECTED: Similar bank account and phone number registered under another application (#NFST-0091). Queued for human verification.',
+    documents: [
+      {
+        name: 'ST Caste Certificate',
+        fileNumber: 'RJ/JAI/2021/ST/1102',
+        issuingAuthority: 'Tehsildar Sanganer, Jaipur',
+        status: 'VERIFIED',
+        confidence: 96.0,
+        extractedText: 'Certified that Suresh Kumar Meena belongs to Meena Scheduled Tribe.',
+        tamperScore: 0.02
+      },
+      {
+        name: 'Income Certificate',
+        fileNumber: 'INC/RJ/2026/991',
+        issuingAuthority: 'Tehsildar Jaipur',
+        status: 'VERIFIED',
+        confidence: 94.0,
+        extractedText: 'Annual income is Rs. 5,20,000 for FY 2026-27.',
+        tamperScore: 0.03
+      }
+    ],
+    auditTrail: [
+      { time: '04:12 PM', date: '2026-09-20', actor: 'Applicant (Suresh Meena)', action: 'Application submitted', hash: 'b771..02' },
+      { time: '04:13 PM', date: '2026-09-20', actor: 'VidyaSetu Anomaly Detector', action: 'Flagged potential duplicate: Phone/Bank match with #NFST-0091 (Similarity: 94%)', hash: 'c992..04' }
+    ],
+    anomalyFlags: [
+      { type: 'DUPLICATE_IDENTIFIER', label: 'Phone & Bank details match #NFST-0091', severity: 'HIGH' }
+    ],
     deficiency: null,
     fellowshipDetails: null
   }
 ];
 
+export const MOCK_NOTIFICATIONS = [
+  {
+    id: 'NOTIF-01',
+    channel: 'SMS + PORTAL',
+    recipient: '+91 97711 55670 (Mangal Singh Munda)',
+    title: 'Deficiency Notice: Income Certificate & Research Proposal',
+    message: 'MoTA Alert: Your application #MOTA-2026-NFST-0199 has 2 deficiencies. Please upload valid FY 2026-27 Income Certificate and Research Proposal by 05-Oct-2026 to retain seniority.',
+    time: '2 hours ago',
+    type: 'ALERT'
+  },
+  {
+    id: 'NOTIF-02',
+    channel: 'EMAIL',
+    recipient: 'shanti.madkam@oxford.alumni.org',
+    title: 'Award Sanction Order Issued — National Overseas Scholarship',
+    message: 'Congratulations! Official Sanction Order MoTA/NOS/2026/CG-OXF-003 for University of Oxford has been signed. Download from VidyaSetu portal.',
+    time: 'Yesterday',
+    type: 'SUCCESS'
+  },
+  {
+    id: 'NOTIF-03',
+    channel: 'PORTAL',
+    recipient: 'birsa.hemrom@research.iitkgp.ac.in',
+    title: 'DBT Stipend Installment 2 Credited',
+    message: 'Rs. 43,660 credited to your Aadhaar seeded SBI A/c via PFMS (UTR: RBI2409158810291). Please submit Q1 Progress Report by 30-Sep.',
+    time: '3 days ago',
+    type: 'INFO'
+  }
+];
+
+export const MOCK_GRIEVANCES = [
+  {
+    id: 'GR-1021',
+    applicantId: 'MOTA-2026-NFST-0101',
+    applicantName: 'Birsa Hemrom',
+    category: 'Payment / Disbursement',
+    title: 'HRA Allowance Difference in Tier-1 City',
+    description: 'IIT Kharagpur campus hostel accommodation is undergoing renovation, so I am staying off-campus in Kolkata city. Requesting HRA upgrade to 27%.',
+    aiCategory: 'Finance & DBT Division',
+    aiPriority: 'MEDIUM',
+    status: 'Pending Review',
+    submittedOn: '2026-09-24',
+    officerResponse: null
+  },
+  {
+    id: 'GR-1022',
+    applicantId: 'MOTA-2026-NFST-0199',
+    applicantName: 'Mangal Singh Munda',
+    category: 'Document Verification',
+    title: 'Delay in Issuance of Fresh Income Certificate from Tehsildar',
+    description: 'Due to local holidays, the Mayurbhanj Revenue Office is processing certificates slowly. Requesting 7 days extension on the deficiency deadline.',
+    aiCategory: 'Scrutiny & Grievance Cell',
+    aiPriority: 'HIGH',
+    status: 'Resolved',
+    submittedOn: '2026-09-22',
+    officerResponse: 'Extension granted. Deadline extended to 12-Oct-2026 on the portal.'
+  }
+];
+
 export const NATIONAL_ANALYTICS_DATA = {
-  totalApplications: 18450,
-  verifiedApplications: 14210,
-  deficienciesIdentified: 2430,
-  deficienciesResolved: 2180,
-  totalSelected: 1770,
+  totalApplications: 12842,
+  underVerification: 3241,
+  deficienciesIdentified: 842,
+  totalSelected: 1204,
+  pendingDisbursement: 328,
   fundsDisbursedCr: 155.8,
   avgProcessingDaysManual: 124,
   avgProcessingDaysAI: 14,
@@ -463,6 +639,11 @@ export const NATIONAL_ANALYTICS_DATA = {
   pvtgApplicants: 1420,
   pvtgBeneficiaries: 395,
   genderRatioFemalePercent: 51.8,
+  schemeBreakdown: [
+    { scheme: 'NFST', applications: 5420, verified: 4821, selected: 1102, fundsCr: 78.4 },
+    { scheme: 'NOS', applications: 2840, verified: 2341, selected: 482, fundsCr: 16.2 },
+    { scheme: 'Top Class ST', applications: 4582, verified: 4120, selected: 940, fundsCr: 61.2 }
+  ],
   statePerformance: [
     { state: 'Jharkhand', applications: 3840, selected: 420, fundsCr: 36.2, pvtgCount: 420 },
     { state: 'Odisha', applications: 3410, selected: 390, fundsCr: 34.8, pvtgCount: 380 },
@@ -473,5 +654,41 @@ export const NATIONAL_ANALYTICS_DATA = {
     { state: 'Rajasthan', applications: 1120, selected: 110, fundsCr: 9.8, pvtgCount: 15 },
     { state: 'Gujarat', applications: 980, selected: 92, fundsCr: 8.2, pvtgCount: 12 },
     { state: 'Others (Telangana, AP, etc.)', applications: 710, selected: 73, fundsCr: 6.5, pvtgCount: 38 }
+  ],
+  aiInsights: [
+    {
+      title: 'Regional Deficiency Pattern',
+      description: 'Maharashtra has a 21% higher document deficiency rate than the national average. Most common deficiency: Income Certificate (43%).',
+      suggestedAction: 'Deploy pre-submission AI validator on Tehsil income portal API.'
+    },
+    {
+      title: 'PVTG Outreach Opportunity',
+      description: 'Particularly Vulnerable Tribal Groups in Dindori (MP) and Bastar (CG) show a 34% increase in Ph.D. enrollments following mobile AI pre-check.',
+      suggestedAction: 'Allocate 15 additional dedicated contingency slots under NFST.'
+    }
   ]
 };
+
+export const AI_TECH_MAPPING = [
+  { module: 'Scheme Matching', tech: 'Hybrid Rule Engine + Recommendation NLP', purpose: 'Pre-screens 14 demographic & academic criteria before student applies' },
+  { module: 'Eligibility Determination', tech: 'Deterministic Rules + Explainable AI', purpose: 'RTI-compliant, legally defensible point-by-point qualification score' },
+  { module: 'Document Intelligence', tech: 'OCR + NLP Entity Parsing (Vision ST v2.4)', purpose: 'Extracts names, dates, seals, certificate IDs with confidence scores' },
+  { module: 'Deficiency Detection', tech: 'NLP Semantic Validation + Expiry Rules', purpose: 'Detects expired dates, missing synopsis, blurred revenue stamps' },
+  { module: 'Application Triage', tech: 'Multi-Factor Risk Classification Engine', purpose: 'Classifies applications into Ready 🟢, Review 🟡, Deficient 🔴' },
+  { module: 'Fraud & Anomaly Check', tech: 'Cross-Entity Graph Matching', purpose: 'Flags duplicate bank details, identical photo hashes, and multi-identity claims' },
+  { module: 'Grievance Redressal', tech: 'NLP Intent Classifier & Smart Router', purpose: 'Auto-categorizes complaints and assigns priority to DDO / Scrutiny officers' },
+  { module: 'VidyaMitra Copilot', tech: 'Multilingual LLM + Web Speech Synthesis', purpose: 'Answers scheme rules in natural language with voice audio assistance' },
+  { module: 'Executive Analytics', tech: 'Predictive What-If Modeling & GIS Heatmap', purpose: 'Simulates budgetary & beneficiary impact of rule and quota adjustments' }
+];
+
+export const MOTA_MANDATE_MAPPING = [
+  { motaMandate: 'End-to-end digital application management', vidyaSetuFeature: '5-Step Smart Wizard, DigiLocker SSO, 6-Stage Visual Pipeline' },
+  { motaMandate: 'Configurable scheme-specific eligibility & rules', vidyaSetuFeature: 'No-Code Scheme Config Studio + 10,000 Application Pool Simulator' },
+  { motaMandate: 'Automated document verification using AI / OCR', vidyaSetuFeature: 'Dual-Pane OCR Inspector, Bounding Boxes, Tamper/Forgery Analysis' },
+  { motaMandate: 'Identification of deficient/incomplete applications', vidyaSetuFeature: 'AI Deficiency Detection Desk with 15-day window & instant AI re-scan' },
+  { motaMandate: 'Transparent screening and selection with human oversight', vidyaSetuFeature: 'Explainable AI Composite Scoring Engine + Officer Decision Gateway' },
+  { motaMandate: 'Separate interfaces for applicants and administrators', vidyaSetuFeature: 'Dedicated Student Portal vs MoTA Executive Admin Hub' },
+  { motaMandate: 'Application tracking, deficiency resubmission & communication', vidyaSetuFeature: 'Real-time Tracker, Automated SMS/Email Engine, 1-Click Rectification' },
+  { motaMandate: 'Post-selection & fellowship lifecycle management', vidyaSetuFeature: 'Supervisor QPR Endorsement Gate, Direct Benefit Transfer (DBT/PFMS)' },
+  { motaMandate: 'Dashboards & analytics for scheme performance monitoring', vidyaSetuFeature: 'National GIS Heatmap, 88% TAT Drop Analytics, PVTG Outreach Index' }
+];
