@@ -23,8 +23,9 @@ import { SchemeConfigStudio } from './portals/AdminPortal/SchemeConfigStudio';
 import { WhatIfAnalysis } from './portals/AdminPortal/WhatIfAnalysis';
 import { NationalAnalytics } from './portals/AdminPortal/NationalAnalytics';
 
-// Initial Data
+// Initial Data & Services
 import { INITIAL_APPLICANTS, INITIAL_SCHEMES } from './data/mockData';
+import { ApiClient } from './services/apiClient';
 
 export function App() {
   // Authentication State
@@ -76,7 +77,7 @@ export function App() {
       setSelectedApplicantId(loginData.user.id);
       showToast(`Welcome back, ${loginData.user.name}! Jan Parichay session authenticated.`);
     } else {
-      setRole('analytics');
+      setRole('scrutiny');
       showToast(`Officer session active: ${loginData.user.name} (${loginData.user.roleLabel})`);
     }
   };
@@ -155,22 +156,137 @@ export function App() {
     showToast(`Application ${appId} marked as Rejected.`);
   };
 
-  const handleResolveDeficiency = (appId, remarks) => {
+  const handleLaunchGoldenDemo = () => {
+    const birsa = applicants.find(a => a.id === 'MOTA-2026-NFST-0101') || applicants[0];
+    setAuth({
+      isAuthenticated: true,
+      type: 'student',
+      user: {
+        id: birsa.id,
+        name: birsa.name,
+        email: birsa.email,
+        schemeId: birsa.schemeId,
+        tribe: birsa.tribe,
+        pvtg: birsa.pvtg
+      }
+    });
+    setSelectedApplicantId(birsa.id);
+    showToast('🚀 Golden Demo Activated: Logged in as Birsa Hemrom (Deficiency Pending on Income Certificate).');
+  };
+
+  const handleLaunchOfficerDemo = () => {
+    handleSwitchWorkspace('admin');
+  };
+
+  const handleSwitchWorkspace = (targetType) => {
+    if (targetType === 'admin') {
+      setAuth({
+        isAuthenticated: true,
+        type: 'admin',
+        user: {
+          name: 'Dr. Rameshwar Oraon',
+          roleLabel: 'MoTA Scrutiny Officer (Directorate)'
+        }
+      });
+      setRole('scrutiny');
+      showToast('Switched to Ministry Officer Scrutiny Desk (Dual-Pane Application X-Ray)');
+    } else {
+      const birsa = applicants.find(a => a.id === 'MOTA-2026-NFST-0101') || applicants[0];
+      setAuth({
+        isAuthenticated: true,
+        type: 'student',
+        user: {
+          id: birsa.id,
+          name: birsa.name,
+          email: birsa.email,
+          schemeId: birsa.schemeId,
+          tribe: birsa.tribe,
+          pvtg: birsa.pvtg
+        }
+      });
+      setSelectedApplicantId(birsa.id);
+      showToast('Switched to Birsa Hemrom (Scholar Desk)');
+    }
+  };
+
+  const handleResolveDeficiency = async (appId, remarks) => {
+    // Also notify local backend service if running
+    ApiClient.replaceDocument(appId, {
+      documentType: 'Income Certificate',
+      fileName: 'Fresh_Income_Certificate_FY2026_27_SDO_Ranchi.pdf',
+      remarks
+    });
+
     setApplicants(prev => prev.map(a => {
       if (a.id === appId) {
+        const updatedDocs = (a.documents || []).map(doc => {
+          if (doc.name.includes('Income')) {
+            return {
+              name: 'Income Certificate (FY 2026-27)',
+              fileNumber: 'JH/INC/2026/01922',
+              issuingAuthority: 'Sub-Divisional Officer (SDO), Ranchi',
+              issueDate: '12-06-2026',
+              status: 'VERIFIED',
+              confidence: 98.4,
+              extractedText: 'Annual Income from all sources is Rs. 4,20,000 for FY 2026-27. Digital Barcode verified.',
+              tamperScore: 0.01
+            };
+          }
+          return doc;
+        });
+
+        const currentTrail = a.auditTrail || [];
+        const lastBlock = currentTrail[currentTrail.length - 1];
+        const lastHash = lastBlock ? lastBlock.hash : 'e81a3f01b9204918acde88102910481239102481029410294810293810293810';
+        
+        const timestamp1 = new Date().toISOString().replace('T', ' ').slice(0, 19);
+        const hash1 = 'c7e890123456789abcdef0123456789abcdef0123456789abcdef0123456789a';
+        const block1 = {
+          prevHash: lastHash,
+          timestamp: timestamp1,
+          actor: `Applicant (${a.name})`,
+          action: 'Replacement Income Certificate for FY 2026-27 uploaded via Deficiency Portal',
+          payload: 'file=Fresh_Income_Certificate_FY2026_27_SDO_Ranchi.pdf;authority=SDO Ranchi;barcode=VERIFIED',
+          hash: hash1,
+          shortHash: `${hash1.slice(0, 8)}...${hash1.slice(-4)}`
+        };
+
+        const timestamp2 = new Date(Date.now() + 1000).toISOString().replace('T', ' ').slice(0, 19);
+        const hash2 = 'f9a0123456789abcdef0123456789abcdef0123456789abcdef0123456789abc';
+        const block2 = {
+          prevHash: hash1,
+          timestamp: timestamp2,
+          actor: 'AI Document Pre-Scrutiny Lab',
+          action: 'AI Re-Scan Passed: Verified FY 2026-27 validity and SDO digital signature. Deficiency cleared.',
+          payload: 'ocrConfidence=98.4;tamperScore=0.01;status=READY_FOR_HUMAN_REVIEW',
+          hash: hash2,
+          shortHash: `${hash2.slice(0, 8)}...${hash2.slice(-4)}`
+        };
+
         return {
           ...a,
           status: 'AI Verified',
           stage: 3,
-          progressPercent: 65,
+          progressPercent: 70,
           triageCategory: 'READY',
           deficiency: null,
-          aiVerdict: 'Deficiency rectified by candidate with verified replacement certificate. Re-queued for Officer approval.'
+          aiVerdict: 'Replacement Income Certificate (FY 2026-27) scanned successfully. All deficiencies resolved. Queued for Officer Scrutiny approval.',
+          deterministicRuleAudit: {
+            status: 'PASS',
+            stStatus: 'PASS',
+            incomeLimit: 'PASS',
+            ageLimit: 'PASS',
+            qualifyingMarks: 'PASS',
+            details: 'All statutory eligibility requirements verified. Valid Income Certificate for FY 2026-27 attached.'
+          },
+          documents: updatedDocs,
+          auditTrail: [...currentTrail, block1, block2]
         };
       }
       return a;
     }));
-    showToast(`Deficiency rectified! Application ${appId} returned to Scrutiny Officer inbox.`);
+
+    showToast(`Deficiency rectified! Application ${appId} moved to READY queue for Officer Approval.`);
   };
 
   const handleBulkSelect = (selectedIds) => {
@@ -224,6 +340,8 @@ export function App() {
               setAuthPortalTab('register');
               setPublicViewState('login');
             }}
+            onLaunchGoldenDemo={handleLaunchGoldenDemo}
+            onLaunchOfficerDemo={handleLaunchOfficerDemo}
             lang={lang}
             setLang={setLang}
             contrast={contrast}
@@ -277,6 +395,7 @@ export function App() {
         onOpenDeficiency={() => {}}
         onOpenNotifications={() => setIsNotificationDrawerOpen(true)}
         onOpenGrievances={() => setIsGrievanceModalOpen(true)}
+        onSwitchWorkspace={handleSwitchWorkspace}
       />
 
       {/* Global Toast Notification */}
@@ -312,6 +431,7 @@ export function App() {
                 onResolveDeficiency={handleResolveDeficiency}
                 onOpenGrievances={() => setIsGrievanceModalOpen(true)}
                 onOpenAuditTrail={(app) => setAuditApp(app)}
+                onSwitchToOfficer={() => handleSwitchWorkspace('admin')}
               />
             )}
           </>

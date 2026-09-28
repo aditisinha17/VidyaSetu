@@ -11,7 +11,7 @@ import {
   Send
 } from 'lucide-react';
 
-export function DeficiencyDesk({ applicant, onResolveDeficiency }) {
+export function DeficiencyDesk({ applicant, onResolveDeficiency, onSwitchToOfficer }) {
   const [selectedFile, setSelectedFile] = useState(null);
   const [isReScanning, setIsReScanning] = useState(false);
   const [scanResult, setScanResult] = useState(null);
@@ -33,7 +33,10 @@ export function DeficiencyDesk({ applicant, onResolveDeficiency }) {
   const def = applicant.deficiency;
 
   const handleSimulateUpload = (e) => {
-    const file = e.target.files?.[0] || { name: 'Fresh_Income_Certificate_FY2026_27_Tahasildar.pdf' };
+    const defaultName = applicant.id === 'MOTA-2026-NFST-0101'
+      ? 'Fresh_Income_Certificate_FY2026_27_SDO_Ranchi.pdf'
+      : 'Fresh_Income_Certificate_FY2026_27_Tahasildar.pdf';
+    const file = e.target.files?.[0] || { name: defaultName };
     setSelectedFile(file);
     setIsReScanning(true);
 
@@ -41,12 +44,16 @@ export function DeficiencyDesk({ applicant, onResolveDeficiency }) {
       setIsReScanning(false);
       setScanResult({
         success: true,
-        confidence: 99.4,
-        dateDetected: '18-09-2026 (Valid FY 2026-27)',
-        authority: 'Tahasildar, Baripada (Digital Barcode Verified)',
-        incomeAmount: '₹3,10,000'
+        confidence: 98.4,
+        dateDetected: '12-06-2026 (Valid FY 2026-27)',
+        authority: applicant.id === 'MOTA-2026-NFST-0101' 
+          ? 'Sub-Divisional Officer, Ranchi (SDO Digital Barcode Verified)' 
+          : 'Tahasildar (Digital Seal Verified)',
+        incomeAmount: applicant.annualIncome ? `₹${applicant.annualIncome.toLocaleString()}` : '₹4,20,000',
+        nameMatch: 100,
+        candidateName: applicant.name
       });
-    }, 1200);
+    }, 1000);
   };
 
   const handleSendResponse = () => {
@@ -171,12 +178,52 @@ export function DeficiencyDesk({ applicant, onResolveDeficiency }) {
           </div>
         </div>
       ) : (
-        <div className="p-8 text-center bg-white rounded-2xl border border-slate-200 shadow-sm space-y-3">
-          <CheckCircle2 className="w-12 h-12 text-emerald-600 mx-auto" />
-          <h3 className="text-base font-bold text-slate-900">Deficiency Rectification Submitted Successfully!</h3>
-          <p className="text-xs text-slate-600 max-w-md mx-auto">
-            Your fresh certificate and explanation have been queued in the MoTA Central Scrutiny Officer priority inbox. The verification officer has been notified via SMS & Portal alert.
+        <div className="p-8 text-center bg-white rounded-2xl border border-slate-200 shadow-sm space-y-4">
+          <div className="w-14 h-14 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-inner">
+            <CheckCircle2 className="w-8 h-8" />
+          </div>
+          <div>
+            <h3 className="text-base font-black text-slate-900 font-serif">
+              Deficiency Rectification Verified & Submitted!
+            </h3>
+            <span className="inline-block mt-1 text-xs font-bold font-mono bg-emerald-100 text-emerald-800 border border-emerald-300 px-3 py-0.5 rounded-full">
+              STATUS: READY FOR HUMAN REVIEW
+            </span>
+          </div>
+
+          <div className="max-w-md mx-auto p-3.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-left space-y-1.5 font-medium text-slate-700">
+            <div className="flex justify-between">
+              <span>Previous Document:</span>
+              <strong className="text-rose-600">❌ Deficient (Expired Validity)</strong>
+            </div>
+            <div className="flex justify-between">
+              <span>Replacement Document:</span>
+              <strong className="text-emerald-700">✓ Valid FY 2026-27 (SDO Ranchi)</strong>
+            </div>
+            <div className="flex justify-between">
+              <span>Candidate Name Match:</span>
+              <strong className="text-emerald-700">100% ({applicant.name})</strong>
+            </div>
+            <div className="flex justify-between">
+              <span>Audit Chain Link:</span>
+              <strong className="text-blue-900 font-mono text-[11px]">SHA-256 Chained Block Appended</strong>
+            </div>
+          </div>
+
+          <p className="text-xs text-slate-500 max-w-md mx-auto">
+            Your application <strong>{applicant.id}</strong> has automatically transitioned out of DEFICIENT status into the Ministry Scrutiny Officer's prioritized <strong>READY</strong> queue.
           </p>
+
+          {onSwitchToOfficer && (
+            <div className="pt-2">
+              <button
+                onClick={onSwitchToOfficer}
+                className="px-6 py-2.5 bg-gradient-to-r from-blue-900 to-indigo-900 hover:from-blue-800 hover:to-indigo-800 text-white font-bold rounded-xl text-xs shadow-md transition"
+              >
+                Switch to Ministry Officer Scrutiny Desk (Dual-Pane Workstation) ➔
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>

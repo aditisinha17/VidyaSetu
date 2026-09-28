@@ -36,6 +36,8 @@ import { I18N } from '../data/i18n';
 export function PublicHomePage({ 
   onOpenLogin, 
   onOpenRegister, 
+  onLaunchGoldenDemo,
+  onLaunchOfficerDemo,
   lang = 'en',
   setLang,
   contrast = false,
@@ -55,6 +57,7 @@ export function PublicHomePage({
   const [checkTarget, setCheckTarget] = useState('india_phd');
   const [checkTribe, setCheckTribe] = useState('Santhal');
   const [checkResult, setCheckResult] = useState(null);
+  const [whyDetails, setWhyDetails] = useState(null);
 
   // FAQ Accordion State
   const [openFaqIndex, setOpenFaqIndex] = useState(0);
@@ -266,11 +269,11 @@ export function PublicHomePage({
 
             <button
               onClick={() => onOpenLogin && onOpenLogin('admin')}
-              className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 rounded-xl text-xs font-bold transition flex items-center space-x-1.5"
+              className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-900 border border-slate-300 rounded-xl text-xs font-bold transition flex items-center space-x-1.5 shadow-xs cursor-pointer"
               title="Official Portal for Ministry Scrutiny, Merit Ranking, and PFMS DBT"
             >
               <ShieldCheck className="w-4 h-4 text-blue-900" />
-              <span className="hidden sm:inline">{t.officialPortal}</span>
+              <span className="font-bold">{t.officialPortal}</span>
             </button>
           </div>
         </div>
@@ -321,11 +324,19 @@ export function PublicHomePage({
             {/* Hero CTAs */}
             <div className="flex flex-wrap gap-3 pt-2">
               <button
-                onClick={() => onOpenRegister && onOpenRegister()}
-                className="px-6 py-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-blue-950 font-black rounded-2xl shadow-xl transition flex items-center space-x-2 text-sm"
+                onClick={() => onLaunchGoldenDemo ? onLaunchGoldenDemo() : (onOpenRegister && onOpenRegister())}
+                className="px-6 py-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-blue-950 font-black rounded-2xl shadow-xl transition flex items-center space-x-2 text-sm ring-2 ring-amber-300 cursor-pointer"
               >
-                <span>{t.newRegistration}</span>
+                <span>🚀 Run 7-Minute Golden Demo (Birsa Hemrom)</span>
                 <ArrowRight className="w-4 h-4" />
+              </button>
+
+              <button
+                onClick={() => onLaunchOfficerDemo ? onLaunchOfficerDemo() : (onOpenLogin && onOpenLogin('admin'))}
+                className="px-5 py-3 bg-gradient-to-r from-blue-800 to-indigo-900 hover:from-blue-700 hover:to-indigo-800 text-white font-black rounded-2xl shadow-xl transition flex items-center space-x-2 text-sm border border-blue-400/40 cursor-pointer"
+              >
+                <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                <span>🛡️ Ministry Officer Scrutiny Login</span>
               </button>
 
               <a
@@ -335,78 +346,85 @@ export function PublicHomePage({
                 <Search className="w-4 h-4 text-amber-400" />
                 <span>{t.checkEligibility30s}</span>
               </a>
-
-              <button
-                onClick={() => onOpenLogin && onOpenLogin('admin')}
-                className="px-4 py-3 bg-blue-900/60 hover:bg-blue-800/80 border border-blue-700/50 text-blue-200 font-semibold rounded-2xl transition flex items-center space-x-2 text-xs"
-              >
-                <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                <span>{t.officialPortal}</span>
-              </button>
             </div>
 
             {/* Trust Badges */}
             <div className="pt-4 flex flex-wrap items-center gap-4 text-xs text-slate-300 border-t border-blue-800/60">
-              <span className="flex items-center space-x-1.5">
+              <span className="flex items-center space-x-1.5" title="Operating with sandbox simulator adapters">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                <span>DigiLocker & Jan Parichay SSO</span>
+                <span>DigiLocker & Jan Parichay Adapters (Sandbox)</span>
+              </span>
+              <span className="flex items-center space-x-1.5" title="Public Financial Management System e-FTO adapter">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                <span>PFMS DBT & NPCI APB Adapters (Sandbox)</span>
               </span>
               <span className="flex items-center space-x-1.5">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                <span>PFMS Direct Benefit Transfer (DBT)</span>
-              </span>
-              <span className="flex items-center space-x-1.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                <span>100% RTI-Compliant Merit Formula</span>
+                <span>Explainable Decision Record (RTI-Friendly Traceability)</span>
               </span>
             </div>
           </div>
 
-          {/* Hero Right: Quick Status Snapshot Card */}
+          {/* Hero Right: Official MoTA DBT Reporting & Prototype Dataset Snapshot */}
           <div className="lg:col-span-5">
-            <div className="bg-white/10 backdrop-blur-md rounded-3xl p-6 border border-white/20 shadow-2xl space-y-5">
-              <div className="flex items-center justify-between border-b border-white/15 pb-4">
+            <div className="bg-white/10 backdrop-blur-md rounded-3xl p-6 border border-white/20 shadow-2xl space-y-4">
+              <div className="flex items-center justify-between border-b border-white/15 pb-3">
                 <div>
-                  <div className="text-xs uppercase tracking-wider text-amber-300 font-bold">National Beneficiary Metrics</div>
-                  <div className="text-lg font-black text-white">Live Disbursal Summary 2026</div>
+                  <div className="text-[11px] uppercase tracking-wider text-amber-300 font-bold flex items-center space-x-1.5">
+                    <span>🏛️ Official MoTA DBT Portal Reporting</span>
+                  </div>
+                  <div className="text-base font-black text-white">Government Scholarship Scale</div>
                 </div>
-                <div className="w-3 h-3 rounded-full bg-emerald-400 animate-ping"></div>
+                <span className="text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 px-2 py-0.5 rounded-full font-bold">
+                  FY 2025–26 Data
+                </span>
               </div>
 
-              <div className="grid grid-cols-2 gap-3 text-left">
-                <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10">
-                  <div className="text-2xl font-black text-white font-mono">12,842</div>
-                  <div className="text-xs text-slate-300 font-medium">ST Scholars Empowered</div>
+              {/* Official DBT numbers */}
+              <div className="grid grid-cols-2 gap-2.5 text-left">
+                <div className="p-3 rounded-2xl bg-white/5 border border-white/10">
+                  <div className="text-xl font-black text-white font-mono">28,99,699</div>
+                  <div className="text-[11px] text-slate-300 font-medium">Pre-Matric ST Scholars</div>
+                  <div className="text-[10px] text-emerald-400 font-semibold mt-0.5">₹412.5 Cr Disbursed</div>
                 </div>
 
-                <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10">
-                  <div className="text-2xl font-black text-emerald-300 font-mono">₹178.4 Cr</div>
-                  <div className="text-xs text-slate-300 font-medium">DBT Disbursed via PFMS</div>
+                <div className="p-3 rounded-2xl bg-white/5 border border-white/10">
+                  <div className="text-xl font-black text-white font-mono">65,42,207</div>
+                  <div className="text-[11px] text-slate-300 font-medium">Post-Matric ST Scholars</div>
+                  <div className="text-[10px] text-emerald-400 font-semibold mt-0.5">₹2,180.4 Cr Disbursed</div>
                 </div>
 
-                <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10">
-                  <div className="text-2xl font-black text-amber-300 font-mono">14 Days</div>
-                  <div className="text-xs text-slate-300 font-medium">Average Processing (88% faster)</div>
+                <div className="p-3 rounded-2xl bg-white/5 border border-white/10">
+                  <div className="text-xl font-black text-amber-300 font-mono">750 Slots</div>
+                  <div className="text-[11px] text-slate-300 font-medium">NFST Research Fellows</div>
+                  <div className="text-[10px] text-amber-400 font-semibold mt-0.5">₹37,000–₹42,000/mo</div>
                 </div>
 
-                <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10">
-                  <div className="text-2xl font-black text-purple-300 font-mono">75 Groups</div>
-                  <div className="text-xs text-slate-300 font-medium">PVTG Communities Reached</div>
+                <div className="p-3 rounded-2xl bg-white/5 border border-white/10">
+                  <div className="text-xl font-black text-purple-300 font-mono">1,020 Slots</div>
+                  <div className="text-[11px] text-slate-300 font-medium">NOS & Top Class ST</div>
+                  <div className="text-[10px] text-purple-400 font-semibold mt-0.5">100% Tuition Fees</div>
                 </div>
               </div>
 
-              {/* Live Gazette Action */}
-              <div className="p-3.5 rounded-2xl bg-amber-400/10 border border-amber-400/30 flex items-center justify-between text-xs">
-                <div className="flex items-center space-x-2 text-amber-200">
-                  <FileText className="w-4 h-4 text-amber-400 shrink-0" />
-                  <span className="font-semibold">Central ST Gazette & Quota Manual 2026</span>
+              {/* Attribution */}
+              <div className="text-[10px] text-slate-400 flex items-center justify-between px-1">
+                <span>Source: Official DBT Bharat Portal Reporting</span>
+                <span className="text-slate-300 font-mono">dbtbharat.gov.in</span>
+              </div>
+
+              {/* Prototype Dataset Callout */}
+              <div className="p-3 rounded-2xl bg-amber-400/10 border border-amber-400/30 text-xs text-amber-200 space-y-1">
+                <div className="font-bold flex items-center justify-between text-[11px]">
+                  <span className="flex items-center space-x-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                    <span>VidyaSetu Prototype Demo Intake Pool:</span>
+                  </span>
+                  <span className="bg-amber-400/20 text-amber-300 px-2 py-0.2 rounded font-mono font-bold">12,842 Records</span>
                 </div>
-                <button 
-                  onClick={() => alert('Official Central ST Gazette (Schedule VI) guidelines are integrated directly into the verification engine.')}
-                  className="text-amber-300 hover:text-white font-bold underline"
-                >
-                  View Rules
-                </button>
+                <p className="text-[10px] text-amber-200/90 leading-tight">
+                  Synthetic test pool used to demonstrate AI document pre-scrutiny, triage queues, and policy simulations without live PII exposure.
+                </p>
               </div>
             </div>
           </div>
@@ -704,6 +722,9 @@ export function PublicHomePage({
                           <div className="flex items-center space-x-2">
                             <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
                             <span className="font-bold text-emerald-950 text-sm">{res.name}</span>
+                            <span className="text-[10px] font-bold bg-emerald-100 text-emerald-800 px-2 py-0.2 rounded-full">
+                              Potentially Eligible
+                            </span>
                           </div>
                           <div className="text-xs text-slate-600 font-medium">{res.location}</div>
                           <div className="text-xs text-emerald-800 font-bold font-mono">Grant: {res.stipend}</div>
@@ -712,23 +733,57 @@ export function PublicHomePage({
                           )}
                         </div>
 
-                        <button
-                          onClick={() => onOpenRegister && onOpenRegister()}
-                          className="px-4 py-2 bg-emerald-700 hover:bg-emerald-600 text-white font-bold rounded-xl text-xs transition shadow-xs self-start sm:self-center shrink-0"
-                        >
-                          Start Application ➔
-                        </button>
+                        <div className="flex items-center space-x-2 self-start sm:self-center shrink-0">
+                          <button
+                            onClick={() => setWhyDetails({
+                              scheme: res.name,
+                              schemeId: res.schemeId,
+                              income: checkIncome,
+                              age: checkAge,
+                              tribe: checkTribe,
+                              isPvtg: checkResult.isPvtg,
+                              qualification: checkQualification
+                            })}
+                            className="px-3 py-2 bg-white hover:bg-slate-50 text-blue-900 border border-blue-300 font-bold rounded-xl text-xs transition"
+                          >
+                            Why am I eligible? 🔍
+                          </button>
+
+                          <button
+                            onClick={() => onLaunchGoldenDemo ? onLaunchGoldenDemo() : (onOpenRegister && onOpenRegister())}
+                            className="px-4 py-2 bg-emerald-700 hover:bg-emerald-600 text-white font-bold rounded-xl text-xs transition shadow-xs"
+                          >
+                            Start Application ➔
+                          </button>
+                        </div>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-900 space-y-1">
-                    <div className="font-bold flex items-center space-x-1.5">
-                      <AlertCircle className="w-4 h-4 text-amber-600" />
-                      <span>No direct fellowship matches under current statutory limits</span>
+                  <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-900 space-y-2">
+                    <div className="font-bold flex items-center justify-between">
+                      <div className="flex items-center space-x-1.5">
+                        <AlertCircle className="w-4 h-4 text-amber-600" />
+                        <span>No direct fellowship matches under current statutory limits</span>
+                      </div>
+                      <button
+                        onClick={() => setWhyDetails({
+                          scheme: 'Statutory Evaluation Summary',
+                          schemeId: 'INELIGIBLE',
+                          income: checkIncome,
+                          age: checkAge,
+                          tribe: checkTribe,
+                          isPvtg: checkResult.isPvtg,
+                          qualification: checkQualification,
+                          isIneligible: true
+                        })}
+                        className="text-xs text-blue-900 font-bold underline"
+                      >
+                        Why does this not qualify?
+                      </button>
                     </div>
                     <p className="text-[11px] text-amber-800">
-                      Reason: Your selected family income (₹{(checkIncome / 100000).toFixed(2)}L) or age ({checkAge} yrs) exceeds statutory ceilings for NFST (₹6L) or NOS (₹8L). You may explore Centrally Sponsored Post-Matric schemes through your state tribal welfare department.
+                      Reason: Your selected family income (₹{(checkIncome / 100000).toFixed(2)}L) or age ({checkAge} yrs) exceeds statutory ceilings for NFST (₹6L) or NOS (₹8L). Deterministic rules ensure transparent decisions without arbitrary algorithmic rejection.
                     </p>
                   </div>
                 )}
@@ -736,6 +791,90 @@ export function PublicHomePage({
             )}
           </div>
         </div>
+
+        {/* Why Am I Eligible / Statutory Rule Modal */}
+        {whyDetails && (
+          <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
+            <div className="bg-white rounded-3xl max-w-xl w-full p-6 space-y-5 shadow-2xl animate-in zoom-in-95 duration-150 text-xs">
+              <div className="flex justify-between items-start pb-3 border-b border-slate-200">
+                <div>
+                  <span className="text-[10px] font-mono font-bold bg-blue-100 text-blue-900 px-2 py-0.5 rounded">
+                    DETERMINISTIC STATUTORY RULE AUDIT
+                  </span>
+                  <h3 className="font-black text-base text-slate-900 mt-1 font-serif">
+                    Statutory Eligibility Breakdown: {whyDetails.scheme}
+                  </h3>
+                </div>
+                <button
+                  onClick={() => setWhyDetails(null)}
+                  className="text-slate-400 hover:text-slate-700 text-lg font-bold"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="space-y-3">
+                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+                  <div className="flex justify-between items-center py-1 border-b border-slate-200">
+                    <span className="font-semibold text-slate-700">1. Scheduled Tribe Status:</span>
+                    <span className="font-bold text-emerald-700 flex items-center space-x-1">
+                      <span>✓ PASS</span>
+                      <span className="text-slate-500 font-normal">({whyDetails.tribe} notified in Schedule VI)</span>
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between items-center py-1 border-b border-slate-200">
+                    <span className="font-semibold text-slate-700">2. Annual Family Income:</span>
+                    <span className={`font-bold flex items-center space-x-1 ${whyDetails.income <= 600000 ? 'text-emerald-700' : 'text-rose-600'}`}>
+                      <span>{whyDetails.income <= 600000 ? '✓ PASS' : '✗ CEILING EXCEEDED'}</span>
+                      <span className="text-slate-500 font-normal">(₹{(whyDetails.income).toLocaleString()} vs ₹6,00,000 ceiling)</span>
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between items-center py-1 border-b border-slate-200">
+                    <span className="font-semibold text-slate-700">3. Age Limit Criterion:</span>
+                    <span className={`font-bold flex items-center space-x-1 ${whyDetails.age <= 36 ? 'text-emerald-700' : 'text-rose-600'}`}>
+                      <span>{whyDetails.age <= 36 ? '✓ PASS' : '✗ OVERAGE'}</span>
+                      <span className="text-slate-500 font-normal">({whyDetails.age} yrs ≤ 36 yrs threshold)</span>
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between items-center py-1">
+                    <span className="font-semibold text-slate-700">4. Qualifying Degree:</span>
+                    <span className="font-bold text-emerald-700">
+                      ✓ Post-Graduate degree satisfied
+                    </span>
+                  </div>
+                </div>
+
+                <div className="p-3 bg-blue-50 border border-blue-200 rounded-xl text-blue-950 text-[11px] space-y-1">
+                  <strong className="block font-bold">Statutory Authority Reference:</strong>
+                  <span>Governed by MoTA NFST Scheme Guidelines Section 4.1 to 4.4. VidyaSetu uses deterministic rules to guarantee constitutional reservations and compliance without arbitrary machine-learning rejection.</span>
+                </div>
+              </div>
+
+              <div className="flex justify-between items-center pt-2">
+                <button
+                  onClick={() => setWhyDetails(null)}
+                  className="px-4 py-2 border rounded-xl text-slate-600 hover:bg-slate-50 font-bold"
+                >
+                  Close
+                </button>
+
+                <button
+                  onClick={() => {
+                    setWhyDetails(null);
+                    if (onLaunchGoldenDemo) onLaunchGoldenDemo();
+                    else if (onOpenRegister) onOpenRegister();
+                  }}
+                  className="px-5 py-2.5 bg-blue-900 hover:bg-blue-800 text-white font-bold rounded-xl shadow-md flex items-center space-x-1.5"
+                >
+                  <span>Run Golden Demo as Birsa Hemrom ➔</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </section>
 
       {/* 8. End-to-End Governance Roadmap Infographic */}

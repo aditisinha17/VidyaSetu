@@ -31,6 +31,12 @@ export function LoginPanel({
 }) {
   const [portalType, setPortalType] = useState(initialTab); // 'student' | 'register' | 'admin'
 
+  React.useEffect(() => {
+    if (initialTab) {
+      setPortalType(initialTab);
+    }
+  }, [initialTab]);
+
   // Student Login Tab
   const [studentAuthMethod, setStudentAuthMethod] = useState('digilocker'); // 'digilocker' | 'otp' | 'aadhaar'
   const [mobileNo, setMobileNo] = useState('+91 94311 02931');
@@ -655,7 +661,7 @@ export function LoginPanel({
                   </select>
                 </div>
 
-                <div className="space-y-3 text-xs">
+                <form onSubmit={(e) => { e.preventDefault(); handleAdminLogin(adminRole); }} className="space-y-3 text-xs">
                   <div>
                     <label className="block font-semibold text-slate-700 mb-1">Official Government Email (.gov.in / .ac.in)</label>
                     <div className="relative">
@@ -700,13 +706,13 @@ export function LoginPanel({
                   </div>
 
                   <button
-                    onClick={() => handleAdminLogin(adminRole)}
-                    className="w-full py-2.5 bg-blue-950 hover:bg-blue-900 text-white rounded-xl font-bold shadow-md transition flex items-center justify-center space-x-2"
+                    type="submit"
+                    className="w-full py-2.5 bg-blue-950 hover:bg-blue-900 text-white rounded-xl font-bold shadow-md transition flex items-center justify-center space-x-2 cursor-pointer"
                   >
                     <ShieldCheck className="w-4 h-4 text-amber-400" />
                     <span>Sign In to Ministry Governance Hub</span>
                   </button>
-                </div>
+                </form>
 
                 {/* Quick 1-Click Officer Demonstrations */}
                 <div className="pt-3 border-t border-slate-200 space-y-2">

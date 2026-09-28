@@ -1,11 +1,39 @@
 # VidyaSetu (विद्यासेतु) — Technical System Architecture Specification
-### Ministry of Tribal Affairs (MoTA), Government of India (जनजातीय कार्य मंत्रालय, भारत सरकार)
+### Unified AI-Assisted Scholarship & Fellowship Governance Platform
+**Ministry of Tribal Affairs (MoTA), Government of India (जनजातीय कार्य मंत्रालय, भारत सरकार)**  
+**Smart India Hackathon (SIH) 2026 — Problem Statement ID: 239 (Software Edition | Theme: Smart Education)**
 
 ---
 
-## 1. High-Level Architecture (HLA)
+## 0. SIH 2026 Problem Statement 239 — System Specification Alignment
+
+### Problem Statement Identity
+* **Problem Statement ID**: 239
+* **Ministry / Department**: Ministry of Tribal Affairs (MoTA)
+* **Category**: Software
+* **Theme**: Smart Education
+* **Official Data Link Sets**: [tribal.nic.in/ScholarshiP.aspx](https://tribal.nic.in/ScholarshiP.aspx) | [dbttribal.gov.in/AllScheme.aspx](https://dbttribal.gov.in/AllScheme.aspx)
+
+### Architectural Mapping Against Problem Statement Mandates:
+1. **End-to-End Integrated System**: Unifies the complete 8-stage lifecycle (applicant registration, online application, document submission, eligibility verification, scrutiny, screening, selection, communication, and post-selection fellowship management).
+2. **Configurable Scheme System**: Handles different eligibility criteria, documents, and selection processes applicable to individual schemes (NFST, NOS, Top Class ST) through a configurable schema engine (`SchemeConfigStudio.jsx` & `ruleEngine.js`).
+3. **AI & Automation for Scrutiny**: Leverages OCR document intelligence (`documentAI.js`) to reduce manual verification, extract certificate fields, and detect defective/expired credentials.
+4. **Deficiency Resubmission Loop**: Provides automated deficiency communication, a 15-day SLA resolution desk, document replacement, AI re-scan, and queue seniority preservation (`DeficiencyDesk.jsx`).
+5. **Transparent Screening with Human Oversight**: Delivers an **Application X-Ray Dual-Pane Workstation** (`OfficerScrutinyDesk.jsx`) ensuring that all AI recommendations are audited by authorized human officers, supported by mandatory **Officer Override** and **Statutory Rejection** clauses.
+6. **Separate Interfaces**: Fully decoupled citizen/scholar interface (**Scholar Desk**) and ministry administrative workspace (**Ministry Governance Hub**).
+7. **Dashboards & Scheme Analytics**: Executive intelligence dashboards monitoring turnaround times (TAT), scheme allocations, state-wise application heatmaps, and PVTG inclusion rates (`NationalAnalytics.jsx`).
+
+---
+
+## 1. Architectural Principles & High-Level Architecture (HLA)
 
 VidyaSetu is architected as an **Event-Driven, Service-Oriented Web Application** conforming to the **National e-Governance Division (NeGD)** standards, **Guidelines for Indian Government Websites (GIGW 2.0)**, and **WCAG 2.1 AA Accessibility Standards**.
+
+### Core Governance Principles
+1. **Human-in-the-Loop Supremacy**: AI models assist in document attribute extraction, validity checking, and queue triage. Adverse decisions (rejections) or statutory overrides require affirmative action and clause citations by authorized human officers.
+2. **Deterministic Statutory Rule Checking**: Eligibility is evaluated via pure deterministic statutory logic (ST notification, income ceilings, age thresholds, notified institute quotas), eliminating black-box bias.
+3. **Integration-Ready Sandbox Adapters**: External systems (UIDAI, DigiLocker, PFMS, NPCI, MeriPehchaan) are decoupled via well-defined adapter interfaces, enabling seamless local simulation or production deployment without hardcoding proprietary dependencies.
+4. **Cryptographic Traceability**: All governance lifecycle events are permanently recorded in a SHA-256 chained audit trail, providing immutable proof of non-tampering.
 
 ```
 +----------------------------------------------------------------------------------------------------+
@@ -17,8 +45,8 @@ VidyaSetu is architected as an **Event-Driven, Service-Oriented Web Application*
 |   |  - Multi-Language Switcher (English, हिन्दी, ଓଡ଼ିଆ, ᱥᱟᱱᱛᱟᱲᱤ [Ol Chiki], తెలుగు, मराठी)         |   |
 |   |  - Flagship Scheme Directory (NFST, NOS, Top Class Education Guidelines & Documents)       |   |
 |   |  - 30-Second Quick Eligibility Pre-Checker (Degree, Income, Age, Tribe, Destination)       |   |
-|   |  - Real-Time National Impact Counters (₹178.4 Cr DBT Disbursed, 12,842 Scholars, 14d Turn) |   |
-|   |  - Official Circulars Ticker & Central ST Schedule VI Gazette Notices                      |   |
+|   |  - Official MoTA DBT Published Metrics vs 12,842 Synthetic Demo Cohort Labels              |   |
+|   |  - "Why am I eligible / not eligible?" Statutory Clause Breakdown Modal                    |   |
 |   |  - 6-Stage Governance Roadmap Infographic & Citizen FAQ Redressal Matrix                   |   |
 |   +----------------------------------------------+---------------------------------------------+   |
 |                                                  |                                                 |
@@ -27,53 +55,52 @@ VidyaSetu is architected as an **Event-Driven, Service-Oriented Web Application*
 |   +---------------------------------------------+   +------------------------------------------+   |
 |   |     NEW REGISTRATION & SCHOLAR WORKSPACE    |   |      MINISTRY ADMINISTRATIVE WORKSPACE   |   |
 |   |  - New Student Registration (Sign-Up Flow)  |   |  - Executive Analytics & National Heatmap|   |
-|   |  - Aadhaar e-KYC (NPCI Seeded Bank Check)   |   |  - Dual-Pane OCR Scrutiny Workstation    |   |
-|   |  - Mobile + NIC SMS OTP Verification        |   |  - AI Triage & Fraud/Anomaly Detection   |   |
-|   |  - 5-Step Application Wizard & Digilocker   |   |  - Selection Committee & Merit Engine    |   |
-|   |  - Rule + AI Scheme Matching Engine         |   |  - Post-Selection & PFMS Disbursal Hub   |   |
-|   |  - 6-Stage Visual Verification Pipeline     |   |  - No-Code Scheme Config & 10k Simulator |   |
-|   |  - Deficiency Redressal Desk (15-Day SLA)   |   |  - What-If Policy Decision Support (DSS) |   |
-|   |  - Post-Selection Fellowship (QPR / DBT)    |   |  - High-Security 2FA e-Pramaan Auth      |   |
-|   |  - AI Grievance Redressal Assistant         |   +------------------------------------------+   |
-|   |  - VidyaMitra Multilingual Audio Copilot    |                                                  |
-|   +---------------------------------------------+                                                  |
+|   |  - Jan Parichay / DigiLocker Sandbox Auth   |   |  - Application X-Ray Dual-Pane Workstation|   |
+|   |  - 5-Step Application Wizard & Pre-Check    |   |  - AI Triage & Shared Identifier Anomaly |   |
+|   |  - Rule + Statutory Scheme Matcher          |   |  - Scheme-Specific Merit & Quota Engine  |   |
+|   |  - 6-Stage Visual Verification Pipeline     |   |  - Post-Selection & PFMS Disbursal Hub   |   |
+|   |  - Deficiency Redressal Desk (15-Day SLA)   |   |  - Scheme Config Studio & 10k Simulator  |   |
+|   |  - Post-Selection Fellowship (QPR / DBT)    |   |  - What-If Policy Decision Support (DSS) |   |
+|   |  - Multi-Channel Notification Drawer        |   |  - Tamper-Evident SHA-256 Audit Trail    |   |
+|   |  - VidyaMitra Multilingual Audio Copilot    |   |  - Officer Scrutiny Override Mechanism   |   |
+|   +---------------------------------------------+   +------------------------------------------+   |
 |                                                                                                    |
 +--------------------------------------------------+-------------------------------------------------+
                                                    |
                                                    v
 +----------------------------------------------------------------------------------------------------+
-|                                 APPLICATION & LOGIC SERVICES LAYER                                 |
+|                                 APPLICATION & LOGIC SERVICES LAYER (backend/)                       |
 |                                                                                                    |
 |   +-------------------------+   +-------------------------+   +--------------------------------+   |
-|   |  MoTA-VISION OCR ENGINE |   | STATUTORY RULE ENGINE   |   | EXPLAINABLE AI MERIT ENGINE    |   |
-|   |  - Entity Extraction    |   | - AST Deterministic     |   | - Multi-Criteria MCDA Scoring  |   |
-|   |  - Bounding Box Tagger  |   | - Hard Ceiling Audits   |   | - PVTG Dedicated Priority      |   |
-|   |  - Digital Seal Auth    |   | - Gazette Cross-Lookup  |   | - 30% ST Female Horizontal     |   |
-|   |  - Tamper Risk Detector |   | - 10k Pool Simulator    |   | - RTI Audit Math Inspector     |   |
+|   | DOCUMENT OCR AI SERVICE |   | STATUTORY RULE ENGINE   |   | SCHEME SELECTION ENGINE        |   |
+|   | - Entity Extraction     |   | - Pure Deterministic    |   | - NFST: PG Marks + Quotas      |   |
+|   | - Bounding Box Tagger   |   | - Income & Age Ceilings |   | - NOS: QS World Top 500/200    |   |
+|   | - Barcode & QR Verifier |   | - Gazette Schedule VI   |   | - Top Class: Entrance Ranks    |   |
+|   | - Date Validity Check   |   | - Zero Black-Box ML     |   | - RTI-Friendly Traceability    |   |
 |   +-------------------------+   +-------------------------+   +--------------------------------+   |
 |                                                                                                    |
 |   +-------------------------+   +-------------------------+   +--------------------------------+   |
-|   |  ANOMALY & FRAUD GRAPH  |   | QPR & COMPLIANCE GATE   |   | NOTIFICATION & DISPATCH ENGINE |   |
-|   |  - Cross-Entity Match   |   | - Supervisor Endorse    |   | - NIC SMS Webhooks             |   |
-|   |  - Duplicate Identifiers|   | - Milestone Compliance  |   | - Official Email Gateway       |   |
-|   |  - Photo/IFSC Variance  |   | - Stipend Hold/Release  |   | - In-App Deficiency Notices    |   |
+|   | ANOMALY DETECTION GRAPH |   | QPR & COMPLIANCE GATE   |   | TAMPER-EVIDENT AUDIT CHAIN     |   |
+|   | - Shared Identifier Hub |   | - Supervisor Endorse    |   | - SHA-256 Hash Chaining        |   |
+|   | - Duplicate Bank / Phone|   | - Quarterly Verification|   | - H_k = SHA(H_k-1 + Payload)   |   |
+|   | - Non-adverse Flagging  |   | - Stipend Release Gate  |   | - Cryptographic Chain Audit    |   |
 |   +-------------------------+   +-------------------------+   +--------------------------------+   |
 |                                                                                                    |
 |   +-------------------------------------------------------+   +--------------------------------+   |
-|   |  CITIZEN PRE-CHECKER & LOCALIZATION ENGINE            |   | POLICY SIMULATOR DSS           |   |
-|   |  - 30-Second Dynamic Qualification Matrix             |   | - What-If Delta Calculator     |   |
-|   |  - Multilingual Dictionary (6 Official Languages)     |   | - Beneficiary Budget Modeling  |   |
+|   | CITIZEN PRE-CHECKER & LOCALIZATION ENGINE             |   | 10k POLICY SIMULATOR DSS       |   |
+|   | - 30-Second Dynamic Qualification Matrix              |   | - What-If Delta Calculator     |   |
+|   | - Multilingual Dictionary (6 Official Languages)      |   | - Beneficiary & Budget Impact  |   |
 |   +-------------------------------------------------------+   +--------------------------------+   |
 +--------------------------------------------------+-------------------------------------------------+
                                                    |
                                                    v
 +----------------------------------------------------------------------------------------------------+
-|                                 INTEGRATION & NATIONAL DATA REPOSITORIES                           |
+|                                 INTEGRATION-READY SANDBOX ADAPTERS                                 |
 |                                                                                                    |
-|   [MeriPehchaan (Jan Parichay)]  <--->  [DigiLocker Certified Repositories]                        |
-|   [UIDAI Aadhaar Authentication] <--->  [NPCI Aadhaar Payment Bridge (APB)]                        |
-|   [Public Financial Mgmt (PFMS)] <--->  [Central ST Gazette (Schedule VI)]                         |
-|   [NIRF / QS World Rank Dataset] <--->  [SHA-256 Immutable Audit Ledger]                           |
+|   [MeriPehchaan (Jan Parichay Adapter)] <---> [DigiLocker Certified Repositories Adapter]          |
+|   [UIDAI Demographic Validation Mock]   <---> [NPCI Aadhaar Payment Bridge (APB) Adapter]          |
+|   [Public Financial Management (PFMS)]  <---> [Central ST Gazette (Schedule VI Data Store)]        |
+|   [QS World University Ranking Data]    <---> [SHA-256 Tamper-Evident Chained Ledger]              |
 +----------------------------------------------------------------------------------------------------+
 ```
 
@@ -89,99 +116,138 @@ VidyaSetu is architected as an **Event-Driven, Service-Oriented Web Application*
      │
      ├───► [Selects Language (EN / HI / OR / SAT / TE / MR)] ──► Real-time UI Localization
      │
-     ├───► [30-Second Eligibility Checker] ──► Instant Match Results (e.g. "Eligible for NFST")
+     ├───► [30-Second Eligibility Checker] ──► Instant Statutory Breakdown ("Why am I eligible?")
      │
-     ▼ (2) Clicks "New Registration" or "Student Login"
+     ▼ (2) Clicks "New Registration" or "Run 7-Minute Golden Demo"
 [Registration & Authentication Gateway]
      │
-     ├───► New Student: Signs Up with Aadhaar e-KYC + NPCI Bank Check + Mobile OTP
+     ├───► New Student: Signs Up with Aadhaar e-KYC (Sandbox) + Mobile OTP
      │
-     └───► Existing Scholar: Jan Parichay SSO / DigiLocker / Aadhaar Authenticated
+     └───► Golden Demo: Birsa Hemrom Authenticated (MOTA-2026-NFST-0101)
      │
-     ▼ (3) System Creates/Syncs Verified Applicant Record
-[5-Step Application Wizard / Scholar Dashboard]
+     ▼ (3) Lands on Scholar Dashboard
+[Applicant Dashboard]
      │
-     ▼ (4) Auto-Populates Verified Caste Certificate & Domicile from DigiLocker
-[MoTA-Vision ST OCR Engine] ───► Extract: Name, Certificate No, Seal, Date, QR Hash
+     ├───► Status: Deficiency Pending (Expired Income Certificate Flagged)
      │
-     ├───► Pass (Confidence > 95%) ──► [Central Scrutiny Queue]
+     ├───► Enters Deficiency Desk ➔ Uploads replacement FY 2026-27 SDO Ranchi Certificate
      │
-     └───► Deficiency Flagged (< 70% or Expired) ──► [Deficiency Desk (15d SLA)]
-                                                               │
-                                                      [Automated SMS Alert]
-                                                               │
-                                                      [Applicant Re-Uploads]
-                                                               │
-                                                      [AI Pre-Clearance (99%)]
-                                                               │
-                                                               ▼
-[MoTA Officer Dual-Pane Scrutiny Desk] ◄──────────────────────┘
+     ├───► AI Re-Scan: Verifies Barcode & 100% Name Match ➔ Appends SHA-256 Block
      │
-     ▼ (5) Officer Approval with Human-in-the-Loop Oversight
-[Selection Committee & Explainable Merit Engine]
+     └───► Status Transitions to: READY FOR HUMAN REVIEW
      │
-     ▼ (6) Compute Composite Merit Score (MCDA with PVTG + Women Horizontal Quotas)
-[National Selection Gazette Released]
+     ▼ (4) Transitions to Ministry Scrutiny Officer Desk
+[Officer Scrutiny Desk (Application X-Ray Dual-Pane)]
      │
-     ▼ (7) Cryptographically Signed Sanction Order with QR Code Dispatched
-[Post-Selection Fellowship Hub]
+     ├───► Left Pane: Inspects Deterministic Statutory Rule Checklist (ST, Income, Age, Marks)
      │
-     ▼ (8) Quarterly Progress Report (QPR) Endorsed by Research Guide
-[PFMS & NPCI Aadhaar Payment Bridge] ───► Monthly Stipend Released into Beneficiary Account
+     ├───► Right Pane: Examines Document Canvas with OCR Bounding Box & Authority Seals
+     │
+     └───► Officer Actions:
+           ├───► [Approve] ───────────────────────► Moves to Selection Committee Review
+           ├───► [Human Officer Override] ────────► Overrides rule with mandatory justification log
+           └───► [Statutory Rejection] ───────────► Rejects with mandatory cited statutory clause
+     │
+     ▼ (5) Merit Allocation & Quota Enforcement
+[Scheme-Specific Selection Engine]
+     │
+     ├───► NFST: PG Marks Ranking + 30% Horizontal Girls Quota + 5% Divyang + PVTG Slots
+     ├───► NOS: QS World Top 500 Ranking Prioritization + Expert Committee Appraisal
+     └───► Top Class: Premier Institute Quotas based on JEE/NEET/CAT/CLAT Scores
+     │
+     ▼ (6) Selection & Gazette Generation
+[National Selection Gazette & Award Modal]
+     │
+     ├───► Publishes Award Sanction Orders with Prototype QR Verification Registry
+     │
+     ▼ (7) Post-Selection Governance & Disbursal
+[Post-Selection & PFMS DBT Sandbox Hub]
+     │
+     ├───► Supervisor Endorsement of Quarterly Progress Reports (QPR)
+     │
+     └───► Automatic Batch Generation for PFMS e-FTO Direct Benefit Transfer to Aadhaar-Seeded Bank
 ```
 
 ---
 
-## 3. Mathematical Model & Explainable Merit Scoring
+## 3. Core Subsystems & Technical Specifications
 
-To eliminate bias, guarantee constitutional reservations, and comply with the **Right to Information (RTI) Act, 2005**, VidyaSetu implements an **Explainable Multi-Criteria Decision Analysis (MCDA)** scoring model:
+### 3.1. Deterministic Statutory Rule Engine (`backend/services/ruleEngine.js`)
+Unlike statistical machine-learning models that can produce variable or discriminatory outcomes, statutory eligibility in government scholarships is governed by legal mandates. The VidyaSetu Rule Engine enforces pure deterministic evaluations:
 
-$$\text{Composite Merit Score } S_i \in [0, 100]$$
+$$\text{Eligibility}(\text{Applicant}, \text{Scheme}) = \bigwedge_{c \in \text{Criteria}} \text{Evaluate}(c, \text{Applicant})$$
 
-$$S_i = W_{\text{acad}} \cdot \left( \frac{M_i}{100} \right) + I_{\text{inst}} + T_{\text{test}} + B_{\text{pvtg}} + B_{\text{female}} + B_{\text{asp}}$$
+* **ST Notification Check**: Verifies if the applicant's tribe belongs to the Central Schedule VI list.
+* **Annual Family Income Ceiling**: Evaluates against scheme ceiling ($\le \text{₹}6.0\text{ LPA}$ for NFST, $\le \text{₹}8.0\text{ LPA}$ for NOS).
+* **Age Ceiling**: Evaluates age against cutoff date ($\le 36\text{ yrs}$ for NFST, $\le 35\text{ yrs}$ for NOS).
+* **Affirmative Action**: Evaluates Particularly Vulnerable Tribal Group (PVTG) status and applies dedicated reserved slots (50 slots in NFST, 3 slots in NOS).
 
-Where:
-* $W_{\text{acad}} = 50$: Qualifying Post-Graduate / Board Marks Weightage ($M_i \in [0, 100]$).
-* $I_{\text{inst}} \in [0, 20]$: Institutional Tier Score:
-  $$I_{\text{inst}} = \begin{cases} 
-  20 & \text{if QS World Rank } \le 50 \text{ or NIRF } \le 5 \\
-  18 & \text{if QS World Rank } \le 200 \text{ or NIRF } \le 10 \\
-  15 & \text{if QS World Rank } \le 500 \text{ or NIRF } \le 50 \\
-  12 & \text{otherwise} 
-  \end{cases}$$
-* $T_{\text{test}} \in [0, 15]$: National Level Competitive Examination Score (UGC-NET / CSIR-JRF / GATE / IELTS ≥ 7.5).
-* $B_{\text{pvtg}} = 10$: Affirmative Action Bonus for **Particularly Vulnerable Tribal Groups (PVTG)**.
-* $B_{\text{female}} = 5$: Horizontal Gender Equity Priority Bonus (supporting 30% statutory female quota).
-* $B_{\text{asp}} = 5$: Aspirational Tribal District Domicile Bonus (NITI Aayog notified blocks).
+### 3.2. AI-Assisted Document Pre-Scrutiny & Live Deficiency Loop (`backend/services/documentAI.js`)
+* Performs optical character extraction to identify certificate serial numbers, issuing revenue authorities, and issuance dates.
+* Detects lapsed certificate validity: Income certificates older than 1 fiscal year are flagged with code `DEF-INC-EXPIRED`.
+* Implements the **Deficiency Resolution Loop**:
+  1. Student uploads fresh certificate: `Fresh_Income_Certificate_FY2026_27_SDO_Ranchi.pdf`.
+  2. OCR engine extracts issuing authority (`Sub-Divisional Officer, Ranchi`), issue date (`12-06-2026`), and candidate name match percentage (100%).
+  3. Automatically updates case status from `DEFICIENT` to `READY FOR HUMAN REVIEW`.
+  4. Preserves initial submission seniority timestamp in the national intake registry.
+
+### 3.3. Application X-Ray: Dual-Pane Workstation (`src/portals/AdminPortal/OfficerScrutinyDesk.jsx`)
+* **Left-Hand Pane**: Displays the candidate's demographic data, academic profile, and the automated rule evaluation pass/fail matrix.
+* **Right-Hand Pane**: Interactive document visualizer rendering bounding-box coordinates around extracted entities (Name, Income Amount, SDO Barcode).
+* **Officer Override Protocol**: Enables an officer to approve an edge-case applicant if manual physical verification was conducted, requiring a mandatory justification log permanently committed to the audit trail.
+* **Statutory Rejection Protocol**: Prohibits generic rejections; officers must cite the exact statutory clause (e.g., *NFST Guidelines Section 4.2: Income Exceeds Ceiling*).
+
+### 3.4. Tamper-Evident SHA-256 Chained Audit Trail (`backend/services/auditChain.js`)
+Every state transition computes a cryptographic block hash chained to the predecessor block:
+
+$$H_k = \text{SHA-256}(H_{k-1} \,\|\, \text{Timestamp} \,\|\, \text{Actor} \,\|\, \text{Action} \,\|\, \text{Payload})$$
+
+```javascript
+// Cryptographic Block Structure
+{
+  prevHash: "e81a3f01b9204918acde88102910481239102481029410294810293810293810",
+  timestamp: "2026-09-12T10:42:00Z",
+  actor: "AI Document Pre-Scrutiny Lab",
+  action: "OCR extraction completed: Flagged Income Certificate validity lapsed",
+  payload: "docName=Income Certificate;issueDate=15-01-2023",
+  hash: "a42f9910c2847102938471029384710293847102938471029384710293847102",
+  shortHash: "a42f..7102"
+}
+```
+
+The system provides live cryptographic integrity verification:
+* If any payload, timestamp, or actor field is altered in historical records, recomputed hashes mismatch and the broken chain link is identified immediately.
+
+### 3.5. What-If Policy DSS & 10,000-Record Simulator (`backend/services/policySimulator.js`)
+Enables MoTA policy directors to simulate proposed scheme rule revisions across a realistic synthetic cohort of 10,000 applicant records:
+* Simulates adjustments to income ceilings (₹6L to ₹8L), minimum marks thresholds (50% to 55%), or quota weightings.
+* Calculates exact prospective outcomes:
+  $$\Delta \text{Beneficiaries} = N_{\text{new}} - N_{\text{current}}$$
+  $$\Delta \text{Budget} = \Delta \text{Beneficiaries} \times \text{Stipend Rate}$$
 
 ---
 
-## 4. Multi-Language & Tribal Inclusion Architecture
+## 4. Integration-Ready Sandbox Adapters
 
-VidyaSetu implements client-side dynamic i18n localization tailored for India's major Scheduled Tribe populations:
-
-| Language Key | Script / Language | Target Demographics & Tribal Coverage |
-| :--- | :--- | :--- |
-| `en` | **English** | National Standard & Official Documentation |
-| `hi` | **हिन्दी (Hindi)** | Central India (Madhya Pradesh, Chhattisgarh, Jharkhand, Rajasthan) |
-| `or` | **ଓଡ଼ିଆ (Odia)** | Odisha Tribal Belts (Mayurbhanj, Koraput, Rayagada) |
-| `sat` | **ᱥᱟᱱᱛᱟᱲᱤ (Santali - Ol Chiki)** | Schedule VI Santhal Communities (Jharkhand, West Bengal, Odisha) |
-| `te` | **తెలుగు (Telugu)** | Andhra Pradesh & Telangana (Chenchu [PVTG], Koya, Gond) |
-| `mr` | **मराठी (Marathi)** | Maharashtra Tribal Habitations (Katkari [PVTG], Bhil, Madia Gond) |
+| External System | Target Entity | Adapter Architecture | Implementation Status |
+| :--- | :--- | :--- | :--- |
+| **MeriPehchaan** | National Single Sign-On | OAuth2 / SAML 2.0 Simulation Adapter | Operational Mock Adapter |
+| **DigiLocker** | Ministry of Electronics & IT | XML / JSON Document Push & Fetch Protocol | Sandbox Ready Adapter |
+| **UIDAI Aadhaar** | Unique Identification Authority | Demographic matching & OTP e-KYC Mock | Sandbox Ready Adapter |
+| **NPCI APB** | National Payments Corporation | Aadhaar Payment Bridge Bank Account Seeding Check | Verification Simulator |
+| **PFMS** | Ministry of Finance | e-FTO (Electronic Funds Transfer Order) Batch Engine | Batch Ledger Sandbox |
 
 ---
 
-## 5. Security, Access Control (RBAC), and Audit Trail
+## 5. Security & Regulatory Compliance
 
-1. **Role-Based Access Control (RBAC)**:
-   * **Citizen / Visitor**: Unauthenticated access to Public Home Page, Scheme Guidelines, Eligibility Pre-Checker, and Notifications.
-   * **Student / Scholar**: Authenticated access via Aadhaar e-KYC or Jan Parichay to Application Wizard, Deficiency Redressal, QPR Submissions, and DBT Disbursal Records.
-   * **Institute Verification Officer (Dean / Registrar)**: Institutional enrollment verification, research admission clearance, and supervisor endorsement.
-   * **District Welfare Officer (DWO)**: District-level caste gazette validation and domicile authentication.
-   * **MoTA Central Scrutiny Officer**: Dual-pane OCR scrutiny desk, intake triage queue, and explainable merit inspector.
-   * **PFMS DDO (Drawing & Disbursing Officer)**: Financial sanction orders, e-FTO generation, and monthly DBT batch releases.
-   * **System Administrator (NIC)**: Audit trail inspection, scheme rule configuration studio, and security compliance.
-2. **SHA-256 Chained Cryptographic Audit Trail**:
-   * Every state change (application submission, OCR confidence rating, deficiency issuance, officer approval, merit ranking calculation, and PFMS fund transfer) generates an immutable SHA-256 hash linked to the previous state:
-   $$\text{Hash}_k = \text{SHA-256}\left(\text{Hash}_{k-1} \,\|\, \text{Timestamp} \,\|\, \text{Actor} \,\|\, \text{ActionPayload}\right)$$
-   * Guarantees complete tamper-evidence and legal defensibility under the **Information Technology Act, 2000** and **RTI Act, 2005**.
+1. **GIGW 2.0 & WCAG 2.1 AA Compliance**:
+   - Contrast ratio $\ge 4.5:1$ with dedicated High-Contrast mode for visually impaired users.
+   - Text magnification support ($A$ and $A+$ controls).
+   - Low-Bandwidth 2G operational mode designed for remote tribal areas.
+2. **Data Minimization & Privacy**:
+   - Aadhaar numbers are masked ($XXXX-XXXX-1234$).
+   - Bank account numbers display only the final 4 digits.
+3. **Session Integrity**:
+   - Role-based access control strictly isolates Scholar Workspace from the Administrative Workstation.
+   - Audit trail provides non-repudiation across all administrative actions.

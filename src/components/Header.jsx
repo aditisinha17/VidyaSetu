@@ -41,7 +41,8 @@ export function Header({
   onLogout,
   onOpenDeficiency,
   onOpenNotifications,
-  onOpenGrievances
+  onOpenGrievances,
+  onSwitchWorkspace
 }) {
   const t = I18N[lang] || I18N.en;
 
@@ -186,6 +187,21 @@ export function Header({
             >
               <BadgeAlert className="w-4 h-4 text-rose-600" />
               <span className="hidden sm:inline">{deficiencyCount} Deficiency</span>
+            </button>
+          )}
+
+          {/* Demo Workspace Quick-Switch */}
+          {onSwitchWorkspace && (
+            <button
+              onClick={() => onSwitchWorkspace(isStudent ? 'admin' : 'student')}
+              className={`px-3 py-1.5 rounded-xl border text-xs font-bold transition flex items-center space-x-1.5 shadow-xs ${
+                isStudent
+                  ? 'bg-purple-50 text-purple-900 border-purple-200 hover:bg-purple-100'
+                  : 'bg-blue-50 text-blue-900 border-blue-200 hover:bg-blue-100'
+              }`}
+              title={isStudent ? 'Switch to Ministry Officer Scrutiny Desk' : 'Switch to Birsa Hemrom Scholar Desk'}
+            >
+              <span>{isStudent ? 'Officer Desk ➔' : 'Scholar Desk ➔'}</span>
             </button>
           )}
 

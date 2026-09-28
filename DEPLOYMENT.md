@@ -1,7 +1,14 @@
 # VidyaSetu (विद्यासेतु) — Production Deployment Manual
 ### Ministry of Tribal Affairs (MoTA), Government of India
+**Smart India Hackathon (SIH) 2026 — Problem Statement ID: 239 (Software Edition | Theme: Smart Education)**
 
 ---
+
+## 0. Full-Stack Architecture Overview
+VidyaSetu is built with:
+* **Frontend Web Application**: React 19 + Vite SPA (WCAG 2.1 AA & GIGW 2.0 compliant).
+* **Backend Governance REST API**: Zero-dependency native Node.js HTTP service located in `backend/` (`server.js`, port 5001).
+* **Static Fallback**: The frontend includes automatic client-side fallback in `src/services/apiClient.js` so it can run seamlessly as a standalone static deployment (e.g. Vercel, Netlify, GitHub Pages) as well as with the local Node.js backend.
 
 ## 1. Quick One-Click Cloud Deployments
 

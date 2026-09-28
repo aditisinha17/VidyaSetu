@@ -182,18 +182,31 @@ export function ApplicationTriage({
                     {app.aiVerdict}
                   </div>
 
-                  {/* Anomaly Callout if present */}
+                  {/* Cross-Application Anomaly Callout if present */}
                   {hasAnomaly && (
-                    <div className="p-2 rounded-lg bg-rose-50 border border-rose-200 text-[11px] text-rose-900 space-y-1">
-                      <div className="font-bold flex items-center space-x-1">
-                        <AlertTriangle className="w-3.5 h-3.5 text-rose-600" />
-                        <span>Fraud / Anomaly Flag Detected:</span>
+                    <div className="p-3 rounded-xl bg-amber-50 border border-amber-300 text-[11px] text-amber-950 space-y-2">
+                      <div className="font-bold flex items-center justify-between">
+                        <span className="flex items-center space-x-1.5 text-amber-900">
+                          <AlertTriangle className="w-4 h-4 text-amber-700" />
+                          <span>Cross-Application Anomaly Detected:</span>
+                        </span>
+                        <span className="bg-amber-200 text-amber-900 text-[10px] px-2 py-0.2 rounded font-mono font-bold">
+                          Shared Identifier Cluster
+                        </span>
                       </div>
                       {app.anomalyFlags.map((flag, idx) => (
-                        <div key={idx} className="font-mono text-[10px] text-rose-800">
-                          • [{flag.severity}] {flag.label}
+                        <div key={idx} className="text-amber-900 space-y-0.5">
+                          <div className="font-semibold">• {flag.label}</div>
+                          {flag.explanation && (
+                            <p className="text-[10px] text-amber-800 italic pl-2">
+                              {flag.explanation}
+                            </p>
+                          )}
                         </div>
                       ))}
+                      <div className="p-2 bg-white/80 rounded border border-amber-200 text-[10px] text-slate-600">
+                        <strong>Statutory Protocol:</strong> The system flags potential duplicate identifiers for human scrutiny. Officers must confirm whether this represents a family account or an administrative duplication.
+                      </div>
                     </div>
                   )}
                 </div>

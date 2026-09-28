@@ -32,7 +32,8 @@ export function ApplicantDashboard({
   onViewAwardLetter,
   onResolveDeficiency,
   onOpenGrievances,
-  onOpenAuditTrail
+  onOpenAuditTrail,
+  onSwitchToOfficer
 }) {
   const [activeTab, setActiveTab] = useState('overview'); // 'overview', 'matcher', 'tracker', 'deficiency', 'lifecycle'
 
@@ -176,8 +177,8 @@ export function ApplicantDashboard({
                       </div>
                       <div className="text-[11px] text-slate-500">M.Phil & Ph.D. in India (₹37k - ₹42k/mo)</div>
                     </div>
-                    <span className="font-mono font-black text-sm text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                      94% Match
+                    <span className="font-mono font-bold text-xs text-emerald-800 bg-emerald-100 px-2.5 py-1 rounded-full border border-emerald-300">
+                      ✓ Statutorily Eligible
                     </span>
                   </div>
 
@@ -209,8 +210,8 @@ export function ApplicantDashboard({
                       </div>
                       <div className="text-[11px] text-slate-500">Masters & Ph.D. Abroad (QS Top 500)</div>
                     </div>
-                    <span className="font-mono font-black text-sm text-blue-800 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
-                      87% Match
+                    <span className="font-mono font-bold text-xs text-amber-800 bg-amber-100 px-2.5 py-1 rounded-full border border-amber-300">
+                      ⚠️ Prerequisites Pending
                     </span>
                   </div>
 
@@ -409,6 +410,7 @@ export function ApplicantDashboard({
         <DeficiencyDesk
           applicant={currentApplicant}
           onResolveDeficiency={onResolveDeficiency}
+          onSwitchToOfficer={onSwitchToOfficer}
         />
       )}
 
