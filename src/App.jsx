@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
+import { PublicHomePage } from './components/PublicHomePage';
 import { LoginPanel } from './components/LoginPanel';
 import { DocumentViewerModal } from './components/DocumentViewerModal';
 import { AwardLetterModal } from './components/AwardLetterModal';
@@ -28,10 +29,13 @@ import { INITIAL_APPLICANTS, INITIAL_SCHEMES } from './data/mockData';
 export function App() {
   // Authentication State
   const [auth, setAuth] = useState({
-    isAuthenticated: false, // Starts at Login Panel
+    isAuthenticated: false, // Starts at Public Portal
     type: null, // 'student' | 'admin'
     user: null
   });
+
+  const [publicViewState, setPublicViewState] = useState('home'); // 'home' | 'login'
+  const [authPortalTab, setAuthPortalTab] = useState('student'); // 'student' | 'register' | 'admin'
 
   const [currentRole, setRole] = useState('analytics'); // for admin: 'analytics', 'scrutiny', 'triage', 'merit', 'dbt', 'config', 'whatif'
   const [lang, setLang] = useState('en');
@@ -84,7 +88,14 @@ export function App() {
       user: null
     });
     setIsWizardOpen(false);
-    showToast('You have been securely signed out.');
+    setPublicViewState('home');
+    showToast('You have been securely signed out. Returned to National Portal.');
+  };
+
+  const handleRegisterApplicant = (newApplicant) => {
+    setApplicants(prev => [newApplicant, ...prev]);
+    setSelectedApplicantId(newApplicant.id);
+    showToast(`Welcome ${newApplicant.name}! Your MoTA registration (${newApplicant.id}) is complete.`);
   };
 
   // APPLICATION WORKFLOW HANDLERS
@@ -199,9 +210,42 @@ export function App() {
 
   const activeDeficiencyCount = applicants.filter(a => a.status === 'Deficiency Pending').length;
 
-  // IF NOT AUTHENTICATED: RENDER LOGIN PANEL
+  // IF NOT AUTHENTICATED: RENDER CITIZEN PUBLIC HOME PAGE OR LOGIN/REGISTRATION GATEWAY
   if (!auth.isAuthenticated) {
-    return <LoginPanel onLoginSuccess={handleLoginSuccess} />;
+    if (publicViewState === 'home') {
+      return (
+        <div className={`min-h-screen flex flex-col font-sans ${textSize === 'large' ? 'text-base' : 'text-sm'} ${contrast ? 'bg-black text-yellow-300' : 'bg-slate-50 text-slate-900'}`}>
+          <PublicHomePage
+            onOpenLogin={(type = 'student') => {
+              setAuthPortalTab(type);
+              setPublicViewState('login');
+            }}
+            onOpenRegister={() => {
+              setAuthPortalTab('register');
+              setPublicViewState('login');
+            }}
+            lang={lang}
+            contrast={contrast}
+            setContrast={setContrast}
+            textSize={textSize}
+            setTextSize={setTextSize}
+            lowBandwidth={lowBandwidth}
+            setLowBandwidth={setLowBandwidth}
+          />
+          {/* Multilingual AI Copilot available for citizens on home page */}
+          <VidyaMitraChatbot />
+        </div>
+      );
+    }
+
+    return (
+      <LoginPanel
+        initialTab={authPortalTab}
+        onBackToHome={() => setPublicViewState('home')}
+        onLoginSuccess={handleLoginSuccess}
+        onRegisterApplicant={handleRegisterApplicant}
+      />
+    );
   }
 
   // IF AUTHENTICATED: RENDER ROLE-SPECIFIC WORKSPACE
