@@ -38,17 +38,29 @@ The **Ministry of Tribal Affairs (MoTA)** implements flagship scholarship and fe
                                   │     Ministry of Tribal Affairs, Govt. of India         │
                                   └──────────────────────────┬─────────────────────────────┘
                                                              │
+                                                             ▼
+                                  ┌────────────────────────────────────────────────────────┐
+                                  │         CITIZEN PUBLIC PORTAL (NO LOGIN REQUIRED)      │
+                                  │ • Flagship Scheme Directory (NFST / NOS / Top Class)   │
+                                  │ • 30-Second Interactive Statutory Eligibility Checker  │
+                                  │ • Multi-Language Switcher (EN, HI, OR, SAT, TE, MR)    │
+                                  │ • Live Impact Metrics (₹178.4 Cr DBT, 12,842 Scholars) │
+                                  │ • Official Gazette & Circulars Live Ticker             │
+                                  │ • 6-Stage Governance Roadmap Infographic & FAQ Desk    │
+                                  └──────────────────────────┬─────────────────────────────┘
+                                                             │
                   ┌──────────────────────────────────────────┴──────────────────────────────────────────┐
                   ▼                                                                                     ▼
      ┌─────────────────────────┐                                                           ┌─────────────────────────┐
      │ 👨🎓 SCHOLAR WORKSPACE   │                                                           │ 👨💼 MINISTRY WORKSPACE │
-     │ • 5-Step Smart Wizard   │                                                           │ • Executive KPIs & Heatmap
-     │ • Profile Dial (92%)    │                                                           │ • Dual-Pane OCR Desk    │
-     │ • Rule + AI Matcher     │                                                           │ • AI Triage & Anomalies │
-     │ • 6-Stage Pipeline      │                                                           │ • Merit Ranking Engine  │
-     │ • Deficiency Desk (15d) │                                                           │ • DBT / PFMS Disbursal  │
-     │ • QPR & Contingency Hub │                                                           │ • Scheme Config Studio  │
-     │ • Grievance Redressal   │                                                           │ • What-If Policy DSS    │
+     │ • New Student Sign-Up   │                                                           │ • Executive KPIs & Heatmap
+     │ • Aadhaar e-KYC & NPCI  │                                                           │ • Dual-Pane OCR Desk    │
+     │ • 5-Step Smart Wizard   │                                                           │ • AI Triage & Anomalies │
+     │ • Profile Dial (92%)    │                                                           │ • Merit Ranking Engine  │
+     │ • Rule + AI Matcher     │                                                           │ • DBT / PFMS Disbursal  │
+     │ • 6-Stage Pipeline      │                                                           │ • Scheme Config Studio  │
+     │ • Deficiency Desk (15d) │                                                           │ • What-If Policy DSS    │
+     │ • QPR & Contingency Hub │                                                           │ • High-Security 2FA     │
      └────────────┬────────────┘                                                           └────────────┬────────────┘
                   │                                                                                     │
                   └──────────────────────────────────────────┬──────────────────────────────────────────┘
@@ -82,8 +94,16 @@ The **Ministry of Tribal Affairs (MoTA)** implements flagship scholarship and fe
   * **NFST (National Fellowship for Scheduled Tribe Students)**: Detailed stipend guidelines (₹37,000–₹42,000/mo), ₹20,500 annual contingency, eligibility rules, and mandatory documents.
   * **NOS (National Overseas Scholarship)**: Master's and Ph.D. abroad in QS Top 500 universities, 100% actual tuition fee reimbursement, £9,900 / $15,400 maintenance allowance, and annual airfare.
   * **Top Class Education for ST Students**: 100% tuition fees, ₹45,000 IT equipment grant, and monthly living allowance in notified premier institutes (IITs, IIMs, NITs, AIIMS, NLUs).
+* **Multi-Language Localization Engine (6 Official & Tribal Languages)**:
+  * Seamless language selector switching all UI copy in real-time between:
+    * **English (EN)** — National Standard Documentation
+    * **हिन्दी (Hindi)** — Central India (MP, Chhattisgarh, Rajasthan, Jharkhand)
+    * **ଓଡ଼ିଆ (Odia)** — Odisha Tribal Communities
+    * **संताली / ᱥᱟᱱᱛᱟᱲᱤ (Santali - Ol Chiki Script)** — Schedule VI Santhal Population
+    * **తెలుగు (Telugu)** — Telangana & Andhra Pradesh (Chenchu, Koya, Gond)
+    * **मराठी (Marathi)** — Maharashtra ST Belts (Katkari, Bhil, Warli)
 * **Interactive 30-Second Quick Eligibility Pre-Checker**:
-  * Public calculator allowing prospective applicants to input qualification, annual family income, age, target institution, and tribal community to immediately discover which fellowships they qualify for.
+  * Public calculator allowing prospective applicants to input qualification, annual family income, age, target institution, and tribal community to immediately discover which fellowships they qualify for before registering.
 * **National Impact & Disbursal Metrics**:
   * Live counters showcasing ₹178.4+ Cr disbursed via PFMS, 12,842 active scholars, 14-day turnaround time, and 75 PVTG communities covered.
 * **Official Notification & Gazette Ticker**:

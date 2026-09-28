@@ -1,26 +1,42 @@
 # VidyaSetu (विद्यासेतु) — Technical System Architecture Specification
-### Ministry of Tribal Affairs (MoTA), Government of India
+### Ministry of Tribal Affairs (MoTA), Government of India (जनजातीय कार्य मंत्रालय, भारत सरकार)
 
 ---
 
 ## 1. High-Level Architecture (HLA)
 
-VidyaSetu is architected as an **Event-Driven, Service-Oriented Web Application** conforming to the **National e-Governance Division (NeGD)** standards and **Guidelines for Indian Government Websites (GIGW 2.0)**.
+VidyaSetu is architected as an **Event-Driven, Service-Oriented Web Application** conforming to the **National e-Governance Division (NeGD)** standards, **Guidelines for Indian Government Websites (GIGW 2.0)**, and **WCAG 2.1 AA Accessibility Standards**.
 
 ```
 +----------------------------------------------------------------------------------------------------+
 |                                    PRESENTATION LAYER (CLIENT-SIDE)                                 |
 |                                                                                                    |
+|   +--------------------------------------------------------------------------------------------+   |
+|   |                         CITIZEN PUBLIC PORTAL (NO LOGIN REQUIRED)                          |   |
+|   |  - National Ministry Identity & Ashoka Emblem Design System                                |   |
+|   |  - Multi-Language Switcher (English, हिन्दी, ଓଡ଼ିଆ, ᱥᱟᱱᱛᱟᱲᱤ [Ol Chiki], తెలుగు, मराठी)         |   |
+|   |  - Flagship Scheme Directory (NFST, NOS, Top Class Education Guidelines & Documents)       |   |
+|   |  - 30-Second Quick Eligibility Pre-Checker (Degree, Income, Age, Tribe, Destination)       |   |
+|   |  - Real-Time National Impact Counters (₹178.4 Cr DBT Disbursed, 12,842 Scholars, 14d Turn) |   |
+|   |  - Official Circulars Ticker & Central ST Schedule VI Gazette Notices                      |   |
+|   |  - 6-Stage Governance Roadmap Infographic & Citizen FAQ Redressal Matrix                   |   |
+|   +----------------------------------------------+---------------------------------------------+   |
+|                                                  |                                                 |
+|                   +------------------------------+------------------------------+                  |
+|                   v                                                             v                  |
 |   +---------------------------------------------+   +------------------------------------------+   |
-|   |         SCHOLAR / STUDENT WORKSPACE         |   |      MINISTRY ADMINISTRATIVE WORKSPACE   |   |
-|   |  - 5-Step Application Wizard & Digilocker   |   |  - Executive Analytics & National Heatmap|   |
-|   |  - Rule + AI Scheme Matching Engine         |   |  - Dual-Pane OCR Scrutiny Workstation    |   |
-|   |  - 6-Stage Visual Verification Pipeline     |   |  - AI Triage & Fraud/Anomaly Detection   |   |
-|   |  - Deficiency Redressal Desk (15-Day)       |   |  - Selection Committee & Merit Engine    |   |
-|   |  - Post-Selection Fellowship (QPR / DBT)    |   |  - Post-Selection & PFMS Disbursal Hub   |   |
-|   |  - AI Grievance Redressal Assistant         |   |  - No-Code Scheme Config & 10k Simulator |   |
-|   |  - VidyaMitra Multilingual Audio Copilot    |   |  - What-If Policy Decision Support (DSS) |   |
-|   +---------------------------------------------+   +------------------------------------------+   |
+|   |     NEW REGISTRATION & SCHOLAR WORKSPACE    |   |      MINISTRY ADMINISTRATIVE WORKSPACE   |   |
+|   |  - New Student Registration (Sign-Up Flow)  |   |  - Executive Analytics & National Heatmap|   |
+|   |  - Aadhaar e-KYC (NPCI Seeded Bank Check)   |   |  - Dual-Pane OCR Scrutiny Workstation    |   |
+|   |  - Mobile + NIC SMS OTP Verification        |   |  - AI Triage & Fraud/Anomaly Detection   |   |
+|   |  - 5-Step Application Wizard & Digilocker   |   |  - Selection Committee & Merit Engine    |   |
+|   |  - Rule + AI Scheme Matching Engine         |   |  - Post-Selection & PFMS Disbursal Hub   |   |
+|   |  - 6-Stage Visual Verification Pipeline     |   |  - No-Code Scheme Config & 10k Simulator |   |
+|   |  - Deficiency Redressal Desk (15-Day SLA)   |   |  - What-If Policy Decision Support (DSS) |   |
+|   |  - Post-Selection Fellowship (QPR / DBT)    |   |  - High-Security 2FA e-Pramaan Auth      |   |
+|   |  - AI Grievance Redressal Assistant         |   +------------------------------------------+   |
+|   |  - VidyaMitra Multilingual Audio Copilot    |                                                  |
+|   +---------------------------------------------+                                                  |
 |                                                                                                    |
 +--------------------------------------------------+-------------------------------------------------+
                                                    |
@@ -43,6 +59,11 @@ VidyaSetu is architected as an **Event-Driven, Service-Oriented Web Application*
 |   |  - Photo/IFSC Variance  |   | - Stipend Hold/Release  |   | - In-App Deficiency Notices    |   |
 |   +-------------------------+   +-------------------------+   +--------------------------------+   |
 |                                                                                                    |
+|   +-------------------------------------------------------+   +--------------------------------+   |
+|   |  CITIZEN PRE-CHECKER & LOCALIZATION ENGINE            |   | POLICY SIMULATOR DSS           |   |
+|   |  - 30-Second Dynamic Qualification Matrix             |   | - What-If Delta Calculator     |   |
+|   |  - Multilingual Dictionary (6 Official Languages)     |   | - Beneficiary Budget Modeling  |   |
+|   +-------------------------------------------------------+   +--------------------------------+   |
 +--------------------------------------------------+-------------------------------------------------+
                                                    |
                                                    v
@@ -58,44 +79,55 @@ VidyaSetu is architected as an **Event-Driven, Service-Oriented Web Application*
 
 ---
 
-## 2. End-to-End Data Flow Architecture (DFD Level 1)
+## 2. End-to-End Data Flow Architecture (DFD Level 0 & Level 1)
 
 ```
-[ST Student]
+[Citizen / Prospective ST Scholar]
      │
-     ▼ (1) Authenticate via MeriPehchaan / Aadhaar e-KYC
-[Auth Gateway]
+     ▼ (1) Explores Public Scheme Directory & Guidelines (NFST / NOS / Top Class)
+[Public Citizen Portal]
      │
-     ▼ (2) Auto-populate Demographics & Caste Certificate
-[5-Step Application Wizard]
+     ├───► [Selects Language (EN / HI / OR / SAT / TE / MR)] ──► Real-time UI Localization
      │
-     ▼ (3) Upload Academic & Financial Documents
-[MoTA-Vision OCR Engine] ───► Extract: Name, Certificate No, Authority, Date, QR Hash
+     ├───► [30-Second Eligibility Checker] ──► Instant Match Results (e.g. "Eligible for NFST")
+     │
+     ▼ (2) Clicks "New Registration" or "Student Login"
+[Registration & Authentication Gateway]
+     │
+     ├───► New Student: Signs Up with Aadhaar e-KYC + NPCI Bank Check + Mobile OTP
+     │
+     └───► Existing Scholar: Jan Parichay SSO / DigiLocker / Aadhaar Authenticated
+     │
+     ▼ (3) System Creates/Syncs Verified Applicant Record
+[5-Step Application Wizard / Scholar Dashboard]
+     │
+     ▼ (4) Auto-Populates Verified Caste Certificate & Domicile from DigiLocker
+[MoTA-Vision ST OCR Engine] ───► Extract: Name, Certificate No, Seal, Date, QR Hash
      │
      ├───► Pass (Confidence > 95%) ──► [Central Scrutiny Queue]
      │
      └───► Deficiency Flagged (< 70% or Expired) ──► [Deficiency Desk (15d SLA)]
-                                                              │
-                                                     [Automated SMS Alert]
-                                                              │
-                                                     [Applicant Re-Uploads]
-                                                              │
-                                                     [AI Pre-Clearance (99%)]
-                                                              │
-                                                              ▼
-[MoTA Officer Dual-Pane Scrutiny] ◄───────────────────────────┘
+                                                               │
+                                                      [Automated SMS Alert]
+                                                               │
+                                                      [Applicant Re-Uploads]
+                                                               │
+                                                      [AI Pre-Clearance (99%)]
+                                                               │
+                                                               ▼
+[MoTA Officer Dual-Pane Scrutiny Desk] ◄──────────────────────┘
      │
-     ▼ (4) Officer Approval with Human Oversight
-[Selection Committee & Merit Engine]
+     ▼ (5) Officer Approval with Human-in-the-Loop Oversight
+[Selection Committee & Explainable Merit Engine]
      │
-     ▼ (5) Compute Composite Merit Score (MCDA)
+     ▼ (6) Compute Composite Merit Score (MCDA with PVTG + Women Horizontal Quotas)
 [National Selection Gazette Released]
      │
-     ▼ (6) Official Award Letter Dispatched with QR Code
+     ▼ (7) Cryptographically Signed Sanction Order with QR Code Dispatched
 [Post-Selection Fellowship Hub]
      │
-     ▼ (7) Quarterly Progress Report (QPR) Endorsed by Research Supervisor
-[PFMS & NPCI Aadhaar Bridge] ───► Monthly Stipend Released into Beneficiary Account
+     ▼ (8) Quarterly Progress Report (QPR) Endorsed by Research Guide
+[PFMS & NPCI Aadhaar Payment Bridge] ───► Monthly Stipend Released into Beneficiary Account
 ```
 
 ---
@@ -124,76 +156,32 @@ Where:
 
 ---
 
-## 4. Entity Schema & Data Contracts
+## 4. Multi-Language & Tribal Inclusion Architecture
 
-### 4.1 Applicant Entity
-```json
-{
-  "id": "MOTA-2026-NFST-0101",
-  "name": "Birsa Hemrom",
-  "tribe": "Santhal",
-  "pvtg": false,
-  "state": "Jharkhand",
-  "district": "Ranchi",
-  "schemeId": "NFST",
-  "institution": "IIT Kharagpur",
-  "degree": "Ph.D. in Rural Development",
-  "pgMarks": 78.4,
-  "annualIncome": 240000,
-  "status": "Selection Committee Review",
-  "stage": 4,
-  "progressPercent": 85,
-  "aiScore": 94,
-  "triageCategory": "READY",
-  "aiRiskLevel": "LOW",
-  "documents": [
-    {
-      "name": "ST Caste Certificate",
-      "fileNumber": "JH/RAN/2021/ST/8821",
-      "issuingAuthority": "Sub-Divisional Officer, Ranchi",
-      "status": "VERIFIED",
-      "confidence": 99.1,
-      "tamperScore": 0.02
-    }
-  ]
-}
-```
+VidyaSetu implements client-side dynamic i18n localization tailored for India's major Scheduled Tribe populations:
 
-### 4.2 Scheme Entity
-```json
-{
-  "id": "NFST",
-  "name": "National Fellowship for Scheduled Tribe Students",
-  "totalSlots": 750,
-  "annualBudgetCr": 95.0,
-  "stipendJrf": 37000,
-  "stipendSrf": 42000,
-  "contingencyAnnual": 20500,
-  "eligibility": {
-    "minMarks": 55,
-    "maxAge": 36,
-    "maxIncome": 600000,
-    "degrees": ["Ph.D.", "M.Phil"]
-  },
-  "quotaRules": {
-    "stFemaleHorizontal": 30,
-    "pvtgPrioritySlots": 50,
-    "pwdReservation": 5
-  }
-}
-```
+| Language Key | Script / Language | Target Demographics & Tribal Coverage |
+| :--- | :--- | :--- |
+| `en` | **English** | National Standard & Official Documentation |
+| `hi` | **हिन्दी (Hindi)** | Central India (Madhya Pradesh, Chhattisgarh, Jharkhand, Rajasthan) |
+| `or` | **ଓଡ଼ିଆ (Odia)** | Odisha Tribal Belts (Mayurbhanj, Koraput, Rayagada) |
+| `sat` | **ᱥᱟᱱᱛᱟᱲᱤ (Santali - Ol Chiki)** | Schedule VI Santhal Communities (Jharkhand, West Bengal, Odisha) |
+| `te` | **తెలుగు (Telugu)** | Andhra Pradesh & Telangana (Chenchu [PVTG], Koya, Gond) |
+| `mr` | **मराठी (Marathi)** | Maharashtra Tribal Habitations (Katkari [PVTG], Bhil, Madia Gond) |
 
 ---
 
 ## 5. Security, Access Control (RBAC), and Audit Trail
 
 1. **Role-Based Access Control (RBAC)**:
-   * **Student**: Restricted to own profile, application wizard, deficiency responses, and fellowship claims.
-   * **Institute Officer**: Limited to institutional enrolment verification and supervisor endorsement.
-   * **District Officer**: Access to district-level caste validation and state quota tracking.
-   * **MoTA Central Scrutiny Officer**: Full access to dual-pane OCR scrutiny, triage, and merit evaluation.
-   * **PFMS DDO**: Financial sanction order generation and electronic Fund Transfer Order (e-FTO) batch execution.
-2. **SHA-256 Chained Audit Trail**:
-   * Every document upload, AI confidence score calculation, officer review, deficiency notice, and DBT transaction generates an immutable cryptographic hash record:
+   * **Citizen / Visitor**: Unauthenticated access to Public Home Page, Scheme Guidelines, Eligibility Pre-Checker, and Notifications.
+   * **Student / Scholar**: Authenticated access via Aadhaar e-KYC or Jan Parichay to Application Wizard, Deficiency Redressal, QPR Submissions, and DBT Disbursal Records.
+   * **Institute Verification Officer (Dean / Registrar)**: Institutional enrollment verification, research admission clearance, and supervisor endorsement.
+   * **District Welfare Officer (DWO)**: District-level caste gazette validation and domicile authentication.
+   * **MoTA Central Scrutiny Officer**: Dual-pane OCR scrutiny desk, intake triage queue, and explainable merit inspector.
+   * **PFMS DDO (Drawing & Disbursing Officer)**: Financial sanction orders, e-FTO generation, and monthly DBT batch releases.
+   * **System Administrator (NIC)**: Audit trail inspection, scheme rule configuration studio, and security compliance.
+2. **SHA-256 Chained Cryptographic Audit Trail**:
+   * Every state change (application submission, OCR confidence rating, deficiency issuance, officer approval, merit ranking calculation, and PFMS fund transfer) generates an immutable SHA-256 hash linked to the previous state:
    $$\text{Hash}_k = \text{SHA-256}\left(\text{Hash}_{k-1} \,\|\, \text{Timestamp} \,\|\, \text{Actor} \,\|\, \text{ActionPayload}\right)$$
-   * Protects against retroactive record modification.
+   * Guarantees complete tamper-evidence and legal defensibility under the **Information Technology Act, 2000** and **RTI Act, 2005**.

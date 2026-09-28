@@ -27,14 +27,17 @@ import {
   SlidersHorizontal,
   Layers,
   TrendingUp,
-  Volume2
+  Volume2,
+  Languages
 } from 'lucide-react';
 import { INITIAL_SCHEMES, TRIBAL_COMMUNITIES } from '../data/mockData';
+import { I18N } from '../data/i18n';
 
 export function PublicHomePage({ 
   onOpenLogin, 
   onOpenRegister, 
   lang = 'en',
+  setLang,
   contrast = false,
   setContrast,
   textSize = 'normal',
@@ -42,6 +45,7 @@ export function PublicHomePage({
   lowBandwidth = false,
   setLowBandwidth
 }) {
+  const t = I18N[lang] || I18N.en;
   const [activeSchemeTab, setActiveSchemeTab] = useState('NFST');
   
   // Quick Eligibility Checker State
@@ -137,13 +141,31 @@ export function PublicHomePage({
       {/* 2. Official Government of India Header Bar */}
       <div className={`border-b text-xs px-4 py-2 flex flex-wrap items-center justify-between ${contrast ? 'bg-zinc-950 border-zinc-800 text-yellow-400' : 'bg-slate-100 border-slate-200 text-slate-600'}`}>
         <div className="flex items-center space-x-3">
-          <span className="font-semibold tracking-wider uppercase text-[11px]">भारत सरकार | Government of India</span>
+          <span className="font-semibold tracking-wider uppercase text-[11px]">{t.govtOfIndia}</span>
           <span className="hidden sm:inline text-slate-300">|</span>
-          <span className="hidden sm:inline font-medium">जनजातीय कार्य मंत्रालय | Ministry of Tribal Affairs</span>
+          <span className="hidden sm:inline font-medium">{t.ministry}</span>
         </div>
 
         {/* Accessibility & Quick Controls */}
         <div className="flex items-center space-x-3 text-[11px]">
+          {/* Language Selector */}
+          <div className="flex items-center space-x-1.5 border border-slate-300 rounded px-2 py-0.5 bg-white text-slate-700 shadow-2xs">
+            <Languages className="w-3.5 h-3.5 text-blue-900 shrink-0" />
+            <select
+              value={lang}
+              onChange={(e) => setLang && setLang(e.target.value)}
+              className="bg-transparent font-bold text-xs text-blue-950 focus:outline-none cursor-pointer"
+              title="Select Language / भाषा चुनें"
+            >
+              <option value="en">English (EN)</option>
+              <option value="hi">हिन्दी (Hindi)</option>
+              <option value="or">ଓଡ଼ିଆ (Odia)</option>
+              <option value="sat">संताली / ᱥᱟᱱᱛᱟᱲᱤ (Santhali)</option>
+              <option value="te">తెలుగు (Telugu)</option>
+              <option value="mr">मराठी (Marathi)</option>
+            </select>
+          </div>
+
           <div className="flex items-center space-x-1 border-r border-slate-300 pr-2">
             <span className="text-[10px] text-slate-400 font-bold">Text:</span>
             <button 
@@ -164,7 +186,7 @@ export function PublicHomePage({
             onClick={() => setContrast && setContrast(!contrast)}
             className="hover:underline font-semibold"
           >
-            {contrast ? 'Standard View' : 'High Contrast'}
+            {contrast ? 'Standard View' : t.highContrast}
           </button>
 
           <span className="text-slate-300">|</span>
@@ -193,14 +215,14 @@ export function PublicHomePage({
             <div>
               <div className="flex items-center space-x-2">
                 <h1 className="text-xl font-black font-serif tracking-tight text-blue-950 leading-none">
-                  विद्यासेतु <span className="text-orange-600 font-sans text-lg font-extrabold">VidyaSetu</span>
+                  विद्यासेतु <span className="text-orange-600 font-sans text-lg font-extrabold">{t.portalTitle}</span>
                 </h1>
                 <span className="hidden md:inline-block bg-blue-100 text-blue-800 text-[10px] font-bold px-2 py-0.5 rounded-full border border-blue-200">
                   National Portal
                 </span>
               </div>
               <p className="text-xs text-slate-600 font-medium">
-                National AI-Enabled Unified Scholarship & Fellowship Governance Ecosystem
+                {t.portalSubtitle}
               </p>
             </div>
           </div>
@@ -211,19 +233,19 @@ export function PublicHomePage({
               href="#schemes" 
               className="hidden lg:inline-block text-xs font-bold text-slate-700 hover:text-blue-900 px-3 py-2"
             >
-              Schemes & Grants
+              {t.schemesNav}
             </a>
             <a 
               href="#eligibility" 
               className="hidden lg:inline-block text-xs font-bold text-slate-700 hover:text-blue-900 px-3 py-2"
             >
-              Eligibility Checker
+              {t.eligibilityNav}
             </a>
             <a 
               href="#governance" 
               className="hidden lg:inline-block text-xs font-bold text-slate-700 hover:text-blue-900 px-3 py-2"
             >
-              Governance Roadmap
+              {t.governanceNav}
             </a>
 
             {/* Primary Action Buttons */}
@@ -232,14 +254,14 @@ export function PublicHomePage({
               className="px-3.5 py-2 bg-emerald-700 hover:bg-emerald-600 text-white rounded-xl text-xs font-bold shadow-xs transition flex items-center space-x-1.5"
             >
               <GraduationCap className="w-4 h-4" />
-              <span>New Registration</span>
+              <span>{t.newRegistration}</span>
             </button>
 
             <button
               onClick={() => onOpenLogin && onOpenLogin('student')}
               className="px-3.5 py-2 bg-blue-900 hover:bg-blue-800 text-white rounded-xl text-xs font-bold shadow-xs transition flex items-center space-x-1.5"
             >
-              <span>Student Login</span>
+              <span>{t.studentLogin}</span>
             </button>
 
             <button
@@ -248,7 +270,7 @@ export function PublicHomePage({
               title="Official Portal for Ministry Scrutiny, Merit Ranking, and PFMS DBT"
             >
               <ShieldCheck className="w-4 h-4 text-blue-900" />
-              <span className="hidden sm:inline">Official Portal</span>
+              <span className="hidden sm:inline">{t.officialPortal}</span>
             </button>
           </div>
         </div>
@@ -258,7 +280,7 @@ export function PublicHomePage({
       <div className="bg-blue-950 text-white text-xs px-4 py-2 border-b border-blue-900 flex items-center">
         <div className="flex items-center space-x-2 text-amber-400 font-bold uppercase tracking-wider text-[11px] shrink-0 mr-3">
           <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
-          <span>Official Circulars:</span>
+          <span>{t.circulars}:</span>
         </div>
         <div className="overflow-x-auto whitespace-nowrap text-xs text-blue-100 flex items-center space-x-6 py-0.5">
           <span className="hover:text-amber-300 cursor-pointer">
@@ -285,15 +307,15 @@ export function PublicHomePage({
           <div className="lg:col-span-7 space-y-6">
             <div className="inline-flex items-center space-x-2 bg-amber-400/20 text-amber-300 border border-amber-400/30 px-3.5 py-1.5 rounded-full text-xs font-bold tracking-wide">
               <Sparkles className="w-4 h-4 text-amber-400" />
-              <span>Ministry of Tribal Affairs • Higher Education & Research Portal</span>
+              <span>{t.ministry} • Higher Education & Research</span>
             </div>
 
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black font-serif leading-tight">
-              Empowering Scheduled Tribe Scholars with <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-200 to-orange-400">AI-Enabled Governance</span>
+              {t.heroHeadline}
             </h1>
 
             <p className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-2xl">
-              An integrated end-to-end national portal connecting ST students to flagship fellowships (<strong>NFST</strong>, <strong>NOS</strong>, and <strong>Top Class Education</strong>) with real-time statutory eligibility verification, automated OCR scrutiny, and transparent direct DBT disbursal.
+              {t.heroDesc}
             </p>
 
             {/* Hero CTAs */}
@@ -302,7 +324,7 @@ export function PublicHomePage({
                 onClick={() => onOpenRegister && onOpenRegister()}
                 className="px-6 py-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-blue-950 font-black rounded-2xl shadow-xl transition flex items-center space-x-2 text-sm"
               >
-                <span>Register for Fellowship</span>
+                <span>{t.newRegistration}</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
 
@@ -311,7 +333,7 @@ export function PublicHomePage({
                 className="px-5 py-3 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold rounded-2xl transition flex items-center space-x-2 text-sm"
               >
                 <Search className="w-4 h-4 text-amber-400" />
-                <span>Check Eligibility (30s)</span>
+                <span>{t.checkEligibility30s}</span>
               </a>
 
               <button
@@ -319,7 +341,7 @@ export function PublicHomePage({
                 className="px-4 py-3 bg-blue-900/60 hover:bg-blue-800/80 border border-blue-700/50 text-blue-200 font-semibold rounded-2xl transition flex items-center space-x-2 text-xs"
               >
                 <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                <span>MoTA Officer Login</span>
+                <span>{t.officialPortal}</span>
               </button>
             </div>
 
@@ -396,10 +418,10 @@ export function PublicHomePage({
         <div className="text-center space-y-3 max-w-3xl mx-auto">
           <div className="inline-flex items-center space-x-1.5 text-xs font-bold text-blue-900 uppercase tracking-widest bg-blue-100 px-3 py-1 rounded-full">
             <Award className="w-3.5 h-3.5 text-blue-900" />
-            <span>Ministry of Tribal Affairs Schemes</span>
+            <span>{t.ministry}</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-black font-serif text-slate-900">
-            Flagship Higher Education Fellowships & Scholarships
+            {t.flagshipSchemes}
           </h2>
           <p className="text-xs sm:text-sm text-slate-600">
             Comprehensive financial assistance covering research in premier domestic institutions, world-class overseas universities, and notified professional colleges.

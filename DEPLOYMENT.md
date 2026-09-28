@@ -159,10 +159,29 @@ sudo systemctl restart nginx
 
 ---
 
-## 4. Verification & Health Check
+## 4. Verification & Health Check Checklist
 
-After deployment, test the following endpoints:
-* **Root Application**: `https://your-domain.gov.in/`
-* **Student Authentication**: Test Jan Parichay & DigiLocker e-KYC
-* **Administrator Portal**: Test MoTA Scrutiny Officer login and Dual-Pane OCR inspection
-* **Offline / Low-Bandwidth Mode**: Toggle the data saver switch in the top bar to verify lightweight asset rendering.
+After deployment, test the following functional milestones:
+1. **Public Citizen Portal (`/`)**:
+   - Verify the landing page loads without authentication.
+   - Test the **Multi-Language Selector** (switch between English, Hindi, Odia, Santali [Ol Chiki], Telugu, and Marathi).
+   - Test the **30-Second Quick Eligibility Pre-Checker** (move the income slider, select degree/tribe, and verify instant recommendation).
+   - Verify the **Official Circulars Ticker** and **National Impact Counters** (₹178.4 Cr, 12,842 scholars).
+2. **New Student Registration (Sign-Up Flow)**:
+   - Click **"New Registration"** in the top navigation.
+   - Enter applicant particulars, verify the **NPCI Aadhaar-Seeded Bank validation badge**, and complete registration.
+   - Confirm automatic 1-click onboarding directly into the newly generated Student Dashboard.
+3. **Student Authentication & Workspace**:
+   - Test **Jan Parichay & DigiLocker e-KYC** login.
+   - Test the **15-Day Deficiency Redressal Desk** with 1-click AI re-scan.
+   - Inspect the **Digital Sanction Order & Award Letter** modal with cryptographic QR code.
+4. **Ministry Administrative Workspace**:
+   - Log in using MoTA Scrutiny Officer credentials (`director.fellowship@tribal.gov.in`).
+   - Test the **Dual-Pane OCR Scrutiny Desk** (inspect side-by-side certificate bounding boxes).
+   - Test **Application Triage & Cross-Entity Fraud/Anomaly Graph**.
+   - Test the **Explainable Merit Ranking Engine** (verify PVTG +10 equity points and 30% ST Women horizontal quota).
+   - Test the **"What-If" Policy Simulation Studio** and **PFMS DBT Batch Disbursal Hub**.
+5. **Accessibility & Low-Bandwidth Mode**:
+   - Toggle **High Contrast View** (black & high-visibility yellow).
+   - Toggle **Font Scaler (A, A+)**.
+   - Toggle **2G Low-Bandwidth Mode** to verify minimal animation overhead for remote tribal areas.

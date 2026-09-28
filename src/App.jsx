@@ -225,6 +225,7 @@ export function App() {
               setPublicViewState('login');
             }}
             lang={lang}
+            setLang={setLang}
             contrast={contrast}
             setContrast={setContrast}
             textSize={textSize}

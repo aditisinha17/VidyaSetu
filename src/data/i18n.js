@@ -23,7 +23,19 @@ export const I18N = {
     pvtgPriority: 'PVTG Inclusion Initiative',
     voiceAssistant: 'VidyaMitra Voice Assistant',
     highContrast: 'High Contrast',
-    fontAdjust: 'Text Size'
+    fontAdjust: 'Text Size',
+    studentLogin: 'Student Login',
+    newRegistration: 'New Registration',
+    officialPortal: 'Official Portal',
+    heroHeadline: 'Empowering Scheduled Tribe Scholars with AI-Enabled Governance',
+    heroDesc: 'An integrated national portal connecting ST students to flagship fellowships (NFST, NOS, and Top Class Education) with statutory eligibility verification, automated OCR scrutiny, and transparent DBT.',
+    checkEligibility30s: 'Check Eligibility (30s)',
+    flagshipSchemes: 'Flagship Higher Education Fellowships',
+    circulars: 'Official Circulars',
+    schemesNav: 'Schemes & Grants',
+    eligibilityNav: 'Eligibility Checker',
+    governanceNav: 'Governance Roadmap',
+    selectLang: 'Language / भाषा'
   },
   hi: {
     portalTitle: 'विद्यासेतु',
@@ -47,7 +59,19 @@ export const I18N = {
     pvtgPriority: 'विशेष रूप से कमजोर जनजातीय समूह (PVTG) प्राथमिकता',
     voiceAssistant: 'विद्यामित्र ध्वनि सहायक',
     highContrast: 'उच्च कंट्रास्ट',
-    fontAdjust: 'अक्षर आकार'
+    fontAdjust: 'अक्षर आकार',
+    studentLogin: 'छात्र लॉगिन',
+    newRegistration: 'नया पंजीकरण',
+    officialPortal: 'अधिकारी पोर्टल',
+    heroHeadline: 'एआई-सक्षम सुशासन द्वारा अनुसूचित जनजाति शोधार्थियों का सशक्तिकरण',
+    heroDesc: 'एसटी विद्यार्थियों को प्रमुख फैलोशिप (एनएफएसटी, एनओएस, एवं टॉप क्लास शिक्षा) से जोड़ने वाला राष्ट्रीय एकीकृत पोर्टल, जिसमें वास्तविक समय पात्रता सत्यापन, ओसीआर संवीक्षा और पारदर्शी डीबीटी उपलब्ध है।',
+    checkEligibility30s: 'पात्रता जांचें (30 सेकंड)',
+    flagshipSchemes: 'प्रमुख उच्च शिक्षा फैलोशिप एवं छात्रवृत्तियां',
+    circulars: 'आधिकारिक परिपत्र',
+    schemesNav: 'योजनाएं एवं अनुदान',
+    eligibilityNav: 'पात्रता जांचकर्ता',
+    governanceNav: 'सुशासन रोडमैप',
+    selectLang: 'भाषा / Language'
   },
   or: {
     portalTitle: 'ବିଦ୍ୟାସେତୁ',
@@ -71,7 +95,19 @@ export const I18N = {
     pvtgPriority: 'PVTG ପ୍ରାଥମିକତା ପଦକ୍ଷେପ',
     voiceAssistant: 'ବିଦ୍ୟାମିତ୍ର ସ୍ୱର ସହାୟକ',
     highContrast: 'ଉଚ୍ଚ କଣ୍ଟ୍ରାଷ୍ଟ',
-    fontAdjust: 'ଅକ୍ଷର ଆକାର'
+    fontAdjust: 'ଅକ୍ଷର ଆକାର',
+    studentLogin: 'ଛାତ୍ର ଲଗଇନ୍',
+    newRegistration: 'ନୂତନ ପଞ୍ଜୀକରଣ',
+    officialPortal: 'ଅଧିକାରୀ ପୋର୍ଟାଲ',
+    heroHeadline: 'AI-ସମର୍ଥିତ ଶାସନ ଦ୍ୱାରା ଅନୁସୂଚିତ ଜନଜାତି ଗବେଷକଙ୍କ ସଶକ୍ତୀକରଣ',
+    heroDesc: 'ଜନଜାତି ଛାତ୍ରଛାତ୍ରୀଙ୍କୁ ପ୍ରମୁଖ ଫେଲୋସିପ୍ (NFST, NOS, ଏବଂ Top Class) ସହିତ ଯୋଡୁଥିବା ଜାତୀୟ ପୋର୍ଟାଲ।',
+    checkEligibility30s: 'ଯୋଗ୍ୟତା ଯାଞ୍ଚ (୩୦ ସେ.)',
+    flagshipSchemes: 'ପ୍ରମୁଖ ଉଚ୍ଚ ଶିକ୍ଷା ଫେଲୋସିପ୍',
+    circulars: 'ସରକାରୀ ବିଜ୍ଞପ୍ତି',
+    schemesNav: 'ଯୋଜନା ସମୂହ',
+    eligibilityNav: 'ଯୋଗ୍ୟତା ପରୀକ୍ଷା',
+    governanceNav: 'ଶାସନ ରୋଡମ୍ୟାପ୍',
+    selectLang: 'ଭାଷା / Language'
   },
   sat: {
     portalTitle: 'ᱵᱤᱫᱽᱭᱟᱥᱮᱛᱩ (VidyaSetu)',
@@ -95,7 +131,19 @@ export const I18N = {
     pvtgPriority: 'PVTG ᱢᱩᱬᱩᱛ ᱠᱟᱹᱢᱤ',
     voiceAssistant: 'ᱵᱤᱫᱽᱭᱟᱢᱤᱛᱨᱚ ᱨᱚᱲ ᱜᱚᱲᱚ',
     highContrast: 'ᱦᱟᱭ ᱠᱚᱱᱴᱨᱟᱥᱴ',
-    fontAdjust: 'ᱚᱞ ᱢᱟᱨᱟᱝ'
+    fontAdjust: 'ᱚᱞ ᱢᱟᱨᱟᱝ',
+    studentLogin: 'ᱯᱟᱹᱴᱷᱩᱣᱟᱹ ᱞᱚᱜᱤᱱ',
+    newRegistration: 'ᱱᱟᱣᱟ ᱨᱮᱡᱤᱥᱴᱨᱮᱥᱚᱱ',
+    officialPortal: 'ᱚᱯᱷᱤᱥ ᱯᱳᱨᱴᱟᱞ',
+    heroHeadline: 'AI ᱛᱮ ᱪᱟᱞᱟᱣ ᱥᱟᱥᱚᱱ ᱦᱚᱛᱮᱛᱮ ᱟᱹᱫᱤᱵᱟᱹᱥᱤ ᱯᱟᱹᱴᱷᱩᱣᱟᱹ ᱠᱚᱣᱟᱜ ᱫᱟᱲᱮ',
+    heroDesc: 'ᱟᱹᱫᱤᱵᱟᱹᱥᱤ ᱯᱟᱹᱴᱷᱩᱣᱟᱹ ᱠᱚ ᱞᱟᱹᱜᱤᱫ ᱡᱟᱹᱛᱤᱭᱟᱹᱨᱤ ᱯᱷᱮᱞᱳᱥᱤᱯ ᱯᱳᱨᱴᱟᱞ (NFST, NOS, Top Class)᱾',
+    checkEligibility30s: 'ᱞᱟᱹᱠᱛᱤ ᱧᱮᱞ (᱓᱐ ᱴᱤᱲᱤᱡ)',
+    flagshipSchemes: 'ᱢᱩᱬ ᱪᱮᱛᱟᱱ ᱥᱮᱪᱮᱫ ᱯᱷᱮᱞᱳᱥᱤᱯ',
+    circulars: 'ᱥᱚᱨᱠᱟᱨᱤ ᱠᱷᱚᱵᱚᱨ',
+    schemesNav: 'ᱥᱠᱤᱢ ᱠᱚ',
+    eligibilityNav: 'ᱞᱟᱹᱠᱛᱤ ᱛᱩᱞᱟᱹᱡᱚᱠᱷᱟ',
+    governanceNav: 'ᱥᱟᱥᱚᱱ ᱰᱟᱦᱟᱨ',
+    selectLang: 'ᱯᱟᱹᱨᱥᱤ / Language'
   },
   te: {
     portalTitle: 'విద్యాసేతు',
@@ -119,7 +167,19 @@ export const I18N = {
     pvtgPriority: 'PVTG ప్రత్యేక ప్రాధాన్యత',
     voiceAssistant: 'విద్యామిత్ర వాయిస్ అసిస్టెంట్',
     highContrast: 'హై కాంట్రాస్ట్',
-    fontAdjust: 'ఫాంట్ పరిమాణం'
+    fontAdjust: 'ఫాంట్ పరిమాణం',
+    studentLogin: 'విద్యార్థి లాగిన్',
+    newRegistration: 'కొత్త నమోదు',
+    officialPortal: 'అధికారిక పోర్టల్',
+    heroHeadline: 'AI ఆధారిత పరిపాలన ద్వారా గిరిజన పరిశోధకులకు సాధికారత',
+    heroDesc: 'గిరిజన విద్యార్థుల ఉన్నత విద్య ఫెలోషిప్‌ల కొరకు జాతీయ సమీకృత డిజిటల్ పోర్టల్ (NFST, NOS, Top Class).',
+    checkEligibility30s: 'అర్హత తనిఖీ (30 సె)',
+    flagshipSchemes: 'ప్రధాన ఉన్నత విద్యా ఫెలోషిప్‌లు',
+    circulars: 'అధికారిక ప్రకటనలు',
+    schemesNav: 'పథకాలు & గ్రాంట్లు',
+    eligibilityNav: 'అర్హత పరిశీలన',
+    governanceNav: 'పరిపాలనా విధానం',
+    selectLang: 'భాష / Language'
   },
   mr: {
     portalTitle: 'विद्यासेतू',
@@ -143,6 +203,18 @@ export const I18N = {
     pvtgPriority: 'PVTG आदिम जमाती प्राधान्य',
     voiceAssistant: 'विद्यामित्र ध्वनी साहाय्यक',
     highContrast: 'हाय कॉन्ट्रास्ट',
-    fontAdjust: 'फॉन्ट आकार'
+    fontAdjust: 'फॉन्ट आकार',
+    studentLogin: 'विद्यार्थी लॉगिन',
+    newRegistration: 'नवीन नोंदणी',
+    officialPortal: 'अधिकारी पोर्टल',
+    heroHeadline: 'AI-सक्षम प्रशासनाद्वारे अनुसूचित जमातीच्या संशोधकांचे सक्षमीकरण',
+    heroDesc: 'आदिवासी विद्यार्थ्यांसाठी उच्च शिक्षण व फेलोशिपसाठी राष्ट्रीय एकात्मिक पोर्टल (NFST, NOS, आणि Top Class).',
+    checkEligibility30s: 'पात्रता तपासा (३० सेकंद)',
+    flagshipSchemes: 'प्रमुख उच्च शिक्षण फेलोशिप',
+    circulars: 'शासकीय परिपत्रके',
+    schemesNav: 'योजना व अनुदाने',
+    eligibilityNav: 'पात्रता तपासणी',
+    governanceNav: 'प्रशासन आराखडा',
+    selectLang: 'भाषा / Language'
   }
 };
