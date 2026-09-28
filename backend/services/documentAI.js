@@ -78,7 +78,7 @@ export class DocumentAIService {
         nameMatch: 100,
         status: 'VERIFIED',
         findings: [
-          { check: 'Tribe Schedule VI Mapping', result: 'PASS', detail: `${candidate?.tribe || 'Santhal'} verified against Central ST Gazette` },
+          { check: 'Tribe Notification Mapping (Article 342)', result: 'PASS', detail: `${candidate?.tribe || 'Santhal'} verified against Central ST Gazette under Article 342` },
           { check: 'Issuing Officer Competence', result: 'PASS', detail: 'SDO / Sub-Divisional Magistrate is authorized issuing authority' },
           { check: 'Permanent Validity', result: 'PASS', detail: 'Caste certificate holds lifelong statutory validity' }
         ],

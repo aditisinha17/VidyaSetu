@@ -290,7 +290,7 @@ export function OfficerScrutinyDesk({
                     <div className="text-[10px] text-slate-400 uppercase">ST Caste Status</div>
                     <div className="font-bold text-emerald-400 flex items-center space-x-1">
                       <CheckCircle2 className="w-3.5 h-3.5" />
-                      <span>PASS (Schedule VI)</span>
+                      <span>PASS (Article 342)</span>
                     </div>
                   </div>
 
@@ -533,7 +533,7 @@ export function OfficerScrutinyDesk({
                 className="w-full px-3 py-2 border rounded-xl font-medium"
               >
                 <option value="INCOME_CEILING_EXCEEDED">Annual Family Income exceeds Scheme Statutory Ceiling</option>
-                <option value="NON_ST_CATEGORY">Applicant Community not notified under Central ST Schedule VI</option>
+                <option value="NON_ST_CATEGORY">Applicant Community not notified under Central ST List (Article 342)</option>
                 <option value="COURSE_INELIGIBLE">Course / Degree not recognized under Scheme Guidelines</option>
                 <option value="AGE_CEILING_EXCEEDED">Applicant exceeds Maximum Permissible Age Limit</option>
               </select>

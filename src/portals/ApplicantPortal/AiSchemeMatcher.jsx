@@ -59,7 +59,7 @@ export function AiSchemeMatcher({ schemes, onSelectSchemeToApply }) {
         hardChecks.push({
           label: 'Scheduled Tribe (ST) Category',
           pass: true,
-          detail: `${profile.tribe} is recognized under Central ST Gazette Schedule VI`
+          detail: `${profile.tribe} is recognized under Central ST Gazette (Article 342)`
         });
 
         // Check 2: Income
@@ -98,8 +98,14 @@ export function AiSchemeMatcher({ schemes, onSelectSchemeToApply }) {
           coursePass = profile.courseAim.includes('Ph.D.') || profile.courseAim.includes('M.Phil');
           cautionNote = 'Requires full-time Ph.D. registration confirmation and research synopsis.';
         } else if (sch.id === 'TOP_CLASS') {
-          coursePass = profile.courseAim.includes('B.Tech') || profile.courseAim.includes('MBBS') || profile.courseAim.includes('UG');
+          coursePass = profile.courseAim.includes('B.Tech') || profile.courseAim.includes('MBBS') || profile.courseAim.includes('UG') || profile.courseAim.includes('IIT');
           cautionNote = 'Applicable only in 250+ MoTA notified premier institutes (IITs, IIMs, NITs, AIIMS).';
+        } else if (sch.id === 'PRE_MATRIC') {
+          coursePass = profile.courseAim.includes('Class IX') || profile.courseAim.includes('Class X') || profile.courseAim.includes('Secondary') || profile.age <= 18;
+          cautionNote = 'Universal entitlement for regular ST students in Class IX and X in recognized schools.';
+        } else if (sch.id === 'POST_MATRIC') {
+          coursePass = !profile.courseAim.includes('Class IX') && !profile.courseAim.includes('Class X');
+          cautionNote = 'Universal entitlement across Groups 1-4 (Higher Secondary, ITI, Diploma, UG, PG).';
         }
 
         hardChecks.push({
@@ -248,8 +254,10 @@ export function AiSchemeMatcher({ schemes, onSelectSchemeToApply }) {
               className="w-full px-3 py-2 border rounded-xl bg-white"
             >
               <option value="Master's Degree (M.Sc / M.A / M.Tech)">Master's Degree (M.Sc / M.A / M.Tech)</option>
-              <option value="Bachelor's Degree (B.Tech / B.Sc)">Bachelor's Degree (B.Tech / B.Sc)</option>
-              <option value="12th Senior Secondary (Science/Arts)">12th Senior Secondary (Science/Arts)</option>
+              <option value="Bachelor's Degree (B.Tech / B.Sc / B.A)">Bachelor's Degree (B.Tech / B.Sc / B.A)</option>
+              <option value="12th Senior Secondary (Science/Arts/Commerce)">12th Senior Secondary (Science/Arts/Commerce)</option>
+              <option value="Class X Secondary Pass">Class X Secondary Pass</option>
+              <option value="Class VIII / IX Pass (Enrolled in School)">Class VIII / IX Pass (Enrolled in School)</option>
             </select>
           </div>
 
@@ -279,6 +287,8 @@ export function AiSchemeMatcher({ schemes, onSelectSchemeToApply }) {
               <option value="Ph.D. Research in India">Ph.D. Research in India (NFST Scheme)</option>
               <option value="Master's / Ph.D. Abroad">Master's / Ph.D. Abroad (NOS Scheme)</option>
               <option value="B.Tech / MBBS in Notified Institute">UG/PG in IIT/IIM/NIT (Top Class ST)</option>
+              <option value="Higher Secondary / UG / Professional Degree">Classes XI to PG / Professional (Post-Matric ST)</option>
+              <option value="Class IX & X (Secondary School)">Classes IX & X (Pre-Matric ST Scheme)</option>
             </select>
           </div>
         </div>

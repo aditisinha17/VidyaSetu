@@ -15,7 +15,8 @@ import {
   AlertCircle,
   HelpCircle,
   TrendingUp,
-  Award
+  Award,
+  ShieldCheck
 } from 'lucide-react';
 import { ApplicationTracker } from './ApplicationTracker';
 import { DeficiencyDesk } from './DeficiencyDesk';
@@ -283,6 +284,79 @@ export function ApplicantDashboard({
                         style={{ width: `${currentApplicant?.progressPercent || 70}%` }}
                       ></div>
                     </div>
+                  </div>
+
+                  {/* End-to-End Visual Stepper Pipeline */}
+                  <div className="p-3 bg-white rounded-xl border border-slate-200 space-y-2">
+                    <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                      End-to-End Application Lifecycle Tracker
+                    </div>
+                    <div className="flex items-center justify-between text-[10px] font-semibold text-slate-600 overflow-x-auto no-scrollbar gap-1 pt-0.5">
+                      {[
+                        { label: 'Submitted', stageNum: 1 },
+                        { label: 'AI Pre-Check', stageNum: 2 },
+                        { label: 'Verification', stageNum: 3 },
+                        { label: 'Ministry Scrutiny', stageNum: 4 },
+                        { label: 'Merit Selection', stageNum: 5 },
+                        { label: 'DBT Disbursal', stageNum: 6 }
+                      ].map((step, idx) => {
+                        const isDone = (currentApplicant?.stage || 1) > step.stageNum || currentApplicant?.status === 'Selected';
+                        const isCurrent = (currentApplicant?.stage || 1) === step.stageNum && currentApplicant?.status !== 'Selected';
+                        return (
+                          <div key={idx} className="flex items-center space-x-1 shrink-0">
+                            <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold ${
+                              isDone ? 'bg-emerald-600 text-white' :
+                              isCurrent ? (currentApplicant?.status === 'Deficiency Pending' ? 'bg-rose-600 text-white animate-pulse' : 'bg-blue-900 text-white ring-2 ring-blue-300') :
+                              'bg-slate-200 text-slate-500'
+                            }`}>
+                              {isDone ? '✓' : isCurrent ? '●' : '○'}
+                            </div>
+                            <span className={isCurrent ? 'font-bold text-blue-950' : isDone ? 'text-emerald-800' : 'text-slate-400'}>
+                              {step.label}
+                            </span>
+                            {idx < 5 && <span className="text-slate-300 px-0.5">➔</span>}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Statutory Clause & Eligibility Breakdown Card */}
+                  <div className="p-3.5 bg-blue-50/70 border border-blue-200 rounded-xl text-xs space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="font-bold text-blue-950 flex items-center space-x-1.5 text-[11px]">
+                        <ShieldCheck className="w-3.5 h-3.5 text-blue-900" />
+                        <span>Statutory Rules Compliance (Article 342 & MoTA Guidelines)</span>
+                      </span>
+                      <span className="text-[10px] bg-blue-100 text-blue-900 font-bold px-2 py-0.5 rounded">
+                        RTI Auditable
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-1.5 text-[10px]">
+                      <div className="p-2 bg-white rounded border border-blue-100 flex justify-between">
+                        <span className="text-slate-600">ST Category:</span>
+                        <strong className="text-emerald-700">✓ Article 342 Pass</strong>
+                      </div>
+                      <div className="p-2 bg-white rounded border border-blue-100 flex justify-between">
+                        <span className="text-slate-600">Income Ceiling:</span>
+                        <strong className="text-emerald-700">✓ ₹{(currentApplicant?.annualIncome || 0).toLocaleString()} (Pass)</strong>
+                      </div>
+                      <div className="p-2 bg-white rounded border border-blue-100 flex justify-between">
+                        <span className="text-slate-600">Age Eligibility:</span>
+                        <strong className="text-emerald-700">✓ {currentApplicant?.age || 26} Yrs (Pass)</strong>
+                      </div>
+                      <div className="p-2 bg-white rounded border border-blue-100 flex justify-between">
+                        <span className="text-slate-600">Academic Score:</span>
+                        <strong className="text-blue-950 font-bold">✓ {currentApplicant?.pgMarks || 78}% (Pass)</strong>
+                      </div>
+                    </div>
+
+                    {currentApplicant?.deterministicRuleAudit?.details && (
+                      <p className="text-[10px] text-slate-600 italic">
+                        "{currentApplicant.deterministicRuleAudit.details}"
+                      </p>
+                    )}
                   </div>
 
                   <div className="flex justify-between items-center pt-1 text-[11px]">

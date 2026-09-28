@@ -45,7 +45,7 @@ export function ApplicationWizard({ schemes, onApplicationSubmit, onCancel }) {
 
   // AI OCR Pre-Check Simulation states for uploaded documents
   const [docUploads, setDocUploads] = useState({
-    casteCert: { name: 'Santhal_Caste_Certificate_2025.pdf', scanned: true, status: 'VERIFIED', confidence: 99.2, note: 'Tribe verified in State Gazette Schedule VI.' },
+    casteCert: { name: 'Santhal_Caste_Certificate_2025.pdf', scanned: true, status: 'VERIFIED', confidence: 99.2, note: 'Tribe verified in State Gazette / Article 342.' },
     incomeCert: { name: 'Income_Certificate_FY26.pdf', scanned: true, status: 'VERIFIED', confidence: 98.4, note: 'Income ₹2,20,000 is well below scheme ceiling of ₹6,00,000.' },
     admissionProof: { name: 'JNU_PhD_Admission_Letter.pdf', scanned: true, status: 'VERIFIED', confidence: 97.9, note: 'NIRF #2 University admission verified.' },
     synopsis: { name: 'Research_Synopsis_Santhali_Dialect.pdf', scanned: true, status: 'VERIFIED', confidence: 95.0, note: '10-page research synopsis compliant with UGC format.' }
@@ -195,7 +195,7 @@ export function ApplicationWizard({ schemes, onApplicationSubmit, onCancel }) {
               <p className="text-xs text-slate-500">Choose the scheme that aligns with your educational programme.</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {schemes.map(sch => (
                 <div
                   key={sch.id}
@@ -219,7 +219,7 @@ export function ApplicationWizard({ schemes, onApplicationSubmit, onCancel }) {
                     {sch.description}
                   </p>
                   <div className="mt-3 pt-3 border-t border-slate-200 text-[11px] text-slate-500 space-y-1">
-                    <div>Slots: <strong className="text-slate-800">{sch.totalSlots} per year</strong></div>
+                    <div>Slots: <strong className="text-slate-800">{typeof sch.totalSlots === 'number' ? `${sch.totalSlots} per year` : sch.totalSlots}</strong></div>
                     <div>Income Limit: <strong className="text-slate-800">≤ ₹{(sch.eligibility.maxIncome/100000).toFixed(1)} Lakhs</strong></div>
                   </div>
                 </div>
@@ -230,8 +230,8 @@ export function ApplicationWizard({ schemes, onApplicationSubmit, onCancel }) {
             <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-900">
               <strong className="block font-bold mb-1">Key Eligibility for {selectedScheme.name}:</strong>
               <ul className="list-disc pl-5 space-y-1 text-slate-700">
-                <li>Candidate must belong to a notified Scheduled Tribe (ST) of India.</li>
-                <li>Minimum {selectedScheme.eligibility.minMarks}% in qualifying Post-Graduation degree.</li>
+                <li>Candidate must belong to a notified Scheduled Tribe (ST) of India under Article 342.</li>
+                <li>Minimum {selectedScheme.eligibility.minMarks}% in qualifying examination.</li>
                 <li>Family annual income from all sources must not exceed ₹{(selectedScheme.eligibility.maxIncome).toLocaleString()}.</li>
                 {selectedSchemeId === 'NOS' && (
                   <li className="font-semibold text-blue-900">Must hold admission in QS World Top 500 accredited institution.</li>

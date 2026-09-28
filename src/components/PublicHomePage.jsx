@@ -105,6 +105,30 @@ export function PublicHomePage({
       });
     }
 
+    // Pre-Matric ST check: school qualification, income <= 2.5L, age <= 18
+    if (checkIncome <= 250000 && checkAge <= 18 && (checkTarget === 'school' || checkTarget === 'any' || checkQualification === 'school')) {
+      matches.push({
+        schemeId: 'PRE_MATRIC',
+        name: 'Pre-Matric Scholarship Scheme for ST Students',
+        stipend: 'Day Scholar: ₹225/mo | Hosteller: ₹525/mo + Books Grant ₹750/yr',
+        location: 'Classes IX & X in Recognized Government / Aided Schools',
+        status: 'Highly Eligible (Universal Entitlement)',
+        pvtgBonus: isPvtg ? '100% Saturation Guarantee for PVTG Students' : null
+      });
+    }
+
+    // Post-Matric ST check: class 12 or ug or pg, income <= 2.5L, age <= 35
+    if (checkIncome <= 250000 && checkAge <= 35 && (checkTarget === 'college_ug' || checkTarget === 'any' || checkQualification === 'class12' || checkQualification === 'ug')) {
+      matches.push({
+        schemeId: 'POST_MATRIC',
+        name: 'Post-Matric Scholarship Scheme for ST Students',
+        stipend: '100% Compulsory Fees + Maintenance Allowance up to ₹1,200/mo',
+        location: 'Classes XI to PG / Professional (Groups 1-4 Recognized Courses)',
+        status: 'Highly Eligible (Universal Entitlement)',
+        pvtgBonus: isPvtg ? '100% Saturation Guarantee for PVTG Students' : null
+      });
+    }
+
     setCheckResult({
       matches,
       tribe: checkTribe,
@@ -462,7 +486,7 @@ export function PublicHomePage({
               <span className={`text-[10px] px-2 py-0.5 rounded-full ${
                 activeSchemeTab === scheme.id ? 'bg-amber-400 text-blue-950' : 'bg-slate-100 text-slate-600'
               }`}>
-                {scheme.totalSlots} Slots
+                {typeof scheme.totalSlots === 'number' ? `${scheme.totalSlots} Slots` : 'Entitlement'}
               </span>
             </button>
           ))}
@@ -486,27 +510,40 @@ export function PublicHomePage({
                   <div className="p-3.5 rounded-2xl bg-blue-50/80 border border-blue-200">
                     <div className="text-[10px] font-bold text-blue-800 uppercase tracking-wide">Monthly Stipend</div>
                     <div className="text-base font-black text-blue-950 mt-0.5">
-                      {scheme.stipendJrf ? `₹${scheme.stipendJrf.toLocaleString('en-IN')}/mo` : (scheme.stipendAnnualGbp ? `£${scheme.stipendAnnualGbp}/yr` : `₹${scheme.livingAllowanceMonthly}/mo`)}
+                      {scheme.stipendJrf ? `₹${scheme.stipendJrf.toLocaleString('en-IN')}/mo` :
+                       (scheme.stipendAnnualGbp ? `£${scheme.stipendAnnualGbp}/yr` :
+                       (scheme.stipendDayScholar ? `₹${scheme.stipendDayScholar} - ₹${scheme.stipendHosteller}/mo` :
+                       (scheme.maintenanceAllowanceMonthly ? `₹${scheme.maintenanceAllowanceMonthly}/mo` :
+                       `₹${scheme.livingAllowanceMonthly}/mo`)))}
                     </div>
                     <div className="text-[10px] text-slate-500 mt-0.5">
-                      {scheme.stipendSrf ? `SRF: ₹${scheme.stipendSrf.toLocaleString('en-IN')}/mo` : 'Direct DBT Disbursal'}
+                      {scheme.stipendSrf ? `SRF: ₹${scheme.stipendSrf.toLocaleString('en-IN')}/mo` :
+                       (scheme.stipendDayScholar ? 'Day Scholar / Hosteller' :
+                       (scheme.maintenanceAllowanceMonthly ? 'Group 1-4 Maintenance' : 'Direct DBT Disbursal'))}
                     </div>
                   </div>
 
                   <div className="p-3.5 rounded-2xl bg-emerald-50/80 border border-emerald-200">
                     <div className="text-[10px] font-bold text-emerald-800 uppercase tracking-wide">Tuition / Contingency</div>
                     <div className="text-base font-black text-emerald-950 mt-0.5">
-                      {scheme.contingencyAnnual ? `₹${scheme.contingencyAnnual.toLocaleString('en-IN')}/yr` : (scheme.tuitionCoverage || '100% Actuals')}
+                      {scheme.contingencyAnnual ? `₹${scheme.contingencyAnnual.toLocaleString('en-IN')}/yr` :
+                       (scheme.booksGrantAnnual ? `Books: ₹${scheme.booksGrantAnnual}/yr` :
+                       (scheme.tuitionCoverage || '100% Actuals'))}
                     </div>
-                    <div className="text-[10px] text-slate-500 mt-0.5">Annual Contingency Grant</div>
+                    <div className="text-[10px] text-slate-500 mt-0.5">
+                      {scheme.contingencyAnnual ? 'Annual Contingency Grant' :
+                       (scheme.booksGrantAnnual ? 'Annual Books & Ad-hoc Grant' : 'Full Tuition & Institutional Fees')}
+                    </div>
                   </div>
 
                   <div className="p-3.5 rounded-2xl bg-amber-50/80 border border-amber-200">
                     <div className="text-[10px] font-bold text-amber-800 uppercase tracking-wide">Quota / Slots</div>
                     <div className="text-base font-black text-amber-950 mt-0.5">
-                      {scheme.totalSlots} Scholars
+                      {typeof scheme.totalSlots === 'number' ? `${scheme.totalSlots} Scholars` : scheme.totalSlots}
                     </div>
-                    <div className="text-[10px] text-slate-500 mt-0.5">30% Women & PVTG Priority</div>
+                    <div className="text-[10px] text-slate-500 mt-0.5">
+                      {typeof scheme.totalSlots === 'number' ? '30% Women & PVTG Priority' : 'All Eligible ST Students'}
+                    </div>
                   </div>
                 </div>
 
@@ -519,7 +556,7 @@ export function PublicHomePage({
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-700">
                     <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
                       <span className="text-slate-500">Qualifying Marks:</span>
-                      <span className="font-bold text-slate-900">≥ {scheme.eligibility.minMarks}% in PG/Degree</span>
+                      <span className="font-bold text-slate-900">≥ {scheme.eligibility.minMarks}% in qualifying examination</span>
                     </div>
                     <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
                       <span className="text-slate-500">Income Ceiling:</span>
@@ -616,7 +653,8 @@ export function PublicHomePage({
                 >
                   <option value="pg">Post-Graduation (Master's / M.Sc. / M.A.)</option>
                   <option value="ug">Under-Graduation (B.Tech / MBBS / B.A. / B.Sc.)</option>
-                  <option value="class12">Higher Secondary (Class XII Passout)</option>
+                  <option value="class12">Higher Secondary / Diploma / ITI (Classes XI & XII)</option>
+                  <option value="school">Secondary School (Classes IX & X)</option>
                 </select>
               </div>
 
@@ -627,17 +665,18 @@ export function PublicHomePage({
                 </label>
                 <input
                   type="range"
-                  min="100000"
+                  min="50000"
                   max="1200000"
-                  step="50000"
+                  step="25000"
                   value={checkIncome}
                   onChange={(e) => setCheckIncome(Number(e.target.value))}
                   className="w-full accent-blue-900 mt-2"
                 />
                 <div className="flex justify-between text-[10px] text-slate-400 mt-1">
-                  <span>₹1.0 Lakh</span>
-                  <span className="font-bold text-slate-600">₹6.0L (NFST limit)</span>
-                  <span className="font-bold text-slate-600">₹8.0L (NOS limit)</span>
+                  <span>₹0.5L</span>
+                  <span className="font-bold text-slate-600">₹2.5L (Pre/Post)</span>
+                  <span className="font-bold text-slate-600">₹6.0L (NFST)</span>
+                  <span className="font-bold text-slate-600">₹8.0L (NOS)</span>
                   <span>₹12.0L</span>
                 </div>
               </div>
@@ -647,7 +686,7 @@ export function PublicHomePage({
                 <label className="block font-bold text-slate-700 mb-1.5">Current Age</label>
                 <input
                   type="number"
-                  min="18"
+                  min="12"
                   max="45"
                   value={checkAge}
                   onChange={(e) => setCheckAge(Number(e.target.value))}
@@ -663,10 +702,12 @@ export function PublicHomePage({
                   onChange={(e) => setCheckTarget(e.target.value)}
                   className="w-full px-3 py-2.5 border border-slate-300 rounded-xl font-medium text-slate-800 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-600"
                 >
-                  <option value="india_phd">Ph.D. / M.Phil in India (Central/State Univ.)</option>
-                  <option value="abroad">Master's or Ph.D. Abroad (QS Top 500)</option>
-                  <option value="premier_institute">IIT / IIM / NIT / AIIMS / NLU (India)</option>
-                  <option value="any">Show All Eligible Schemes</option>
+                  <option value="india_phd">Ph.D. / M.Phil in India (Central/State Univ. - NFST)</option>
+                  <option value="abroad">Master's or Ph.D. Abroad (QS Top 500 - NOS)</option>
+                  <option value="premier_institute">IIT / IIM / NIT / AIIMS / NLU (Top Class ST)</option>
+                  <option value="college_ug">Higher Secondary / ITI / UG / PG (Post-Matric ST)</option>
+                  <option value="school">Classes IX & X Secondary School (Pre-Matric ST)</option>
+                  <option value="any">Show All Eligible Schemes (Universal Discovery)</option>
                 </select>
               </div>
 
@@ -819,7 +860,7 @@ export function PublicHomePage({
                     <span className="font-semibold text-slate-700">1. Scheduled Tribe Status:</span>
                     <span className="font-bold text-emerald-700 flex items-center space-x-1">
                       <span>✓ PASS</span>
-                      <span className="text-slate-500 font-normal">({whyDetails.tribe} notified in Schedule VI)</span>
+                      <span className="text-slate-500 font-normal">({whyDetails.tribe} notified under Article 342)</span>
                     </span>
                   </div>
 
@@ -907,7 +948,7 @@ export function PublicHomePage({
             {
               step: '03',
               title: 'MoTA-Vision OCR Scrutiny',
-              desc: 'Dual-pane scrutiny desk uses computer vision to highlight certificate seals, Schedule VI caste listings, and automatically detects lapsed income certificates.'
+              desc: 'Dual-pane scrutiny desk uses computer vision to highlight certificate seals, Article 342 notified tribal registries, and automatically detects lapsed income certificates.'
             },
             {
               step: '04',

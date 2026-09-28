@@ -135,6 +135,77 @@ export const INITIAL_SCHEMES = [
       'Aadhaar Card'
     ],
     workflow: ['Application Submission', 'AI Pre-Verification', 'Institutional Registrar Verification', 'MoTA Direct Sanction', 'DBT Direct to Institute & Student']
+  },
+  {
+    id: 'PRE_MATRIC',
+    name: 'Pre-Matric Scholarship Scheme for ST Students',
+    shortName: 'Pre-Matric ST',
+    category: 'Secondary School Education (Classes IX & X)',
+    description: 'Centrally sponsored scholarship scheme to support Scheduled Tribe parents in sending their children to school, minimizing dropout rates between elementary and secondary stages (Classes IX and X).',
+    totalSlots: 'Universal Entitlement',
+    filledSlots: '28,99,699',
+    annualBudgetCr: 412.5,
+    disbursedCr: 412.5,
+    stipendDayScholar: 225,
+    stipendHosteller: 525,
+    booksGrantAnnual: 750,
+    guidelineReference: 'Centrally Sponsored Scheme Guidelines for Pre-Matric Scholarship to ST Students (Classes IX & X)',
+    selectionBasis: 'Universal entitlement for all eligible regular ST students enrolled in Classes IX & X in recognized government/aided schools.',
+    eligibility: {
+      minMarks: 35,
+      maxAge: 18,
+      maxIncome: 250000,
+      degrees: ['Class IX', 'Class X'],
+      institutionTypes: ['Government School', 'Govt-Aided School', 'Recognized Secondary School']
+    },
+    quotaRules: {
+      stFemaleHorizontal: 30,
+      pvtgPrioritySlots: '100% Coverage (No Caps)',
+      pwdReservation: 5
+    },
+    requiredDocuments: [
+      'ST Caste Certificate (Issued under Article 342)',
+      'Annual Family Income Certificate (<= 2.5 Lakhs)',
+      'Previous Class Pass Marksheet (Class VIII / IX)',
+      'School Bonafide & Enrolment Certificate',
+      'Aadhaar Seeded Bank Account Details'
+    ],
+    workflow: ['School Bonafide Enrolment', 'AI Pre-Verification', 'District Welfare Officer Scrutiny', 'State DBT Approval', 'Direct Benefit Transfer to Student/Parent Bank Account']
+  },
+  {
+    id: 'POST_MATRIC',
+    name: 'Post-Matric Scholarship Scheme for ST Students',
+    shortName: 'Post-Matric ST',
+    category: 'Post-Secondary & Higher Education (Classes XI to Ph.D.)',
+    description: 'Flagship Centrally Sponsored scheme providing financial assistance to Scheduled Tribe students studying at post-matriculation or post-secondary stage to enable them to complete their education.',
+    totalSlots: 'Universal Entitlement',
+    filledSlots: '65,42,207',
+    annualBudgetCr: 2180.4,
+    disbursedCr: 2180.4,
+    maintenanceAllowanceMonthly: 1200,
+    tuitionCoverage: '100% Compulsory Non-Refundable Fees',
+    guidelineReference: 'Centrally Sponsored Scheme Guidelines for Post-Matric Scholarship to ST Students',
+    selectionBasis: 'Universal entitlement across 4 course groups (Group 1: Professional Degree/PG; Group 2: Diplomas & Professional; Group 3: General UG/PG; Group 4: Classes XI-XII, ITI).',
+    eligibility: {
+      minMarks: 40,
+      maxAge: 35,
+      maxIncome: 250000,
+      degrees: ['Class XI', 'Class XII', 'Diploma', 'Polytechnic', 'B.A.', 'B.Sc.', 'B.Com', 'M.A.', 'M.Sc.', 'B.Tech', 'MBBS', 'Professional Degree'],
+      courseGroups: ['Group 1 (Professional Degree/PG)', 'Group 2 (Diplomas & Other Professional)', 'Group 3 (General UG/PG)', 'Group 4 (Classes XI-XII, ITI)']
+    },
+    quotaRules: {
+      stFemaleHorizontal: 30,
+      pvtgPrioritySlots: '100% Coverage (No Caps)',
+      pwdReservation: 5
+    },
+    requiredDocuments: [
+      'ST Caste Certificate (Issued under Article 342)',
+      'Annual Family Income Certificate (<= 2.5 Lakhs for FY 2026-27)',
+      'Class X / XII / Qualifying Exam Marksheet',
+      'College / Institute Bonafide Certificate & Fee Structure',
+      'Aadhaar Seeded Bank Account Details'
+    ],
+    workflow: ['Student Online Registration', 'AI Pre-Verification', 'Institutional Nodal Officer Verification', 'District Welfare Scrutiny', 'State / MoTA DBT Disbursal']
   }
 ];
 
@@ -545,6 +616,160 @@ export const INITIAL_APPLICANTS = [
     ],
     deficiency: null,
     fellowshipDetails: null
+  },
+  {
+    id: 'MOTA-2026-PRE-0512',
+    name: 'Mangal Munda',
+    email: 'mangal.munda.khunti@jharkhandschools.gov.in',
+    phone: '+91 94301 88412',
+    gender: 'Male',
+    age: 15,
+    dob: '2011-03-22',
+    tribe: 'Munda',
+    pvtg: false,
+    state: 'Jharkhand',
+    district: 'Khunti',
+    schemeId: 'PRE_MATRIC',
+    schemeName: 'Pre-Matric Scholarship Scheme for ST Students',
+    institution: 'Government High School, Khunti',
+    nirfRank: null,
+    degree: 'Class X (Secondary School)',
+    guideName: 'Headmaster: Sri R. N. Sahu',
+    pgMarks: 81.2,
+    netScore: 'Class IX Final: 81.2% (Grade A)',
+    annualIncome: 140000,
+    submissionDate: '2026-09-18',
+    status: 'AI Verified',
+    stage: 2,
+    progressPercent: 40,
+    aiScore: 94,
+    triageCategory: 'READY',
+    aiRiskLevel: 'LOW',
+    aiVerdict: 'All statutory criteria met under Pre-Matric ST guidelines. Income ₹1.40L <= ₹2.50L. School bonafide verified.',
+    deterministicRuleAudit: {
+      status: 'PASSED',
+      stStatus: 'PASS',
+      incomeLimit: 'PASS',
+      ageLimit: 'PASS',
+      qualifyingMarks: 'PASS',
+      details: 'Meets Article 342 ST notification, income ceiling <= 2.5L, and enrolled in recognized Government School.'
+    },
+    documents: [
+      {
+        name: 'ST Caste Certificate',
+        fileNumber: 'JH/KHU/2022/ST/4401',
+        issuingAuthority: 'Circle Officer, Khunti',
+        issueDate: '14-07-2022',
+        status: 'VERIFIED',
+        confidence: 99.4,
+        extractedText: 'Certified that Mangal Munda belongs to Munda Scheduled Tribe in Jharkhand under Article 342.',
+        tamperScore: 0.0
+      },
+      {
+        name: 'Income Certificate',
+        fileNumber: 'INC/JH/2026/0882',
+        issuingAuthority: 'Tehsildar Khunti',
+        issueDate: '2026-05-10',
+        status: 'VERIFIED',
+        confidence: 98.1,
+        extractedText: 'Annual family income is Rs. 1,40,000 for FY 2026-27.',
+        tamperScore: 0.01
+      },
+      {
+        name: 'School Bonafide Certificate',
+        fileNumber: 'GHSK/ENROL/2026/IX-104',
+        issuingAuthority: 'Headmaster, Govt High School Khunti',
+        issueDate: '2026-06-20',
+        status: 'VERIFIED',
+        confidence: 98.9,
+        extractedText: 'Mangal Munda is a bonafide regular student of Class X for academic year 2026-27.',
+        tamperScore: 0.0
+      }
+    ],
+    auditTrail: [
+      { time: '09:30 AM', date: '2026-09-18', actor: 'Applicant (Mangal Munda)', action: 'Application submitted for Pre-Matric ST', hash: 'd112..81', shortHash: 'd112..81' },
+      { time: '09:31 AM', date: '2026-09-18', actor: 'VidyaSetu Document AI', action: 'School bonafide and Article 342 caste status verified', hash: 'e223..92', shortHash: 'e223..92' }
+    ],
+    anomalyFlags: [],
+    deficiency: null,
+    fellowshipDetails: null
+  },
+  {
+    id: 'MOTA-2026-POST-0841',
+    name: 'Sunita Oraon',
+    email: 'sunita.oraon@rims.edu.in',
+    phone: '+91 94317 55219',
+    gender: 'Female',
+    age: 21,
+    dob: '2005-08-14',
+    tribe: 'Oraon (Kurukh)',
+    pvtg: false,
+    state: 'Jharkhand',
+    district: 'Ranchi',
+    schemeId: 'POST_MATRIC',
+    schemeName: 'Post-Matric Scholarship Scheme for ST Students',
+    institution: 'Rajendra Institute of Medical Sciences (RIMS), Ranchi',
+    nirfRank: 25,
+    degree: 'B.Sc. Nursing (Group 1 Professional Degree)',
+    guideName: 'Principal: Dr. S. K. Tirkey',
+    pgMarks: 76.5,
+    netScore: 'Class XII Science: 76.5%',
+    annualIncome: 185000,
+    submissionDate: '2026-09-15',
+    status: 'AI Verified',
+    stage: 2,
+    progressPercent: 45,
+    aiScore: 96,
+    triageCategory: 'READY',
+    aiRiskLevel: 'LOW',
+    aiVerdict: 'All statutory criteria met under Post-Matric ST guidelines. Income ₹1.85L <= ₹2.50L. Group 1 Professional course verified.',
+    deterministicRuleAudit: {
+      status: 'PASSED',
+      stStatus: 'PASS',
+      incomeLimit: 'PASS',
+      ageLimit: 'PASS',
+      qualifyingMarks: 'PASS',
+      details: 'Meets Article 342 ST notification, income ceiling <= 2.5L, and enrolled in recognized institution for Group 1 professional course.'
+    },
+    documents: [
+      {
+        name: 'ST Caste Certificate',
+        fileNumber: 'JH/RAN/2023/ST/1092',
+        issuingAuthority: 'Sub-Divisional Officer, Ranchi',
+        issueDate: '2023-04-10',
+        status: 'VERIFIED',
+        confidence: 99.2,
+        extractedText: 'Certified that Ku. Sunita Oraon belongs to Oraon Scheduled Tribe in Jharkhand under Article 342.',
+        tamperScore: 0.0
+      },
+      {
+        name: 'Income Certificate',
+        fileNumber: 'INC/JH/2026/4102',
+        issuingAuthority: 'Circle Officer, Ranchi',
+        issueDate: '2026-05-15',
+        status: 'VERIFIED',
+        confidence: 98.7,
+        extractedText: 'Family annual income is Rs. 1,85,000 for FY 2026-27.',
+        tamperScore: 0.0
+      },
+      {
+        name: 'College Bonafide & Fee Structure',
+        fileNumber: 'RIMS/NURS/2026/BON-088',
+        issuingAuthority: 'Dean, College of Nursing, RIMS Ranchi',
+        issueDate: '2026-08-01',
+        status: 'VERIFIED',
+        confidence: 99.0,
+        extractedText: 'Bonafide student in B.Sc. Nursing (Year 2). Compulsory fee eligible for 100% reimbursement under Post-Matric ST.',
+        tamperScore: 0.0
+      }
+    ],
+    auditTrail: [
+      { time: '11:20 AM', date: '2026-09-15', actor: 'Applicant (Sunita Oraon)', action: 'Application submitted for Post-Matric ST', hash: 'f334..12', shortHash: 'f334..12' },
+      { time: '11:22 AM', date: '2026-09-15', actor: 'VidyaSetu Document AI', action: 'RIMS Bonafide & Fee structure verified via institutional adapter', hash: 'a445..23', shortHash: 'a445..23' }
+    ],
+    anomalyFlags: [],
+    deficiency: null,
+    fellowshipDetails: null
   }
 ];
 
@@ -598,6 +823,11 @@ export const NATIONAL_ANALYTICS_DATA = {
   // Sourced official MoTA DBT published numbers
   officialMoTaStats: OFFICIAL_MOTA_DBT_STATS,
   // Synthetic intake dataset for demo
+  totalApplications: 12842,
+  underVerification: 3241,
+  deficienciesIdentified: 842,
+  totalSelected: 1204,
+  pendingDisbursement: 328,
   prototypeDataset: {
     totalApplications: 12842,
     underVerification: 3241,
@@ -607,9 +837,11 @@ export const NATIONAL_ANALYTICS_DATA = {
     isSynthetic: true
   },
   schemeBreakdown: [
-    { scheme: 'NFST', applications: 5420, verified: 4821, selected: 620, slots: 750 },
-    { scheme: 'NOS', applications: 2840, verified: 2341, selected: 18, slots: 20 },
-    { scheme: 'Top Class ST', applications: 4582, verified: 4120, selected: 940, slots: 1000 }
+    { scheme: 'Pre-Matric ST', applications: 2899699, verified: 2840120, selected: 2795400, fundsCr: 412.5 },
+    { scheme: 'Post-Matric ST', applications: 6542207, verified: 6410300, selected: 6320100, fundsCr: 2180.4 },
+    { scheme: 'Top Class ST', applications: 4582, verified: 4120, selected: 940, fundsCr: 65.0 },
+    { scheme: 'NFST', applications: 5420, verified: 4821, selected: 620, fundsCr: 95.0 },
+    { scheme: 'NOS', applications: 2840, verified: 2341, selected: 18, fundsCr: 18.5 }
   ],
   statePerformance: [
     { state: 'Jharkhand', applications: 3840, selected: 420, pvtgCount: 420 },
@@ -620,5 +852,17 @@ export const NATIONAL_ANALYTICS_DATA = {
     { state: 'Assam & NE States', applications: 1840, selected: 180, pvtgCount: 40 },
     { state: 'Rajasthan', applications: 1120, selected: 110, pvtgCount: 15 },
     { state: 'Gujarat', applications: 980, selected: 92, pvtgCount: 12 }
+  ],
+  aiInsights: [
+    {
+      title: 'Low NOS Intake from Central Tribal Belt',
+      description: 'Only 3% of NOS applicants originate from MP and Chhattisgarh despite high tribal population. Recommended intervention: Launch overseas counseling bootcamps in Eklavya Model Residential Schools (EMRS).',
+      suggestedAction: 'Deploy regional language awareness materials via VidyaMitra.'
+    },
+    {
+      title: 'Expiring Income Certificates in Q3 Intake',
+      description: '412 applications in Jharkhand currently have FY 2024-25 income certificates expiring before selection. Automated deficiency alerts dispatched with 14-day SLA deadline.',
+      suggestedAction: 'Track deficiency clearance rate on Officer Scrutiny Desk.'
+    }
   ]
 };

@@ -313,10 +313,10 @@ export function SchemeConfigStudio({ schemes, onUpdateScheme }) {
           <div>
             <h3 className="text-sm font-bold text-slate-900 flex items-center space-x-2">
               <Sparkles className="w-4 h-4 text-purple-700" />
-              <span>10,000 Application Pool Scheme Simulator & Stress-Test</span>
+              <span>10,000 Synthetic Applications — Policy Simulation</span>
             </h3>
             <p className="text-xs text-slate-500">
-              Test your newly configured scheme rules against the national historical intake of 10,000 applications to calculate eligibility ratios before rollout.
+              Stress-test newly configured scheme rules against a calibrated demonstration cohort of 10,000 synthetic applications to evaluate eligibility ratios, intake yield, and fiscal budget impact.
             </p>
           </div>
 
@@ -342,7 +342,7 @@ export function SchemeConfigStudio({ schemes, onUpdateScheme }) {
           <div className="flex justify-start">
             <button
               onClick={() => {
-                // Compute dynamic simulation on 10,000 application pool
+                // Compute dynamic simulation on 10,000 synthetic application pool
                 const poolTotal = 10000;
                 const incomePassRate = Math.min(0.85, formData.eligibility.maxIncome / 1000000);
                 const marksPassRate = Math.max(0.4, (100 - formData.eligibility.minMarks) / 100);
@@ -360,16 +360,16 @@ export function SchemeConfigStudio({ schemes, onUpdateScheme }) {
                     eligiblePercent: ((eligible / poolTotal) * 100).toFixed(1)
                   },
                   checks: [
-                    { label: `Income ≤ ₹${formData.eligibility.maxIncome.toLocaleString()}`, pass: true, value: 'Evaluated against 10k records' },
-                    { label: `Academic Marks ≥ ${formData.eligibility.minMarks}%`, pass: true, value: 'Evaluated against 10k records' },
-                    { label: `Age ≤ ${formData.eligibility.maxAge} yrs`, pass: true, value: 'Evaluated against 10k records' }
+                    { label: `Income ≤ ₹${formData.eligibility.maxIncome.toLocaleString()}`, pass: true, value: 'Evaluated against 10k synthetic records' },
+                    { label: `Academic Marks ≥ ${formData.eligibility.minMarks}%`, pass: true, value: 'Evaluated against 10k synthetic records' },
+                    { label: `Age ≤ ${formData.eligibility.maxAge} yrs`, pass: true, value: 'Evaluated against 10k synthetic records' }
                   ]
                 });
               }}
               className="flex items-center space-x-2 px-6 py-2.5 bg-purple-700 hover:bg-purple-600 text-white rounded-xl text-xs font-bold shadow transition"
             >
               <Play className="w-4 h-4" />
-              <span>Simulate on 10,000 Historical Applications</span>
+              <span>Simulate on 10,000 Synthetic Applications</span>
             </button>
           </div>
 
@@ -378,7 +378,7 @@ export function SchemeConfigStudio({ schemes, onUpdateScheme }) {
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2 font-bold text-sm text-purple-950">
                   <CheckCircle2 className="w-5 h-5 text-purple-700" />
-                  <span>Simulation Results on 10,000 Applications:</span>
+                  <span>Simulation Results on 10,000 Synthetic Applications (Policy Simulation DSS):</span>
                 </div>
                 <span className="text-[11px] font-mono font-bold bg-purple-100 text-purple-900 px-2.5 py-0.5 rounded">
                   Eligibility Ratio: {sandboxResult.poolStats.eligiblePercent}%

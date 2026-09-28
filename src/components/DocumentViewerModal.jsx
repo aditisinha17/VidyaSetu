@@ -158,7 +158,7 @@ export function DocumentViewerModal({ doc, applicant, onClose }) {
                   <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                   <div>
                     <strong className="block font-semibold">Tribe & Gazette Validation</strong>
-                    <span>Candidate tribe <strong>{applicant?.tribe}</strong> maps to Central ST List (Gazette of India Schedule VI).</span>
+                    <span>Candidate tribe <strong>{applicant?.tribe}</strong> maps to Central ST List notified under Article 342.</span>
                   </div>
                 </div>
 

@@ -16,10 +16,10 @@
 
 ### Architectural Mapping Against Problem Statement Mandates:
 1. **End-to-End Integrated System**: Unifies the complete 8-stage lifecycle (applicant registration, online application, document submission, eligibility verification, scrutiny, screening, selection, communication, and post-selection fellowship management).
-2. **Configurable Scheme System**: Handles different eligibility criteria, documents, and selection processes applicable to individual schemes (NFST, NOS, Top Class ST) through a configurable schema engine (`SchemeConfigStudio.jsx` & `ruleEngine.js`).
-3. **AI & Automation for Scrutiny**: Leverages OCR document intelligence (`documentAI.js`) to reduce manual verification, extract certificate fields, and detect defective/expired credentials.
+2. **Configurable Scheme System**: Handles different eligibility criteria, documents, and selection processes applicable to all 5 active MoTA schemes (Pre-Matric, Post-Matric, Top Class Education, NFST, and NOS) through a configurable schema engine (`SchemeConfigStudio.jsx` & `ruleEngine.js`).
+3. **AI & Automation for Scrutiny**: Leverages document-intelligence services (`documentAI.js`) to assist human scrutiny, extract certificate fields, and detect defective/expired credentials.
 4. **Deficiency Resubmission Loop**: Provides automated deficiency communication, a 15-day SLA resolution desk, document replacement, AI re-scan, and queue seniority preservation (`DeficiencyDesk.jsx`).
-5. **Transparent Screening with Human Oversight**: Delivers an **Application X-Ray Dual-Pane Workstation** (`OfficerScrutinyDesk.jsx`) ensuring that all AI recommendations are audited by authorized human officers, supported by mandatory **Officer Override** and **Statutory Rejection** clauses.
+5. **Transparent Screening with Human Oversight**: Delivers an **Application X-Ray Dual-Pane Workstation** (`OfficerScrutinyDesk.jsx`) ensuring that all AI recommendations are audited by authorized human officers, supported by mandatory **Officer Override** and **Statutory Rejection** clauses ("AI assists, rules govern, humans decide").
 6. **Separate Interfaces**: Fully decoupled citizen/scholar interface (**Scholar Desk**) and ministry administrative workspace (**Ministry Governance Hub**).
 7. **Dashboards & Scheme Analytics**: Executive intelligence dashboards monitoring turnaround times (TAT), scheme allocations, state-wise application heatmaps, and PVTG inclusion rates (`NationalAnalytics.jsx`).
 
@@ -27,7 +27,7 @@
 
 ## 1. Architectural Principles & High-Level Architecture (HLA)
 
-VidyaSetu is architected as an **Event-Driven, Service-Oriented Web Application** conforming to the **National e-Governance Division (NeGD)** standards, **Guidelines for Indian Government Websites (GIGW 2.0)**, and **WCAG 2.1 AA Accessibility Standards**.
+VidyaSetu is architected as a **modular, service-oriented prototype architecture designed for event-driven production deployment**, conforming to the **National e-Governance Division (NeGD)** standards, **Guidelines for Indian Government Websites (GIGW 2.0)**, and **WCAG 2.1 AA Accessibility Standards**.
 
 ### Core Governance Principles
 1. **Human-in-the-Loop Supremacy**: AI models assist in document attribute extraction, validity checking, and queue triage. Adverse decisions (rejections) or statutory overrides require affirmative action and clause citations by authorized human officers.
@@ -43,7 +43,7 @@ VidyaSetu is architected as an **Event-Driven, Service-Oriented Web Application*
 |   |                         CITIZEN PUBLIC PORTAL (NO LOGIN REQUIRED)                          |   |
 |   |  - National Ministry Identity & Ashoka Emblem Design System                                |   |
 |   |  - Multi-Language Switcher (English, हिन्दी, ଓଡ଼ିଆ, ᱥᱟᱱᱛᱟᱲᱤ [Ol Chiki], తెలుగు, मराठी)         |   |
-|   |  - Flagship Scheme Directory (NFST, NOS, Top Class Education Guidelines & Documents)       |   |
+|   |  - All 5 Active MoTA Schemes (Pre/Post-Matric, Top Class, NFST, NOS Guidelines)           |   |
 |   |  - 30-Second Quick Eligibility Pre-Checker (Degree, Income, Age, Tribe, Destination)       |   |
 |   |  - Official MoTA DBT Published Metrics vs 12,842 Synthetic Demo Cohort Labels              |   |
 |   |  - "Why am I eligible / not eligible?" Statutory Clause Breakdown Modal                    |   |
@@ -75,8 +75,8 @@ VidyaSetu is architected as an **Event-Driven, Service-Oriented Web Application*
 |   | DOCUMENT OCR AI SERVICE |   | STATUTORY RULE ENGINE   |   | SCHEME SELECTION ENGINE        |   |
 |   | - Entity Extraction     |   | - Pure Deterministic    |   | - NFST: PG Marks + Quotas      |   |
 |   | - Bounding Box Tagger   |   | - Income & Age Ceilings |   | - NOS: QS World Top 500/200    |   |
-|   | - Barcode & QR Verifier |   | - Gazette Schedule VI   |   | - Top Class: Entrance Ranks    |   |
-|   | - Date Validity Check   |   | - Zero Black-Box ML     |   | - RTI-Friendly Traceability    |   |
+|   | - Barcode & QR Verifier |   | - Article 342 Notified  |   | - Top Class: Entrance Ranks    |   |
+|   | - Date Validity Check   |   | - Zero Black-Box ML     |   | - Pre/Post-Matric Frameworks   |   |
 |   +-------------------------+   +-------------------------+   +--------------------------------+   |
 |                                                                                                    |
 |   +-------------------------+   +-------------------------+   +--------------------------------+   |
@@ -87,7 +87,7 @@ VidyaSetu is architected as an **Event-Driven, Service-Oriented Web Application*
 |   +-------------------------+   +-------------------------+   +--------------------------------+   |
 |                                                                                                    |
 |   +-------------------------------------------------------+   +--------------------------------+   |
-|   | CITIZEN PRE-CHECKER & LOCALIZATION ENGINE             |   | 10k POLICY SIMULATOR DSS       |   |
+|   | CITIZEN PRE-CHECKER & LOCALIZATION ENGINE             |   | 10k SYNTHETIC POLICY SIM DSS   |   |
 |   | - 30-Second Dynamic Qualification Matrix              |   | - What-If Delta Calculator     |   |
 |   | - Multilingual Dictionary (6 Official Languages)      |   | - Beneficiary & Budget Impact  |   |
 |   +-------------------------------------------------------+   +--------------------------------+   |
@@ -99,7 +99,7 @@ VidyaSetu is architected as an **Event-Driven, Service-Oriented Web Application*
 |                                                                                                    |
 |   [MeriPehchaan (Jan Parichay Adapter)] <---> [DigiLocker Certified Repositories Adapter]          |
 |   [UIDAI Demographic Validation Mock]   <---> [NPCI Aadhaar Payment Bridge (APB) Adapter]          |
-|   [Public Financial Management (PFMS)]  <---> [Central ST Gazette (Schedule VI Data Store)]        |
+|   [Public Financial Management (PFMS)]  <---> [Central ST Gazette (Article 342 Data Store)]        |
 |   [QS World University Ranking Data]    <---> [SHA-256 Tamper-Evident Chained Ledger]              |
 +----------------------------------------------------------------------------------------------------+
 ```
@@ -111,7 +111,7 @@ VidyaSetu is architected as an **Event-Driven, Service-Oriented Web Application*
 ```
 [Citizen / Prospective ST Scholar]
      │
-     ▼ (1) Explores Public Scheme Directory & Guidelines (NFST / NOS / Top Class)
+     ▼ (1) Explores Scheme Directory (Pre-Matric / Post-Matric / Top Class / NFST / NOS)
 [Public Citizen Portal]
      │
      ├───► [Selects Language (EN / HI / OR / SAT / TE / MR)] ──► Real-time UI Localization
@@ -151,9 +151,11 @@ VidyaSetu is architected as an **Event-Driven, Service-Oriented Web Application*
      ▼ (5) Merit Allocation & Quota Enforcement
 [Scheme-Specific Selection Engine]
      │
-     ├───► NFST: PG Marks Ranking + 30% Horizontal Girls Quota + 5% Divyang + PVTG Slots
-     ├───► NOS: QS World Top 500 Ranking Prioritization + Expert Committee Appraisal
-     └───► Top Class: Premier Institute Quotas based on JEE/NEET/CAT/CLAT Scores
+     ├───► Pre-Matric: Secondary School Enrollment + Income ≤ ₹2.5L + Direct Institute Validation
+     ├───► Post-Matric: Higher Secondary/UG/PG Tier Points + Income ≤ ₹2.5L + State Portal Harmonization
+     ├───► NFST: PG Marks Ranking + 30% Horizontal Girls Quota + 5% Divyang + PVTG Slots (750 Slots)
+     ├───► NOS: QS World Top 500/200 Prioritization + Expert Committee Appraisal (20 Slots)
+     └───► Top Class: Premier Institute Quotas (IITs/IIMs/NITs) based on Ranks (Income ≤ ₹6.0L)
      │
      ▼ (6) Selection & Gazette Generation
 [National Selection Gazette & Award Modal]
@@ -177,12 +179,13 @@ Unlike statistical machine-learning models that can produce variable or discrimi
 
 $$\text{Eligibility}(\text{Applicant}, \text{Scheme}) = \bigwedge_{c \in \text{Criteria}} \text{Evaluate}(c, \text{Applicant})$$
 
-* **ST Notification Check**: Verifies if the applicant's tribe belongs to the Central Schedule VI list.
-* **Annual Family Income Ceiling**: Evaluates against scheme ceiling ($\le \text{₹}6.0\text{ LPA}$ for NFST, $\le \text{₹}8.0\text{ LPA}$ for NOS).
-* **Age Ceiling**: Evaluates age against cutoff date ($\le 36\text{ yrs}$ for NFST, $\le 35\text{ yrs}$ for NOS).
-* **Affirmative Action**: Evaluates Particularly Vulnerable Tribal Group (PVTG) status and applies dedicated reserved slots (50 slots in NFST, 3 slots in NOS).
+* **ST Notification Check**: Verifies if the applicant's tribe is notified under Article 342 of the Constitution of India for the respective State/UT.
+* **Annual Family Income Ceiling**: Evaluates strictly against statutory limits: $\le \text{₹}2.5\text{ LPA}$ (Pre-Matric & Post-Matric), $\le \text{₹}6.0\text{ LPA}$ (NFST & Top Class ST), $\le \text{₹}8.0\text{ LPA}$ (NOS).
+* **Age & Academic Criteria**: Evaluates age against cutoff date ($\le 36\text{ yrs}$ for NFST, $\le 35\text{ yrs}$ for NOS) and academic enrollment/marks requirements per scheme guidelines.
+* **Affirmative Action & Inclusion**: Evaluates Particularly Vulnerable Tribal Group (PVTG) status and applies statutory reserved slots (50 slots in NFST, 3 slots in NOS, 30% horizontal reservation for ST female scholars).
 
 ### 3.2. AI-Assisted Document Pre-Scrutiny & Live Deficiency Loop (`backend/services/documentAI.js`)
+*Note on AI Architecture: VidyaSetu integrates an AI document-intelligence service (simulated in the hackathon prototype, architected to interface with production OCR engines such as Tesseract or Google Document AI) to assist human scrutiny without displacing officer authority. AI assists, rules govern, humans decide.*
 * Performs optical character extraction to identify certificate serial numbers, issuing revenue authorities, and issuance dates.
 * Detects lapsed certificate validity: Income certificates older than 1 fiscal year are flagged with code `DEF-INC-EXPIRED`.
 * Implements the **Deficiency Resolution Loop**:
@@ -218,8 +221,8 @@ $$H_k = \text{SHA-256}(H_{k-1} \,\|\, \text{Timestamp} \,\|\, \text{Actor} \,\|\
 The system provides live cryptographic integrity verification:
 * If any payload, timestamp, or actor field is altered in historical records, recomputed hashes mismatch and the broken chain link is identified immediately.
 
-### 3.5. What-If Policy DSS & 10,000-Record Simulator (`backend/services/policySimulator.js`)
-Enables MoTA policy directors to simulate proposed scheme rule revisions across a realistic synthetic cohort of 10,000 applicant records:
+### 3.5. What-If Policy DSS & 10,000 Synthetic Applications Simulator (`backend/services/policySimulator.js`)
+Enables MoTA policy directors to simulate proposed scheme rule revisions across a realistic synthetic cohort of 10,000 policy-simulation applicant records:
 * Simulates adjustments to income ceilings (₹6L to ₹8L), minimum marks thresholds (50% to 55%), or quota weightings.
 * Calculates exact prospective outcomes:
   $$\Delta \text{Beneficiaries} = N_{\text{new}} - N_{\text{current}}$$

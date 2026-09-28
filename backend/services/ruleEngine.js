@@ -96,6 +96,32 @@ export class SchemeRuleEngine {
       });
     }
 
+    // 7. Pre-Matric Specific: School Bonafide Enrolment
+    if (scheme.id === 'PRE_MATRIC') {
+      const isSchoolLevel = (candidate.degree || '').toLowerCase().includes('class') || (candidate.institution || '').toLowerCase().includes('school') || Number(candidate.age || 0) <= 18;
+      checks.push({
+        criterion: 'Secondary School Bonafide Enrolment',
+        statutoryRule: 'Student must be enrolled regular full-time in Class IX or X in a recognized Government/Aided school.',
+        required: 'Class IX or X Enrolment',
+        actual: candidate.degree || candidate.institution || 'School Enrolled',
+        passed: isSchoolLevel,
+        severity: 'BLOCKING'
+      });
+    }
+
+    // 8. Post-Matric Specific: Post-Secondary Course Level
+    if (scheme.id === 'POST_MATRIC') {
+      const isPostMatric = !(candidate.degree || '').toLowerCase().includes('class ix') && !(candidate.degree || '').toLowerCase().includes('class 9');
+      checks.push({
+        criterion: 'Post-Matric Course Level',
+        statutoryRule: 'Course must be post-secondary/higher secondary or above (Group 1 to 4 recognized course).',
+        required: 'Group 1 to 4 Recognized Course',
+        actual: candidate.degree || 'Post-Matric Course',
+        passed: isPostMatric,
+        severity: 'BLOCKING'
+      });
+    }
+
     // Aggregate Determination
     const blockingFailures = checks.filter(c => c.severity === 'BLOCKING' && !c.passed);
     const attentionWarnings = checks.filter(c => c.severity === 'ATTENTION' && !c.passed);
