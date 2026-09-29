@@ -164,7 +164,7 @@ export function AiSchemeMatcher({ schemes, onSelectSchemeToApply }) {
   return (
     <div className="space-y-6">
       {/* Banner */}
-      <div className="p-6 rounded-2xl bg-gradient-to-r from-blue-900 to-indigo-950 text-white shadow-md flex flex-wrap items-center justify-between gap-4">
+      <div data-tour="eligibility-progress" className="p-6 rounded-2xl bg-gradient-to-r from-blue-900 to-indigo-950 text-white shadow-md flex flex-wrap items-center justify-between gap-4">
         <div>
           <div className="flex items-center space-x-2">
             <span className="text-xs font-mono font-bold bg-amber-400/20 text-amber-300 border border-amber-400/30 px-2.5 py-0.5 rounded-full">
@@ -416,6 +416,7 @@ export function AiSchemeMatcher({ schemes, onSelectSchemeToApply }) {
 
                     <div className="mt-5 pt-3 border-t border-slate-100">
                       <button
+                        data-tour="start-application"
                         onClick={() => onSelectSchemeToApply(sch.id)}
                         className={`w-full py-2 rounded-xl text-xs font-bold flex items-center justify-center space-x-2 transition ${
                           isTopMatch
@@ -436,7 +437,15 @@ export function AiSchemeMatcher({ schemes, onSelectSchemeToApply }) {
           <div className="p-6 bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl text-center text-slate-500 text-xs">
             <Sparkles className="w-6 h-6 mx-auto mb-2 text-slate-400" />
             <p className="font-semibold text-slate-700">Scheme Recommendations & AI Explanation Area</p>
-            <p className="text-[11px] text-slate-500 mt-1">Fill out the questionnaire above and click "Compute Rule Engine Match" to see your personalized eligibility breakdown.</p>
+            <p className="text-[11px] text-slate-500 mt-1">Fill out the questionnaire above and click "Run Statutory Evaluation" to see your personalized eligibility breakdown.</p>
+            <button
+              type="button"
+              data-tour="start-application"
+              onClick={handleEvaluate}
+              className="mt-3 px-4 py-2 bg-blue-900 text-white rounded-xl text-xs font-bold shadow-xs hover:bg-blue-800 transition"
+            >
+              Run Evaluation & View Matching Schemes
+            </button>
           </div>
         )}
       </div>

@@ -122,6 +122,16 @@ export function ApplicantDashboard({
       {/* Quick Action Strip: Tour, 2G Data Saver, Official Slips */}
       <div data-tour="quick-actions" className="flex flex-wrap items-center justify-between gap-3 bg-white p-3 rounded-2xl border border-slate-200 shadow-xs text-xs">
         <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            data-tour="check-eligibility"
+            onClick={() => setActiveTab('matcher')}
+            className="px-3 py-1.5 bg-blue-900 text-white rounded-xl font-bold hover:bg-blue-800 flex items-center space-x-1.5 shadow-xs transition-colors"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+            <span>{lang === 'hi' ? 'पात्रता जांचें' : 'Check Eligibility'}</span>
+          </button>
+
           {onReplayTour && (
             <button
               type="button"
