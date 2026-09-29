@@ -26,6 +26,7 @@ export function OfficerScrutinyDesk({
   onApproveApplication, 
   onRaiseDeficiency, 
   onRejectApplication,
+  onOverrideApplication,
   onInspectDoc 
 }) {
   const [selectedId, setSelectedId] = useState(applicants[0]?.id || null);
@@ -56,33 +57,48 @@ export function OfficerScrutinyDesk({
                           app.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           app.tribe.toLowerCase().includes(searchQuery.toLowerCase());
     if (filterStatus === 'ALL') return matchesSearch;
-    if (filterStatus === 'READY') return matchesSearch && (app.triageCategory === 'READY' || app.status === 'AI Verified');
-    if (filterStatus === 'FLAGGED') return matchesSearch && (app.aiRiskLevel === 'MEDIUM' || app.status === 'Deficiency Pending' || app.triageCategory === 'DEFICIENT');
-    if (filterStatus === 'REVIEW') return matchesSearch && (app.status === 'Submitted' || app.status === 'Selection Committee Review');
-    if (filterStatus === 'APPROVED') return matchesSearch && (app.status === 'Selected');
+    if (filterStatus === 'READY') return matchesSearch && (app.triageCategory === 'READY' || app.status === 'READY_FOR_REVIEW' || app.status === 'AI Verified');
+    if (filterStatus === 'FLAGGED') return matchesSearch && (app.aiRiskLevel === 'HIGH' || app.aiRiskLevel === 'MEDIUM' || app.status === 'DEFICIENT' || app.triageCategory === 'DEFICIENT');
+    if (filterStatus === 'REVIEW') return matchesSearch && (app.status === 'SUBMITTED' || app.status === 'UNDER_SCRUTINY');
+    if (filterStatus === 'APPROVED') return matchesSearch && (app.status === 'APPROVED' || app.status === 'AWARDED');
     return matchesSearch;
   });
 
   const handleDeficiencySubmit = () => {
+    const deadlineDate = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
     onRaiseDeficiency(selectedApp.id, {
       code: 'DEF-OFFICER-SCRUTINY',
       title: defTitle,
       description: defRemarks,
       actionRequired: 'Re-upload valid document on VidyaSetu portal within 14 days.',
       raisedOn: new Date().toISOString().split('T')[0],
-      deadline: '2026-10-15',
+      deadline: deadlineDate,
+      deadlineDays: 14,
       officerRemarks: defRemarks
     });
     setIsDeficiencyModalOpen(false);
   };
 
   const handleOverrideSubmit = () => {
-    onApproveApplication(selectedApp.id);
+    if (onOverrideApplication) {
+      onOverrideApplication(selectedApp.id, {
+        reason: overrideRemarks,
+        statutoryClause: 'Article 342 Discretionary Clearance Clause',
+        overrideType: overrideReason,
+        comments: overrideRemarks
+      });
+    } else {
+      onApproveApplication(selectedApp.id);
+    }
     setIsOverrideModalOpen(false);
   };
 
   const handleRejectSubmit = () => {
-    onRejectApplication(selectedApp.id);
+    onRejectApplication(selectedApp.id, {
+      statutoryClause: rejectClause,
+      reason: rejectReason,
+      comments: rejectRemarks
+    });
     setIsRejectModalOpen(false);
   };
 

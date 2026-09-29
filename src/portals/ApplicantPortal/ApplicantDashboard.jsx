@@ -359,6 +359,37 @@ export function ApplicantDashboard({
                     )}
                   </div>
 
+                  {/* Application Health Score (0-100) with visible breakdown */}
+                  <div className="p-3 bg-indigo-50/70 border border-indigo-200 rounded-xl text-xs space-y-1.5">
+                    <div className="flex justify-between items-center">
+                      <span className="font-bold text-indigo-950 flex items-center space-x-1.5 text-[11px]">
+                        <Award className="w-3.5 h-3.5 text-indigo-700" />
+                        <span>Application Health Score</span>
+                      </span>
+                      <span className="text-xs font-mono font-black text-indigo-900 bg-indigo-100 px-2.5 py-0.5 rounded-full border border-indigo-300">
+                        {currentApplicant?.healthScore?.finalScore || 92} / 100
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-4 gap-1 text-[10px] text-center font-medium text-slate-600">
+                      <div className="p-1 bg-white rounded border border-indigo-100">
+                        <div>Demographics</div>
+                        <div className="font-bold text-emerald-700">{currentApplicant?.healthScore?.breakdown?.demographics ?? 25}/25</div>
+                      </div>
+                      <div className="p-1 bg-white rounded border border-indigo-100">
+                        <div>Academics</div>
+                        <div className="font-bold text-blue-700">{currentApplicant?.healthScore?.breakdown?.academics ?? 25}/25</div>
+                      </div>
+                      <div className="p-1 bg-white rounded border border-indigo-100">
+                        <div>Documents</div>
+                        <div className="font-bold text-amber-700">{currentApplicant?.healthScore?.breakdown?.documents ?? 22}/25</div>
+                      </div>
+                      <div className="p-1 bg-white rounded border border-indigo-100">
+                        <div>Integrity</div>
+                        <div className="font-bold text-purple-700">{currentApplicant?.healthScore?.breakdown?.anomalyRisk ?? 20}/25</div>
+                      </div>
+                    </div>
+                  </div>
+
                   <div className="flex justify-between items-center pt-1 text-[11px]">
                     <button 
                       onClick={() => onOpenAuditTrail(currentApplicant)}

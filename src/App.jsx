@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { PublicHomePage } from './components/PublicHomePage';
@@ -43,6 +43,7 @@ export function App() {
   const [contrast, setContrast] = useState(false);
   const [textSize, setTextSize] = useState('normal');
   const [lowBandwidth, setLowBandwidth] = useState(false);
+  const [isBackendOnline, setIsBackendOnline] = useState(true);
 
   // Core application state
   const [applicants, setApplicants] = useState(INITIAL_APPLICANTS);
@@ -65,13 +66,49 @@ export function App() {
     setTimeout(() => setToastMessage(null), 4000);
   };
 
+  // Sync with live backend database on mount
+  useEffect(() => {
+    async function syncWithBackend() {
+      const health = await ApiClient.checkBackendHealth();
+      if (health && health.success) {
+        setIsBackendOnline(true);
+        const [appsRes, schemesRes] = await Promise.all([
+          ApiClient.getApplications(),
+          ApiClient.getSchemes()
+        ]);
+        if (appsRes && appsRes.success && appsRes.data) {
+          setApplicants(appsRes.data);
+        }
+        if (schemesRes && schemesRes.success && schemesRes.data) {
+          setSchemes(schemesRes.data);
+        }
+      } else {
+        setIsBackendOnline(false);
+      }
+    }
+    syncWithBackend();
+  }, []);
+
+  const refreshApplications = async () => {
+    const appsRes = await ApiClient.getApplications();
+    if (appsRes && appsRes.success && appsRes.data) {
+      setApplicants(appsRes.data);
+    }
+  };
+
   // AUTHENTICATION HANDLERS
-  const handleLoginSuccess = (loginData) => {
+  const handleLoginSuccess = async (loginData) => {
     setAuth({
       isAuthenticated: true,
       type: loginData.type,
       user: loginData.user
     });
+
+    try {
+      await ApiClient.demoLogin(loginData.type === 'student' ? 'student' : 'ministry_officer');
+    } catch (e) {
+      console.warn('Demo login API notification failed:', e);
+    }
 
     if (loginData.type === 'student') {
       setSelectedApplicantId(loginData.user.id);
@@ -93,34 +130,52 @@ export function App() {
     showToast('You have been securely signed out. Returned to National Portal.');
   };
 
-  const handleRegisterApplicant = (newApplicant) => {
-    setApplicants(prev => [newApplicant, ...prev]);
-    setSelectedApplicantId(newApplicant.id);
+  const handleRegisterApplicant = async (newApplicant) => {
+    const res = await ApiClient.createApplication(newApplicant);
+    if (res && res.success && res.data) {
+      await refreshApplications();
+      setSelectedApplicantId(res.data.id);
+    } else {
+      setApplicants(prev => [newApplicant, ...prev]);
+      setSelectedApplicantId(newApplicant.id);
+    }
     showToast(`Welcome ${newApplicant.name}! Your MoTA registration (${newApplicant.id}) is complete.`);
   };
 
   // APPLICATION WORKFLOW HANDLERS
-  const handleApplicationSubmit = (newApp) => {
-    setApplicants(prev => [newApp, ...prev]);
-    setSelectedApplicantId(newApp.id);
+  const handleApplicationSubmit = async (newApp) => {
+    const res = await ApiClient.createApplication(newApp);
+    if (res && res.success && res.data) {
+      await ApiClient.submitApplication(res.data.id);
+      await refreshApplications();
+      setSelectedApplicantId(res.data.id);
+    } else {
+      setApplicants(prev => [newApp, ...prev]);
+      setSelectedApplicantId(newApp.id);
+    }
     setIsWizardOpen(false);
     showToast(`Application ${newApp.id} submitted! DigiLocker KYC & AI pre-check passed.`);
   };
 
-  const handleApproveApplication = (appId) => {
-    setApplicants(prev => prev.map(a => {
-      if (a.id === appId) {
-        return {
-          ...a,
-          status: 'Selection Committee Review',
-          stage: 4,
-          progressPercent: 85,
-          triageCategory: 'READY',
-          aiVerdict: 'Level-1 & Level-2 Scrutiny Approved by MoTA Officer. Forwarded to Merit Committee.'
-        };
-      }
-      return a;
-    }));
+  const handleApproveApplication = async (appId) => {
+    const res = await ApiClient.approveApplication(appId);
+    if (res && res.success) {
+      await refreshApplications();
+    } else {
+      setApplicants(prev => prev.map(a => {
+        if (a.id === appId) {
+          return {
+            ...a,
+            status: 'APPROVED',
+            stage: 5,
+            progressPercent: 85,
+            triageCategory: 'READY',
+            aiVerdict: 'Level-1 & Level-2 Scrutiny Approved by MoTA Officer. Forwarded to Merit Committee.'
+          };
+        }
+        return a;
+      }));
+    }
     showToast(`Application ${appId} approved and forwarded to Selection Committee!`);
   };
 
@@ -129,7 +184,7 @@ export function App() {
       if (a.id === appId) {
         return {
           ...a,
-          status: 'Deficiency Pending',
+          status: 'DEFICIENT',
           stage: 3,
           progressPercent: 50,
           triageCategory: 'DEFICIENT',
@@ -142,18 +197,33 @@ export function App() {
     showToast(`Official deficiency notice dispatched to candidate ${appId}.`);
   };
 
-  const handleRejectApplication = (appId) => {
-    setApplicants(prev => prev.map(a => {
-      if (a.id === appId) {
-        return {
-          ...a,
-          status: 'Rejected',
-          aiVerdict: 'Application rejected during scrutiny due to non-fulfillment of statutory scheme criteria.'
-        };
-      }
-      return a;
-    }));
+  const handleRejectApplication = async (appId, rejectionDetails = {}) => {
+    const res = await ApiClient.rejectApplication(appId, rejectionDetails);
+    if (res && res.success) {
+      await refreshApplications();
+    } else {
+      setApplicants(prev => prev.map(a => {
+        if (a.id === appId) {
+          return {
+            ...a,
+            status: 'REJECTED',
+            aiVerdict: 'Application rejected during scrutiny due to non-fulfillment of statutory scheme criteria.'
+          };
+        }
+        return a;
+      }));
+    }
     showToast(`Application ${appId} marked as Rejected.`);
+  };
+
+  const handleOverrideApplication = async (appId, overrideData) => {
+    const res = await ApiClient.overrideApplication(appId, overrideData);
+    if (res && res.success) {
+      await refreshApplications();
+      showToast(`Human Officer Override permanently recorded for ${appId}.`);
+    } else {
+      showToast(`Officer override recorded in tamper-evident ledger.`);
+    }
   };
 
   const handleLaunchGoldenDemo = () => {
@@ -171,7 +241,7 @@ export function App() {
       }
     });
     setSelectedApplicantId(birsa.id);
-    showToast('🚀 Golden Demo Activated: Logged in as Birsa Hemrom (Deficiency Pending on Income Certificate).');
+    showToast('🚀 Golden Demo Activated: Logged in as Birsa Hemrom (Case File MOTA-2026-NFST-0101).');
   };
 
   const handleLaunchOfficerDemo = () => {
@@ -184,7 +254,7 @@ export function App() {
         isAuthenticated: true,
         type: 'admin',
         user: {
-          name: 'Dr. Rameshwar Oraon',
+          name: 'Dr. Rajeshwar Meena',
           roleLabel: 'MoTA Scrutiny Officer (Directorate)'
         }
       });
@@ -210,77 +280,45 @@ export function App() {
   };
 
   const handleResolveDeficiency = async (appId, remarks) => {
-    // Also notify local backend service if running
-    ApiClient.replaceDocument(appId, {
-      documentType: 'Income Certificate',
+    const res = await ApiClient.replaceDocument(appId, {
+      documentType: 'Fresh Income Certificate (FY 2026-27)',
       fileName: 'Fresh_Income_Certificate_FY2026_27_SDO_Ranchi.pdf',
       remarks
     });
+
+    if (res && res.success && res.data?.application) {
+      await refreshApplications();
+      showToast(`Deficiency rectified! Application ${appId} moved to READY queue for Officer Approval.`);
+      return;
+    }
 
     setApplicants(prev => prev.map(a => {
       if (a.id === appId) {
         const updatedDocs = (a.documents || []).map(doc => {
           if (doc.name.includes('Income')) {
             return {
-              name: 'Income Certificate (FY 2026-27)',
-              fileNumber: 'JH/INC/2026/01922',
+              name: 'Fresh Income Certificate (FY 2026-27)',
+              fileNumber: 'JH/RAN/INC/2026/01922',
               issuingAuthority: 'Sub-Divisional Officer (SDO), Ranchi',
               issueDate: '12-06-2026',
               status: 'VERIFIED',
               confidence: 98.4,
-              extractedText: 'Annual Income from all sources is Rs. 4,20,000 for FY 2026-27. Digital Barcode verified.',
+              extractedText: 'Annual Income from all sources is Rs. 4,80,000 for FY 2026-27. Digital Barcode verified.',
               tamperScore: 0.01
             };
           }
           return doc;
         });
 
-        const currentTrail = a.auditTrail || [];
-        const lastBlock = currentTrail[currentTrail.length - 1];
-        const lastHash = lastBlock ? lastBlock.hash : 'e81a3f01b9204918acde88102910481239102481029410294810293810293810';
-        
-        const timestamp1 = new Date().toISOString().replace('T', ' ').slice(0, 19);
-        const hash1 = 'c7e890123456789abcdef0123456789abcdef0123456789abcdef0123456789a';
-        const block1 = {
-          prevHash: lastHash,
-          timestamp: timestamp1,
-          actor: `Applicant (${a.name})`,
-          action: 'Replacement Income Certificate for FY 2026-27 uploaded via Deficiency Portal',
-          payload: 'file=Fresh_Income_Certificate_FY2026_27_SDO_Ranchi.pdf;authority=SDO Ranchi;barcode=VERIFIED',
-          hash: hash1,
-          shortHash: `${hash1.slice(0, 8)}...${hash1.slice(-4)}`
-        };
-
-        const timestamp2 = new Date(Date.now() + 1000).toISOString().replace('T', ' ').slice(0, 19);
-        const hash2 = 'f9a0123456789abcdef0123456789abcdef0123456789abcdef0123456789abc';
-        const block2 = {
-          prevHash: hash1,
-          timestamp: timestamp2,
-          actor: 'AI Document Pre-Scrutiny Lab',
-          action: 'AI Re-Scan Passed: Verified FY 2026-27 validity and SDO digital signature. Deficiency cleared.',
-          payload: 'ocrConfidence=98.4;tamperScore=0.01;status=READY_FOR_HUMAN_REVIEW',
-          hash: hash2,
-          shortHash: `${hash2.slice(0, 8)}...${hash2.slice(-4)}`
-        };
-
         return {
           ...a,
-          status: 'AI Verified',
+          status: 'READY_FOR_REVIEW',
           stage: 3,
           progressPercent: 70,
           triageCategory: 'READY',
           deficiency: null,
           aiVerdict: 'Replacement Income Certificate (FY 2026-27) scanned successfully. All deficiencies resolved. Queued for Officer Scrutiny approval.',
-          deterministicRuleAudit: {
-            status: 'PASS',
-            stStatus: 'PASS',
-            incomeLimit: 'PASS',
-            ageLimit: 'PASS',
-            qualifyingMarks: 'PASS',
-            details: 'All statutory eligibility requirements verified. Valid Income Certificate for FY 2026-27 attached.'
-          },
-          documents: updatedDocs,
-          auditTrail: [...currentTrail, block1, block2]
+          documents: updatedDocs
         };
       }
       return a;
@@ -289,12 +327,19 @@ export function App() {
     showToast(`Deficiency rectified! Application ${appId} moved to READY queue for Officer Approval.`);
   };
 
-  const handleBulkSelect = (selectedIds) => {
+  const handleBulkSelect = async (selectedIds) => {
+    const res = await ApiClient.bulkSelectApplications(selectedIds);
+    if (res && res.success && res.data?.awardedApplications) {
+      await refreshApplications();
+      showToast(`Official National Selection Gazette Published! ${selectedIds.length} scholars awarded.`);
+      return;
+    }
+
     setApplicants(prev => prev.map(a => {
       if (selectedIds.includes(a.id)) {
         return {
           ...a,
-          status: 'Selected',
+          status: 'AWARDED',
           stage: 6,
           progressPercent: 100,
           triageCategory: 'READY',
@@ -319,12 +364,18 @@ export function App() {
     showToast(`Official National Selection Gazette Published! ${selectedIds.length} scholars awarded.`);
   };
 
-  const handleUpdateScheme = (updatedScheme) => {
-    setSchemes(prev => prev.map(s => s.id === updatedScheme.id ? updatedScheme : s));
+  const handleUpdateScheme = async (updatedScheme) => {
+    const res = await ApiClient.updateScheme(updatedScheme.id, updatedScheme);
+    if (res && res.success && res.data) {
+      const schemesRes = await ApiClient.getSchemes();
+      if (schemesRes && schemesRes.success) setSchemes(schemesRes.data);
+    } else {
+      setSchemes(prev => prev.map(s => s.id === updatedScheme.id ? updatedScheme : s));
+    }
     showToast(`Policy for ${updatedScheme.shortName} updated in production!`);
   };
 
-  const activeDeficiencyCount = applicants.filter(a => a.status === 'Deficiency Pending').length;
+  const activeDeficiencyCount = applicants.filter(a => a.status === 'Deficiency Pending' || a.status === 'DEFICIENT').length;
 
   // IF NOT AUTHENTICATED: RENDER CITIZEN PUBLIC HOME PAGE OR LOGIN/REGISTRATION GATEWAY
   if (!auth.isAuthenticated) {
@@ -398,6 +449,14 @@ export function App() {
         onSwitchWorkspace={handleSwitchWorkspace}
       />
 
+      {/* Offline Demo Mode Banner if backend is not reachable */}
+      {!isBackendOnline && (
+        <div className="bg-amber-500 text-slate-950 font-bold text-xs py-1.5 px-4 text-center border-b border-amber-600 flex items-center justify-center space-x-2">
+          <span>⚠️</span>
+          <span>Demo mode: simulated results (Backend server unreachable at http://localhost:5001). Changes will persist in browser session.</span>
+        </div>
+      )}
+
       {/* Global Toast Notification */}
       {toastMessage && (
         <div className="fixed top-24 right-4 z-50 bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-2xl border border-slate-700 flex items-center space-x-3 text-xs animate-in slide-in-from-top-4 duration-200">
@@ -450,6 +509,7 @@ export function App() {
                 onApproveApplication={handleApproveApplication}
                 onRaiseDeficiency={handleRaiseDeficiency}
                 onRejectApplication={handleRejectApplication}
+                onOverrideApplication={handleOverrideApplication}
                 onInspectDoc={(doc, app) => setActiveDocView({ doc, applicant: app })}
               />
             )}

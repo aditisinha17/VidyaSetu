@@ -10,14 +10,18 @@ import {
   GraduationCap
 } from 'lucide-react';
 
+import { PublicAwardVerificationModal } from './PublicAwardVerificationModal';
+
 export function AwardLetterModal({ applicant, onClose }) {
   if (!applicant) return null;
+  const [showVerifyModal, setShowVerifyModal] = React.useState(false);
 
   const handlePrint = () => {
     window.print();
   };
 
   const isNos = applicant.schemeId === 'NOS';
+  const sanctionNo = applicant.fellowshipDetails?.sanctionNumber || `MoTA/${applicant.schemeId}/2026/${applicant.id.split('-').pop()}`;
 
   return (
     <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
@@ -140,14 +144,26 @@ export function AwardLetterModal({ applicant, onClose }) {
           {/* Signatures & Security Verification */}
           <div className="mt-10 pt-6 border-t border-slate-200 flex justify-between items-end text-xs font-sans">
             <div className="flex items-center space-x-3">
-              <div className="p-2 border border-slate-300 rounded bg-slate-50 flex flex-col items-center">
-                <QrCode className="w-14 h-14 text-slate-800" />
-                <span className="text-[9px] text-slate-500 font-mono mt-1">Scan to Verify</span>
-              </div>
+              <button
+                type="button"
+                onClick={() => setShowVerifyModal(true)}
+                className="p-2 border border-slate-300 rounded bg-slate-50 hover:bg-blue-50 hover:border-blue-300 flex flex-col items-center cursor-pointer transition group"
+                title="Click to verify cryptographic signature in prototype registry"
+              >
+                <QrCode className="w-14 h-14 text-slate-800 group-hover:text-blue-900" />
+                <span className="text-[9px] text-blue-700 font-mono mt-1 font-bold group-hover:underline">Verify Online ↗</span>
+              </button>
               <div className="text-[10px] text-slate-500 leading-tight">
                 <div className="font-semibold text-slate-700">Digital Seal of Integrity</div>
                 <div>Hash: e82d...91c0</div>
                 <div className="text-emerald-700 font-medium">✓ Cryptographically Signed by MoTA</div>
+                <button
+                  type="button"
+                  onClick={() => setShowVerifyModal(true)}
+                  className="text-blue-600 hover:underline font-medium text-[10px] mt-0.5 block"
+                >
+                  View Registry Proof 🔍
+                </button>
               </div>
             </div>
 
@@ -159,6 +175,13 @@ export function AwardLetterModal({ applicant, onClose }) {
           </div>
         </div>
       </div>
+
+      {showVerifyModal && (
+        <PublicAwardVerificationModal
+          sanctionNumber={sanctionNo}
+          onClose={() => setShowVerifyModal(false)}
+        />
+      )}
     </div>
   );
 }

@@ -1,81 +1,44 @@
-"""
-Tamper-Evident SHA-256 Chained Audit Trail Service (Section J)
-Every lifecycle action computes a cryptographic hash chained to its predecessor block:
-H_k = SHA-256(H_{k-1} || timestamp || actor || action || payloadHash)
-"""
-
 import hashlib
 import json
-from datetime import datetime
-from typing import Dict, Any, List
+from datetime import datetime, timezone
+from backend_fastapi.database import supabase_get, supabase_post
 
-class AuditService:
-    GENESIS_HASH = "0000000000000000000000000000000000000000000000000000000000000000"
+async def create_audit_log(app_id: str, actor: str, action: str, payload: dict):
+    # Fetch previous hash
+    prev_logs = await supabase_get("audit_logs", params={"application_id": f"eq.{app_id}", "order": "created_at.desc", "limit": "1"})
+    prev_hash = prev_logs[0]["hash"] if prev_logs else "0" * 64
 
-    @staticmethod
-    def compute_hash(prev_hash: str, timestamp: str, actor: str, action: str, payload_str: str) -> str:
-        raw = f"{prev_hash}|{timestamp}|{actor}|{action}|{payload_str}"
-        return hashlib.sha256(raw.encode("utf-8")).hexdigest()
+    timestamp = datetime.now(timezone.utc).isoformat()
+    data_str = json.dumps(payload, sort_keys=True)
+    
+    hash_input = f"{prev_hash}{timestamp}{actor}{action}{data_str}"
+    new_hash = hashlib.sha256(hash_input.encode('utf-8')).hexdigest()
 
-    @classmethod
-    def create_block(cls, prev_hash: str, actor: str, action: str, payload: Any, index: int = 1) -> Dict[str, Any]:
-        timestamp = datetime.utcnow().isoformat() + "Z"
-        payload_str = json.dumps(payload, sort_keys=True) if isinstance(payload, (dict, list)) else str(payload)
-        payload_hash = hashlib.sha256(payload_str.encode("utf-8")).hexdigest()
-        block_hash = cls.compute_hash(prev_hash, timestamp, actor, action, payload_hash)
+    log_entry = {
+        "application_id": app_id,
+        "actor": actor,
+        "action": action,
+        "payload": payload,
+        "prev_hash": prev_hash,
+        "hash": new_hash,
+        "created_at": timestamp
+    }
+    
+    return await supabase_post("audit_logs", log_entry)
 
-        return {
-            "block_index": index,
-            "prev_hash": prev_hash,
-            "timestamp": timestamp,
-            "actor": actor,
-            "action": action,
-            "payload_hash": payload_hash,
-            "payload_data": payload_str,
-            "hash": block_hash,
-            "short_hash": f"{block_hash[:6]}..{block_hash[-4:]}"
-        }
-
-    @classmethod
-    def verify_chain(cls, blocks: List[Dict[str, Any]]) -> Dict[str, Any]:
-        """
-        Validates the entire hash chain from genesis to head block.
-        """
-        if not blocks:
-            return {"valid": True, "total_blocks": 0, "message": "No blocks in audit trail."}
-
-        for i, block in enumerate(blocks):
-            # Check predecessor linkage
-            if i > 0:
-                expected_prev = blocks[i - 1]["hash"]
-                if block["prev_hash"] != expected_prev:
-                    return {
-                        "valid": False,
-                        "broken_block_index": i,
-                        "reason": f"Block #{i} prev_hash mismatch. Expected {expected_prev}, got {block['prev_hash']}"
-                    }
-
-            # Recompute block hash
-            payload_str = block.get("payload_data", "")
-            payload_hash = hashlib.sha256(payload_str.encode("utf-8")).hexdigest()
-            recomputed = cls.compute_hash(
-                block["prev_hash"],
-                block["timestamp"],
-                block["actor"],
-                block["action"],
-                payload_hash
-            )
-
-            if block["hash"] != recomputed:
-                return {
-                    "valid": False,
-                    "broken_block_index": i,
-                    "reason": f"Cryptographic integrity failed at block #{i}. Hash mismatch detected."
-                }
-
-        return {
-            "valid": True,
-            "total_blocks": len(blocks),
-            "status": "AUDIT_CHAIN_VALID",
-            "message": f"All {len(blocks)} cryptographic ledger blocks verified successfully without tampering."
-        }
+async def verify_chain(app_id: str) -> dict:
+    logs = await supabase_get("audit_logs", params={"application_id": f"eq.{app_id}", "order": "created_at.asc"})
+    if not logs:
+        return {"valid": True, "message": "No logs found"}
+    
+    prev_hash = "0" * 64
+    for log in logs:
+        data_str = json.dumps(log["payload"], sort_keys=True)
+        hash_input = f"{prev_hash}{log['created_at']}{log['actor']}{log['action']}{data_str}"
+        computed = hashlib.sha256(hash_input.encode('utf-8')).hexdigest()
+        
+        if log["hash"] != computed or log["prev_hash"] != prev_hash:
+            return {"valid": False, "broken_at": log["id"]}
+        prev_hash = log["hash"]
+        
+    return {"valid": True, "message": "Chain is verified"}

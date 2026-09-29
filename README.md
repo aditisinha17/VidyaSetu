@@ -9,6 +9,7 @@
 [![All 5 MoTA Schemes](https://img.shields.io/badge/Schemes_Covered-All_5_MoTA_DBT_Schemes-blue.svg)](#)
 [![National Portals Integrated](https://img.shields.io/badge/SSO_Adapters-Jan_Parichay_%7C_DigiLocker-blue.svg)](#)
 [![DBT Sandbox](https://img.shields.io/badge/Payments_Sandbox-PFMS_%7C_NPCI_APB-orange.svg)](#)
+[![Audit Ledger](https://img.shields.io/badge/Integrity-SHA--256_Chained_Ledger-emerald.svg)](#)
 [![Accessibility](https://img.shields.io/badge/Accessibility-WCAG_2.1_AA_%7C_GIGW_2.0-teal.svg)](#)
 
 ---
@@ -29,7 +30,7 @@
 | :--- | :--- | :--- |
 | **1. End-to-End Digital Workflow** | Manage complete process: registration, online application, document submission, eligibility verification, scrutiny, screening, selection, communication, and post-selection management. | **8-Stage Unified Digital Lifecycle**: Discover ➔ Apply ➔ Verify ➔ Scrutinize ➔ Select ➔ Communicate ➔ Disburse ➔ Monitor in a single unified platform. |
 | **2. Configurable Scheme Rules** | Handle different eligibility criteria, documents, and selection processes applicable to individual schemes through a configurable system. | **Unified 5-Scheme Configuration Studio & Engine** (`SchemeConfigStudio.jsx` & `ruleEngine.js`): Dynamic rule parameters covering all 5 official MoTA schemes (Pre-Matric, Post-Matric, Top Class ST, NFST, and NOS) without code redeployment. |
-| **3. AI OCR & Document Intelligence** | Use automation and AI-based tools to reduce manual verification, identify incomplete or deficient applications, and improve accuracy. | **AI Document Pre-Scrutiny Service** (`documentAI.js`): Optical character extraction, bounding-box coordinate mapping, digital barcode verification, and automatic detection of lapsed validity (e.g. Income Certificate > 1 fiscal year old). Architected to integrate production OCR engines (e.g., Google Document AI / Tesseract). |
+| **3. AI OCR & Document Intelligence** | Use automation and AI-based tools to reduce manual verification, identify incomplete or deficient applications, and improve accuracy. | **AI Document Pre-Scrutiny Service** (`documentAI.js`): Optical character extraction, bounding-box coordinate mapping, digital barcode verification, and automatic detection of lapsed validity (e.g. Income Certificate > 1 fiscal year old). Real multipart upload with pre-computed demo fallback. |
 | **4. Deficiency Resolution Loop** | Provide workflow management for applicants and administrators, including deficiency identification, communication, resubmission, and status tracking. | **Stateful Deficiency Desk** (`DeficiencyDesk.jsx`): Interactive replacement certificate upload (`Fresh_Income_Certificate_FY2026_27_SDO_Ranchi.pdf`) with live AI re-scan, automatically shifting state to `READY FOR HUMAN REVIEW` with preserved seniority. |
 | **5. Transparent Selection & Human Oversight** | Support transparent screening and selection by applying approved scheme criteria while retaining appropriate human oversight. | **Application X-Ray Dual-Pane Workstation** (`OfficerScrutinyDesk.jsx`): Left pane displays demographic data and deterministic rule checklist; Right pane displays document canvas with OCR bounding boxes. Includes mandatory **Human Officer Override** and **Statutory Rejection** clause logging. *"AI assists, rules govern, humans decide."* |
 | **6. Scheme-Specific Selection Allocation** | Merit-based selection reflecting distinct scheme rules rather than generic formulas. | **Statutory Allocation Engines** (`MeritRankingEngine.jsx`): Pre-Matric & Post-Matric universal entitlements; Top Class institutional rank allocation; NFST PG marks + 30% horizontal female quota + 5% Divyangjan + PVTG slots; NOS QS World Top 500/200 offers + Expert Committee. |
@@ -38,103 +39,24 @@
 
 ---
 
-## 🏛️ Executive Summary & Architectural Vision
+## ⚖️ What is Real vs Simulated (Data & Architecture Transparency)
 
-The **Ministry of Tribal Affairs (MoTA)** administers 5 active higher-education scholarship and fellowship programs to empower Scheduled Tribe (ST) students across schools, premier Indian universities, and top global institutions ([dbttribal.gov.in](https://dbttribal.gov.in/AllScheme.aspx)):
+VidyaSetu adheres strictly to absolute truth in engineering and transparent disclosure:
 
-1. **Pre-Matric Scholarship Scheme for ST Students**: Centrally sponsored secondary school assistance for regular ST scholars in Classes IX & X with family income ≤ ₹2.50 LPA (Day Scholar: ₹225/mo, Hosteller: ₹525/mo, Books Grant: ₹750/yr).
-2. **Post-Matric Scholarship Scheme for ST Students**: Flagship Centrally Sponsored scheme covering higher secondary (Classes XI–XII), ITI, Polytechnic, Diploma, Undergraduate, and Postgraduate courses across 4 recognized course groups with family income ≤ ₹2.50 LPA (100% compulsory non-refundable fees + living allowance up to ₹1,200/mo).
-3. **Top Class Education for ST Students**: 100% tuition coverage, ₹45,000 IT hardware grant, books allowance, and monthly living assistance in notified premier institutions (IITs, IIMs, NITs, AIIMS, NLUs, NIDs) for scholars with family income ≤ ₹6.00 LPA.
-4. **National Fellowship for Scheduled Tribe Students (NFST)**: 750 annual research fellowships for regular M.Phil and Ph.D. scholars in Indian universities with family income ≤ ₹6.00 LPA (₹37,000–₹42,000/mo JRF/SRF stipend, HRA, and ₹20,500 annual contingency).
-5. **National Overseas Scholarship (NOS)**: 100% actual tuition fee coverage, economy return airfare, and annual living allowance (GBP 9,900 / USD 15,400) for Master's and Ph.D. studies at **QS World Top 500** universities (priority to ranking ≤ 200) with family income ≤ ₹8.00 LPA.
-
-### The Core Problem Addressed
-* **Manual Scrutiny Delays**: Applications historically required 4 to 6 months of multi-tier verification across school/university, district, state, and ministry desks.
-* **Repetitive Correspondence**: Minor document deficiencies (lapsed annual income certificates, smudged revenue seals) led to prolonged delays and accidental rejections.
-* **Hardcoded Eligibility Engines**: Legacy portals could not accommodate annual quota modifications or affirmative action adjustments without code redeployments.
-* **Post-Selection Bottlenecks**: Absence of automated tracking for supervisor-endorsed Quarterly Progress Reports (QPR) and timely Direct Benefit Transfer (DBT) release through PFMS.
-
-**VidyaSetu (विद्यासेतु)** bridges the existing government scholarship ecosystem (NSP, DigiLocker, PFMS, NPCI) through an intelligent orchestration layer to human scrutiny officers:  
-**Discover ➔ Apply ➔ Verify ➔ Scrutinize ➔ Select ➔ Communicate ➔ Disburse ➔ Monitor**
-
-> [!NOTE]
-> **Prototype Architecture & Sandbox Grounding:**  
-> VidyaSetu is a functional, modular prototype built for Smart India Hackathon 2026. External interfaces (UIDAI Aadhaar e-KYC, DigiLocker repository, PFMS e-FTO, and NPCI Aadhaar Payment Bridge) are implemented as **integration-ready sandbox adapters** that adhere to published government interface schemas. The AI document-intelligence engine is implemented as a simulated service architected to interface with production OCR solutions (e.g. Google Cloud Document AI, AWS Textract, or open-source Tesseract OCR). **AI assists, rules govern, humans decide**—all statutory and financial sanctions are strictly executed by authorized officers.
+| System / Capability | Real Implementation Details | Simulated / Sandbox Grounding |
+| :--- | :--- | :--- |
+| **Deterministic Rule Engine** | **100% REAL & GENERIC**: Evaluates criteria arrays dynamically from persistent database configuration. Zero hardcoded scheme branching. All rules carry `{source, verified}`. | None. Pure mathematical logic adhering to Article 342 and MoTA scheme guidelines. |
+| **Database & State Persistence** | **100% REAL DUAL-MODE**: Real persistent database store (`backend/data/store.js`) with Supabase PostgreSQL synchronization and local persistent JSON mirror (`localStore.json`). | Local JSON mirror runs automatically offline if external network is unavailable. |
+| **Tamper-Evident Audit Ledger** | **100% REAL SHA-256 HASH CHAIN**: Cryptographic hash chaining on every application creation, submission, upload, deficiency, approval, rejection, and override. Full cryptographic integrity verification via `/api/audit/:id/verify`. | Local cryptographic execution using Node.js native `crypto`. |
+| **Document Upload & AI Pre-Scrutiny** | **REAL FILE INGESTION + REAL PARSER**: Real multipart upload (`multer`), file size/type validation, Jaro-Winkler phonetic string similarity, certificate validity date computation against FY 2026-27. | Pre-computed fallback for test files in `/samples` guarantees 100% reliable demo execution without external OCR cloud latency. |
+| **Government External Integrations** | **STANDARD ADAPTER ARCHITECTURE**: Modular `GovernmentService` interfaces for Jan Parichay (SSO), DigiLocker (Certificates), PFMS (DBT Batches), and NIC SMS (Alerts). | Implemented as **Sandbox Adapters** with realistic payload schemas, latency simulation, and sandbox delivery receipts. Swappable to production via env vars. |
+| **Policy Simulator DSS** | **100% REAL SIMULATION LOGIC**: Computes projected beneficiary deltas, fiscal budget impact deltas (in ₹ Crores), and scrutiny workload shifts. | Run on a calibrated **10,000-record synthetic demonstration pool** clearly labeled in UI and responses. |
 
 ---
 
-## 📊 Grounded Official Statistics vs Prototype Demonstration Cohort
+## ⚡ 5-Minute Golden Journey Demonstration Walkthrough
 
-To maintain absolute credibility and transparent data hygiene, VidyaSetu clearly distinguishes published official MoTA DBT metrics from its synthetic demonstration cohort:
-
-| Metric Category | Metric & Source | Published Value / Scope | Description |
-| :--- | :--- | :--- | :--- |
-| **Official MoTA DBT** | Pre-Matric ST Scholarship | **28,99,699 Beneficiaries** | Official MoTA published portal figures ([dbttribal.gov.in](https://dbttribal.gov.in/AllScheme.aspx)) |
-| **Official MoTA DBT** | Post-Matric ST Scholarship | **65,42,207 Beneficiaries** | Official MoTA published portal figures ([dbttribal.gov.in](https://dbttribal.gov.in/AllScheme.aspx)) |
-| **Official MoTA DBT** | Top Class Education ST | **1,000 Sanctioned Slots** | Premier institutions (IITs, IIMs, NITs, AIIMS, NLUs) |
-| **Official MoTA DBT** | National Fellowship (NFST) | **750 Sanctioned Slots** | M.Phil and Ph.D. scholars in Indian universities |
-| **Official MoTA DBT** | National Overseas Scholarship (NOS) | **20 Sanctioned Slots** | Master's and Ph.D. studies in QS Top 500 universities |
-| **Official MoTA DBT** | Cumulative Fellowship DBT Outlays | **₹4,300+ Crores** | Total historical transfers via PFMS |
-| **Prototype Demo Cohort** | Synthetic Demonstration Pool | **12,842 Applications** | Synthetic dataset across 36 States/UTs and 75 PVTG communities |
-| **Prototype Demo Cohort** | Policy Simulator Pool | **10,000 Records** | Calibrated synthetic cohort for stress-testing rule adjustments |
-| **Prototype Demo Cohort** | Disbursal Sandbox Batches | **₹178.4 Crores** | Synthetic PFMS batch simulation pool |
-
----
-
-## 🤖 4 Core Defensible AI Capabilities
-
-VidyaSetu organizes its artificial intelligence capabilities into 4 modular, explainable services:
-
-```
-┌────────────────────────────────────────────────────────────────────────────────────────┐
-│                        VIDYASETU 4 CORE AI MODULES                                     │
-├──────────────────────────┬──────────────────────────┬──────────────────────────────────┤
-│ 1. Document Intelligence │ 2. Automated Deficiency  │ 3. Policy Simulator DSS          │
-│    & OCR Service         │    & Anomaly Detector    │    (10,000 Synthetic Records)    │
-│ • OCR entity extraction  │ • Expired certificate    │ • No-code rule perturbation      │
-│ • Digital seal & barcode   lapsed validity alerts   │ • Projected beneficiary delta    │
-│ • Name phonetic match    │ • Cross-application dupe │ • Instant budgetary fiscal       │
-│ • Article 342 verification phone/bank cluster flag  │   impact delta calculations      │
-├──────────────────────────┴──────────────────────────┴──────────────────────────────────┤
-│ 4. Multilingual Voice & Text Copilot (VidyaMitra)                                      │
-│ • Conversational guidance in 6 scheduled & tribal languages (Santali, Odia, etc.)      │
-│ • Speech recognition & voice synthesis for low-literacy applicant accessibility         │
-│ • Core Policy: "AI assists. Rules govern. Humans decide."                              │
-└────────────────────────────────────────────────────────────────────────────────────────┘
-```
-
-### Module 1: Document Intelligence & OCR Service (`documentAI.js`)
-* Extracts document attributes: issuing authority, certificate serial number, date of issuance, candidate name phonetic similarity (98%+ match).
-* Cross-references applicant community against the **Central Scheduled Tribe list notified under Article 342 of the Constitution of India**.
-* Architected as a modular interface that integrates with production OCR engines (Google Document AI / Tesseract) while providing a reliable prototype sandbox.
-
-### Module 2: Automated Deficiency & Cross-Application Anomaly Detection
-* **Automated Deficiency Detection**: Detects lapsed certificates (e.g. an Income Certificate issued in Jan 2023, exceeding the statutory 1-fiscal-year validity window). Dispatches instant deficiency notices with a 15-day resolution window preserving queue seniority.
-* **Cross-Application Anomaly Detection**: Uncovers shared contact numbers, bank accounts, or duplicate identity markers across different applications (e.g. flagging potential fraud rings across state borders).
-
-### Module 3: Policy Simulator Decision Support System (`policySimulator.js`)
-* Evaluates proposed policy rule adjustments (raising income ceilings, relaxing marks, adding affirmative PVTG quotas) across a calibrated demonstration pool of **10,000 Synthetic Applications**.
-* Delivers instant predictive impact analysis: projected beneficiary deltas, fiscal budget impact (in ₹ Crores), and administrative scrutiny workload changes.
-
-### Module 4: Multilingual Voice & Text Copilot — VidyaMitra (`VidyaMitraChatbot.jsx`)
-* Conversational assistant supporting 6 languages: English, हिन्दी (Hindi), ওডodia (Odia), ᱥᱟᱱᱛᱟᱲᱤ (Santali - Ol Chiki script), తెలుగు (Telugu), and मराठी (Marathi).
-* Equipped with Web Speech recognition and synthesis to assist first-generation tribal learners in discovering schemes and understanding eligibility.
-
----
-
-## ⚖️ Deterministic Governance: "AI Assists, Rules Govern, Humans Decide"
-
-To prevent algorithmic discrimination and ensure strict adherence to Indian administrative law:
-
-1. **AI Assists**: AI extracts text, maps coordinates, identifies expired dates, and flags potential anomalies into triage queues (`READY`, `REVIEW`, `DEFICIENT`).
-2. **Rules Govern**: Scheme eligibility is determined **100% deterministically** by statutory rules (`ruleEngine.js`) citing official MoTA guidelines and Article 342. No applicant is ever rejected by an AI probabilistic score.
-3. **Humans Decide**: Sanction orders and adverse rejections are strictly executed by designated Ministry Officers on the **Dual-Pane Scrutiny Desk**, with mandatory statutory clause logging for RTI auditability.
-
----
-
-## ⚡ 7-Minute Golden End-to-End Walkthrough Guide
-
-Follow this curated walkthrough to experience the entire lifecycle of scholar **Birsa Hemrom** (`MOTA-2026-NFST-0101`):
+Experience the entire lifecycle of star applicant **Birsa Hemrom** (`MOTA-2026-NFST-0101`):
 
 ```
 ┌──────────────┐     ┌──────────────┐     ┌──────────────┐     ┌──────────────┐
@@ -152,35 +74,33 @@ Follow this curated walkthrough to experience the entire lifecycle of scholar **
 
 1. **Step 1: Public Pre-Checker (30 Seconds)**
    * On the Public Home Page ([http://localhost:5173/](http://localhost:5173/)), scroll to **"Check Your Eligibility in 30 Seconds"**.
-   * Select Post-Graduation, ₹4,50,000 income, 26 yrs, Ph.D. in India, Santhal.
+   * Select Post-Graduation, ₹4,80,000 income, 26 yrs, Ph.D. in India, Santhal.
    * Click **"Evaluate My Statutory Eligibility Now"** ➔ click **"Why am I eligible? 🔍"** to view the deterministic statutory rule breakdown citing Article 342.
 
-2. **Step 2: Launch Golden Demo Candidate (Birsa Hemrom)**
+2. **Step 2: Launch Star Scholar Profile (Birsa Hemrom)**
    * Click the hero button: **"🚀 Run 7-Minute Golden Demo (Birsa Hemrom)"**.
    * You are logged in as Birsa Hemrom (`MOTA-2026-NFST-0101`, Ph.D. at IIT Kharagpur, Santhal tribe).
-   * Notice status: **"Deficiency Pending"** with an active alert banner indicating an expired Income Certificate (issued Jan 2023, >1 yr old).
-   * Inspect the **End-to-End Application Lifecycle Tracker** and the **Statutory Rules Compliance Card**.
+   * Observe the **Application Health Score (92/100)** breakdown badge, active deficiency history, and 6-stage lifecycle stepper.
 
-3. **Step 3: Resolve Deficiency via AI Re-Scan**
-   * Click the red **"Rectify & Re-Upload"** button (or navigate to the **Deficiency Desk** tab).
-   * Review the Scrutiny Officer's observation.
-   * Click the upload box to load `Fresh_Income_Certificate_FY2026_27_SDO_Ranchi.pdf`.
+3. **Step 3: Resolve Deficiency via Real Document Re-Upload**
+   * Navigate to the **Deficiency Desk** tab.
+   * Upload `Fresh_Income_Certificate_FY2026_27_SDO_Ranchi.pdf` (or any sample from `/samples`).
    * Watch the AI re-scan validate the SDO barcode, 100% name match, and FY 2026-27 validity.
    * Click **"Submit Rectified Document to MoTA Desk"**.
-   * State transitions immediately to: **`STATUS: READY FOR HUMAN REVIEW`**.
+   * State transitions immediately to: **`STATUS: READY FOR HUMAN REVIEW`** with preserved seniority.
 
 4. **Step 4: Ministry Officer Scrutiny Desk (Application X-Ray)**
-   * Click **"Switch to Ministry Officer Scrutiny Desk (Dual-Pane Workstation) ➔"** (or click the hero button `🛡️ Ministry Officer Scrutiny Login` / header toggle `Officer Desk ➔`).
-   * Select Birsa Hemrom (`MOTA-2026-NFST-0101`) in the queue.
-   * **Left Pane**: Observe that all deterministic rules (ST status Article 342, income, age, degree) now show **PASS**.
+   * Click **"Switch to Ministry Officer Scrutiny Desk (Dual-Pane Workstation) ➔"**.
+   * Select Birsa Hemrom (`MOTA-2026-NFST-0101`) in the priority review queue.
+   * **Left Pane**: Observe all deterministic statutory rules showing **PASS**.
    * **Right Pane**: Inspect the Income Certificate canvas with the green OCR bounding box and extracted entity table.
-   * Click **"Approve Application"** to forward to the Selection Committee (or inspect the **Human Officer Override** and **Statutory Rejection** modals).
+   * Click **"Approve Application"** to forward to the National Selection Committee (or inspect **Human Officer Override** and **Statutory Rejection** modals).
 
 5. **Step 5: Scheme Configuration Studio & 10,000 Synthetic Applications Simulator**
    * In the top admin bar, click **"Scheme Config & 10k Simulator"**.
-   * View all 5 official MoTA schemes (Pre-Matric, Post-Matric, Top Class, NFST, NOS).
+   * View all 5 official MoTA schemes with versioned rules.
    * Switch to the **Policy Sandbox** tab.
-   * Click **"Simulate on 10,000 Synthetic Applications"** to observe real-time projected beneficiary deltas (+680 scholars) and budget impact (+₹25.16 Cr).
+   * Click **"Simulate on 10,000 Synthetic Applications"** to observe real-time projected beneficiary deltas and budget impact (+₹86.23 Cr).
 
 6. **Step 6: Verify Tamper-Evident SHA-256 Chained Audit Trail**
    * In the admin bar, click **"AI Triage & Priority Desk"** (or click Audit Trail on any student card).
@@ -189,48 +109,50 @@ Follow this curated walkthrough to experience the entire lifecycle of scholar **
    * Click **"Simulate Tamper Attack (Test)"** ➔ observe instant detection of altered block hash and broken chain pointer.
    * Click **"Restore Original Audit Chain"** to return to integrity.
 
-7. **Step 7: Award Letter & PFMS DBT Sandbox Hub**
+7. **Step 7: Award Letter & Public QR Registry Verification**
    * In the admin bar, click **"Merit & Quota Engine"** and click **"Generate Official Gazette & Sanction Award Letters"**.
-   * View Birsa's official Award Letter with digitally signed credentials and prototype QR registry verification.
-   * Switch to **"Post-Selection & DBT Hub"** to view quarterly progress report (QPR) compliance and simulated PFMS e-FTO disbursement batches.
+   * View Birsa's official Award Letter with digitally signed credentials.
+   * Click the **QR Code** or **"Verify Online ↗"** to launch the **Public Award Verification Registry** modal confirming genuine status.
 
 ---
 
-## 🏗️ Technical Architecture & Repository Structure
+## 📡 Complete REST API Endpoint Reference
 
-VidyaSetu is built on a **modular, service-oriented prototype architecture designed for event-driven production deployment**:
+The backend exposes a complete, consistent REST API with `{ success, data, message, error }` envelopes:
 
-```
-VidyaSetu/
-├── backend/
-│   ├── server.js                     # Zero-dependency Node.js HTTP/REST server (Port 5001)
-│   ├── services/
-│   │   ├── ruleEngine.js             # Pure deterministic statutory evaluation engine (Article 342)
-│   │   ├── auditChain.js            # SHA-256 cryptographic block chaining & verification
-│   │   ├── documentAI.js            # OCR entity extraction, date check & re-scan service
-│   │   └── policySimulator.js       # 10,000-record synthetic policy DSS simulator
-│   └── data/
-│       └── db.js                     # In-memory database with 5 MoTA schemes & applicants
-├── src/
-│   ├── components/
-│   │   ├── PublicHomePage.jsx        # Citizen home page, 30-sec pre-checker & "Why?" modal
-│   │   ├── Header.jsx                # Gov of India header, accessibility & role quick-toggle
-│   │   ├── AuditTrailModal.jsx       # Interactive SHA-256 chain integrity validator
-│   │   ├── AwardLetterModal.jsx      # Sanction award letter with prototype QR verification
-│   │   ├── VidyaMitraChatbot.jsx     # Multilingual voice/text conversational AI copilot
-│   │   └── LoginPanel.jsx            # Citizen / Officer Jan Parichay authentication
-│   ├── portals/
-│   │   ├── ApplicantPortal/          # Scholar dashboard, wizard, deficiency desk, QPR
-│   │   └── AdminPortal/              # Scrutiny desk, triage, merit engine, policy simulator
-│   ├── services/
-│   │   └── apiClient.js              # REST client with automatic fallback for static hosting
-│   └── data/
-│       ├── mockData.js               # Initial applicants, 5 schemes, and tribal communities
-│       └── i18n.js                   # Multilingual dictionary (6 official & tribal languages)
-├── SYSTEM_ARCHITECTURE.md            # Comprehensive technical architecture specification
-├── DEPLOYMENT.md                     # Production deployment manual (Cloud & Docker)
-└── package.json                      # Project dependencies and operational scripts
-```
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/health` | Health check, server status & Government Sandbox Adapters overview |
+| `POST` | `/api/auth/demo-login` | Authenticate student, officer, or admin via Jan Parichay Sandbox |
+| `GET` | `/api/users` | List all registered demo users and roles |
+| `GET` | `/api/schemes` | Retrieve all 5 MoTA schemes with active versioned rules |
+| `GET` | `/api/schemes/:id` | Retrieve single scheme definition and required documents |
+| `PUT` | `/api/schemes/:id` | Update scheme rules and parameters (SchemeConfigStudio) |
+| `POST` | `/api/eligibility/check` | Deterministic statutory eligibility evaluation against configured rules |
+| `GET` | `/api/applications` | Query applications with filters (`schemeId`, `status`, `userId`) + Health Scores |
+| `GET` | `/api/applications/:id` | Retrieve single application case file with documents & audit trail |
+| `POST` | `/api/applications` | Create new scholarship/fellowship application (`DRAFT`/`SUBMITTED`) |
+| `POST` | `/api/applications/:id/submit` | Submit application and trigger automated AI pre-scrutiny |
+| `POST` | `/api/documents/upload` | Multipart file upload with OCR parsing and Jaro-Winkler name similarity |
+| `POST` | `/api/applications/:id/documents/replace` | Replace deficient document, execute AI re-scan, advance state to `READY_FOR_REVIEW` |
+| `GET` | `/api/officer/queue` | Computed triage priority queue (PVTG first, lowest income, high marks) |
+| `POST` | `/api/applications/:id/scrutiny/pickup` | Scrutiny Officer picks up case file (`UNDER_SCRUTINY`) |
+| `POST` | `/api/applications/:id/scrutiny/approve` | Scrutiny Officer approves application (`APPROVED`) with chained audit block |
+| `POST` | `/api/applications/:id/scrutiny/reject` | Scrutiny Officer rejects application with mandatory statutory clause |
+| `POST` | `/api/applications/:id/scrutiny/override` | Scrutiny Officer overrides AI recommendation with logged justification |
+| `POST` | `/api/merit/select` | National Selection Committee issues official Sanction Orders (`AWARDED`) |
+| `GET` | `/api/awards/verify/:sanctionNumber` | Public prototype registry for verifying Award Letter QR codes |
+| `GET` | `/api/audit/:id/chain` | Retrieve full cryptographic audit trail for application |
+| `GET` | `/api/audit/:id/verify` | Cryptographically verify SHA-256 hash chain integrity |
+| `POST` | `/api/policy/simulate` | Execute what-if policy simulation over 10,000 synthetic records |
+| `GET` | `/api/anomalies` | Detect cross-application clusters sharing phone, bank account, or photo hash |
+| `GET` | `/api/analytics/summary` | Executive dashboard KPIs computed live from database applications |
+| `GET` | `/api/qpr` & `POST /api/qpr` | Query and submit supervisor-endorsed Quarterly Progress Reports |
+| `GET` | `/api/disbursements` | Retrieve Direct Benefit Transfer (DBT) disbursement ledger |
+| `POST` | `/api/disbursements/batch` | Execute simulated PFMS e-FTO payment batch |
+| `GET` | `/api/grievances` & `POST /api/grievances` | 7-day SLA grievance tracking and citizen redressal portal |
+| `GET` | `/api/notifications` | Citizen multi-channel notification drawer |
+| `POST` | `/api/admin/reset-db` | One-click restoration of pristine SIH demonstration state |
 
 ---
 
@@ -240,54 +162,39 @@ VidyaSetu/
 * **Node.js**: v18.0 or higher (v24.x tested and supported)
 * **npm**: v9.0 or higher
 
-### 1. Clone the Repository
+### 1. Clone & Install
 ```bash
 git clone https://github.com/aditisinha17/VidyaSetu.git
 cd VidyaSetu
-```
-
-### 2. Install Dependencies
-```bash
 npm install
 ```
 
-### 3. Run the Complete Platform (Backend + Frontend)
+### 2. Run the Complete Platform
+In separate terminal tabs:
 
 **Terminal 1 — Start the Backend Service:**
 ```bash
 npm run backend
 ```
-*Starts the VidyaSetu Governance API server at `http://localhost:5001`.*
+*Starts the VidyaSetu Express Governance API server on `http://localhost:5001`.*
 
 **Terminal 2 — Start the Vite Development Server:**
 ```bash
 npm run dev
 ```
-*Opens the VidyaSetu application at `http://localhost:5173`.*
+*Opens the VidyaSetu frontend on `http://localhost:5173`.*
 
-### 4. Build for Production
+### 3. Run Automated End-to-End Audit
+Verify all 17 checkpoints across the full Golden Journey:
 ```bash
-npm run build
+node scripts/verify-golden-journey.js
 ```
-*Generates optimized production assets in `dist/`.*
 
----
-
-## 🌐 Multilingual Accessibility & Tribal Inclusion (GIGW 2.0)
-
-VidyaSetu is designed from the ground up for equitable access across remote tribal belts:
-* **6 Supported Languages**: English, हिन्दी (Hindi), ଓଡ଼ିଆ (Odia), ᱥᱟᱱᱛᱟᱲᱤ (Santali - Ol Chiki script), తెలుగు (Telugu), and मराठी (Marathi).
-* **Low-Bandwidth 2G Mode**: Eliminates heavy graphics and compresses UI payloads for scholars in remote tribal areas.
-* **Accessibility Controls**: WCAG 2.1 AA compliant high-contrast theme and font size scaling ($A$ / $A+$).
-* **Screen Reader & Speech Support**: Multilingual speech recognition and synthesis via the **VidyaMitra** copilot.
-
----
-
-## 📜 Compliance, Integrity & Legal Framework
-
-* **Constitutional Grounding**: Implements statutory reservation rules under Article 342 of the Constitution of India and official Central/State notified ST gazette lists.
-* **Explainable Decisions**: RTI-friendly decision records with deterministic rule audit trails ensure that administrative discretion is transparent and auditable.
-* **Zero Adverse Automated Decisions**: AI performs entity extraction, validation flagging, and triage prioritization; adverse decisions require statutory clause citations by authorized human officers.
+### 4. Reset Demo State Anytime
+Restore the pristine demo dataset with one command:
+```bash
+npm run reset-db
+```
 
 ---
 
