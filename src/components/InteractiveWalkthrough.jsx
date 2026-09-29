@@ -57,11 +57,15 @@ export function InteractiveWalkthrough({
   const current = steps[currentStep];
   const IconComponent = current.icon;
 
-  const handleFinish = async () => {
-    if (user?.id) {
-      await ApiClient.updateTutorialCompleted(user.id);
-    }
+  const handleFinish = () => {
+    // 1. Close modal immediately so student stays smoothly in student portal
     onClose();
+    // 2. Persist completion flag to backend asynchronously without blocking or triggering reload
+    if (user?.id) {
+      ApiClient.updateTutorialCompleted(user.id).catch(err => {
+        console.warn('Could not update tutorial status in backend:', err);
+      });
+    }
   };
 
   const handleNext = () => {

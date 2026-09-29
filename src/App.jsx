@@ -30,11 +30,22 @@ import { INITIAL_APPLICANTS, INITIAL_SCHEMES } from './data/mockData';
 import { ApiClient } from './services/apiClient';
 
 export function App() {
-  // Authentication State
-  const [auth, setAuth] = useState({
-    isAuthenticated: false, // Starts at Public Portal
-    type: null, // 'student' | 'admin'
-    user: null
+  // Authentication State with LocalStorage Session Persistence
+  const [auth, setAuth] = useState(() => {
+    try {
+      const saved = localStorage.getItem('vidyasetu_auth');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && parsed.isAuthenticated) return parsed;
+      }
+    } catch (e) {
+      console.warn('Could not parse stored auth session:', e);
+    }
+    return {
+      isAuthenticated: false, // Starts at Public Portal
+      type: null, // 'student' | 'admin'
+      user: null
+    };
   });
 
   const [publicViewState, setPublicViewState] = useState('home'); // 'home' | 'login'
@@ -50,7 +61,13 @@ export function App() {
   // Core application state
   const [applicants, setApplicants] = useState(INITIAL_APPLICANTS);
   const [schemes, setSchemes] = useState(INITIAL_SCHEMES);
-  const [selectedApplicantId, setSelectedApplicantId] = useState(INITIAL_APPLICANTS[0].id);
+  const [selectedApplicantId, setSelectedApplicantId] = useState(() => {
+    try {
+      const savedId = localStorage.getItem('vidyasetu_selected_applicant_id');
+      if (savedId) return savedId;
+    } catch (e) {}
+    return INITIAL_APPLICANTS[0].id;
+  });
 
   // Modal states
   const [isWizardOpen, setIsWizardOpen] = useState(false);
@@ -61,6 +78,26 @@ export function App() {
   const [isNotificationDrawerOpen, setIsNotificationDrawerOpen] = useState(false);
   const [isWelcomeTourOpen, setIsWelcomeTourOpen] = useState(false);
   const [isWalkthroughOpen, setIsWalkthroughOpen] = useState(false);
+
+  // Keep auth state synchronized in localStorage
+  useEffect(() => {
+    try {
+      if (auth.isAuthenticated) {
+        localStorage.setItem('vidyasetu_auth', JSON.stringify(auth));
+      } else {
+        localStorage.removeItem('vidyasetu_auth');
+      }
+    } catch (e) {}
+  }, [auth]);
+
+  // Keep selected applicant ID synchronized in localStorage
+  useEffect(() => {
+    try {
+      if (selectedApplicantId) {
+        localStorage.setItem('vidyasetu_selected_applicant_id', selectedApplicantId);
+      }
+    } catch (e) {}
+  }, [selectedApplicantId]);
 
   // Toast
   const [toastMessage, setToastMessage] = useState(null);
@@ -127,6 +164,10 @@ export function App() {
   };
 
   const handleLogout = () => {
+    try {
+      localStorage.removeItem('vidyasetu_auth');
+      localStorage.removeItem('vidyasetu_selected_applicant_id');
+    } catch (e) {}
     setAuth({
       isAuthenticated: false,
       type: null,
@@ -611,7 +652,12 @@ export function App() {
       {/* First-Time User Tutorial: Welcome Tour (3 Slides) */}
       <WelcomeTourModal
         isOpen={isWelcomeTourOpen}
-        onClose={(dontShowAgain) => setIsWelcomeTourOpen(false)}
+        onClose={(dontShowAgain) => {
+          setIsWelcomeTourOpen(false);
+          if (!auth.isAuthenticated) {
+            handleLaunchGoldenDemo();
+          }
+        }}
         lang={lang}
         setLang={setLang}
       />
@@ -619,7 +665,12 @@ export function App() {
       {/* First-Time User Tutorial: Interactive Guided Walkthrough */}
       <InteractiveWalkthrough
         isOpen={isWalkthroughOpen}
-        onClose={() => setIsWalkthroughOpen(false)}
+        onClose={() => {
+          setIsWalkthroughOpen(false);
+          if (auth.isAuthenticated && auth.type === 'student') {
+            showToast('✓ Walkthrough complete! Welcome to your Scholar Workspace.');
+          }
+        }}
         user={auth?.user}
         lang={lang}
       />
