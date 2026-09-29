@@ -42,7 +42,8 @@ export function Header({
   onOpenDeficiency,
   onOpenNotifications,
   onOpenGrievances,
-  onSwitchWorkspace
+  onSwitchWorkspace,
+  onOpenTour
 }) {
   const t = I18N[lang] || I18N.en;
 
@@ -157,6 +158,18 @@ export function Header({
 
         {/* Action Controls & Authenticated User Status */}
         <div className="flex items-center space-x-2.5">
+          {/* Welcome Tour Trigger */}
+          {onOpenTour && (
+            <button
+              onClick={onOpenTour}
+              className="px-2.5 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-900 border border-blue-200 transition flex items-center space-x-1 text-xs font-bold"
+              title="Welcome Tour & Guidelines"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-blue-600" />
+              <span className="hidden md:inline">{lang === 'hi' ? 'टूर' : 'Tour'}</span>
+            </button>
+          )}
+
           {/* Grievance Desk Button (Student mode) */}
           {isStudent && (
             <button

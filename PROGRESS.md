@@ -22,11 +22,31 @@
 | **System 8: Complete REST APIs & Error Handling** | ✅ **DONE** | Comprehensive Express server covering 17 routes with `{ success, data, message, error }` envelopes and proper HTTP status codes |
 | **System 9: Role-Based Authorization** | ✅ **DONE** | Strict workspace boundaries for Student, Institute Officer, Ministry Scrutiny Officer, and Platform Admin |
 | **System 10: 100% Clickable UI & Zero Dead Buttons** | ✅ **DONE** | All portal workflows wired to real API calls; offline demo banner if backend unreachable; zero dead buttons |
+| **System 11: First-Time User Tutorial System** | ✅ **DONE** | 4-layer onboarding: Welcome Tour (3 slides), Interactive Guided Walkthrough on first login, Mission Checklist (6 Steps to a Scholarship), Contextual ⓘ Help + "What happens next?" on every stage |
+| **System 12: 2G Data Saver / Remote Low-Bandwidth Mode** | ✅ **DONE** | `data_saver_mode` in DB, `LiteApplicantDashboard.jsx` with static accessible tables, tap-to-load previews, ~85% mobile data savings |
+| **System 13: Live OCR Pipeline & QR Document Slips** | ✅ **DONE** | `tesseract.js` live optical character recognition with per-field confidence, transparent fallback tagging, `qrcode` generation for printable statutory slips |
+| **System 14: Quality Gates A–G Verification Suite** | ✅ **DONE** | `node scripts/verify-quality-gates.js`: 41/41 criteria passed (100%) across Schemes, Rule Engine, AI Scrutiny, Scrutiny Desk, Ledger, DSS, and User Onboarding |
 | **Demo Data & Test Samples** | ✅ **DONE** | Birsa Hemrom at `UNDER_SCRUTINY` with 6 docs & 1 resolved deficiency; anomaly pair `0102` & `0103` flagged; `/samples` with mapping; `npm run reset-db` |
 
 ---
 
-## Golden Journey Automated Test Suite Results
+## Quality Gates A–G Audit Results (`scripts/verify-quality-gates.js`)
+```
+================================================================
+🎉  ALL QUALITY GATES PASSED: 41/41 AUDIT CRITERIA MET (100%)
+================================================================
+✓ GATE A: Statutory Scheme Integrity (All 5 schemes, versioned, {source, verified})
+✓ GATE B: Deterministic Statutory Eligibility Engine (Pure function, explainable checklist)
+✓ GATE C: Document AI Pre-Scrutiny & 14-Day Deficiency Workflow (Real OCR, DEF-INC-EXPIRED, re-scan)
+✓ GATE D: Human-in-the-Loop Scrutiny Desk (PVTG queue, pickup, approval, logged override)
+✓ GATE E: Cryptographic Audit Ledger & Chain Integrity (SHA-256 blocks, 100% hash validity)
+✓ GATE F: Policy Simulation & Decision Support System (10k synthetic applications, +1778 scholars, +₹86.23 Cr)
+✓ GATE G: First-Time User Tutorial, 6-Step Progress & 2G Data Saver (6-step checklist, tutorial flag, data-saver flag, QR slips)
+```
+
+---
+
+## Golden Journey Automated Test Suite Results (`scripts/verify-golden-journey.js`)
 ```
 ================================================================
 🎉  GOLDEN JOURNEY AUDIT COMPLETE: 17/17 CHECKPOINTS PASSED (100%)

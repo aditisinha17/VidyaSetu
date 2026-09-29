@@ -456,5 +456,64 @@ export const ApiClient = {
       console.warn('API error resetDatabase:', e);
     }
     return null;
+  },
+
+  /**
+   * 6 Steps Mission Progress
+   */
+  async getProgress(userId = null, appId = null) {
+    try {
+      const params = new URLSearchParams();
+      if (userId) params.append('userId', userId);
+      if (appId) params.append('appId', appId);
+      const url = `${API_BASE}/me/progress${params.toString() ? `?${params.toString()}` : ''}`;
+      const res = await fetch(url, { signal: AbortSignal.timeout(2000) });
+      if (res.ok) return await res.json();
+    } catch (e) {
+      console.warn('API error getProgress:', e);
+    }
+    return null;
+  },
+
+  /**
+   * Update User Tutorial Completion
+   */
+  async updateTutorialCompleted(userId) {
+    try {
+      const res = await fetch(`${API_BASE}/users/${userId}/tutorial-completed`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        signal: AbortSignal.timeout(2000)
+      });
+      if (res.ok) return await res.json();
+    } catch (e) {
+      console.warn('API error updateTutorialCompleted:', e);
+    }
+    return null;
+  },
+
+  /**
+   * Update User 2G Data Saver Mode
+   */
+  async updateDataSaver(userId, enabled) {
+    try {
+      const res = await fetch(`${API_BASE}/users/${userId}/data-saver`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ enabled }),
+        signal: AbortSignal.timeout(2000)
+      });
+      if (res.ok) return await res.json();
+    } catch (e) {
+      console.warn('API error updateDataSaver:', e);
+    }
+    return null;
+  },
+
+  /**
+   * Get printable slip URL
+   */
+  getApplicationSlipUrl(appId, type = 'acknowledgment') {
+    return `${API_BASE}/applications/${appId}/slip?type=${type}`;
   }
 };

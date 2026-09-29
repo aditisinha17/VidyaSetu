@@ -1,4 +1,5 @@
 // Multi-language localization dictionary for VidyaSetu MoTA Portal
+// Supports English, Hindi, and Regional Tribal Languages (Odia, Santhali, Telugu, Marathi)
 
 export const I18N = {
   en: {
@@ -35,8 +36,93 @@ export const I18N = {
     schemesNav: 'Schemes & Grants',
     eligibilityNav: 'Eligibility Checker',
     governanceNav: 'Governance Roadmap',
-    selectLang: 'Language / भाषा'
+    selectLang: 'Language / भाषा',
+
+    // Tutorial & Onboarding
+    welcomeTour: {
+      badge: 'Welcome to VidyaSetu',
+      slide1Title: 'Bridge of Knowledge for Tribal Scholars',
+      slide1Desc: 'VidyaSetu connects ST students to 5 major Ministry of Tribal Affairs schemes: Pre-Matric, Post-Matric, Top Class Education, National Fellowship for ST (NFST), and National Overseas Scholarship (NOS).',
+      slide2Title: 'Your 4-Step Scholarship Journey',
+      slide2Desc: 'Simple, transparent, and fair scholarship workflow with real-time tracking.',
+      step1: '1. Check Eligibility — Statutory rule evaluation in 30 seconds',
+      step2: '2. Submit Application — Upload certificates via DigiLocker or direct scan',
+      step3: '3. Automated AI Pre-Scrutiny — Real OCR verification with 14-day defect resolution',
+      step4: '4. Direct Benefit Transfer — Fast merit selection and monthly stipend via PFMS',
+      slide3Title: 'What to Prepare Before You Start',
+      slide3Desc: 'Having these documents ready will allow you to complete your application in under 10 minutes:',
+      doc1: 'Aadhaar Card (Mobile-linked for DigiLocker KYC)',
+      doc2: 'ST Caste Certificate (Notified under Article 342)',
+      doc3: 'Income Certificate (Valid for ongoing FY 2026-27)',
+      doc4: 'Academic Marksheets / Degree Certificates',
+      doc5: 'Admission / Enrolment Letter & Fee Receipt',
+      next: 'Next',
+      back: 'Back',
+      skip: 'Skip Tour',
+      start: 'Get Started Now',
+      dontShowAgain: 'Don’t show this again'
+    },
+
+    walkthrough: {
+      step1Title: 'Statutory Scheme Finder',
+      step1Text: 'Use the Eligibility Checker to test your qualifications across all 5 schemes without bias.',
+      step2Title: 'Live Milestone Tracker',
+      step2Text: 'Follow your application across all 6 stages from initial submission to final sanction.',
+      step3Title: 'Deficiency Resolution Desk',
+      step3Text: 'If AI flags any document issues, review the statutory defect and replace it within 14 days.',
+      step4Title: 'Document Locker & Verification',
+      step4Text: 'Download your official Acknowledgment Slip and QR-verified Award Letter anytime.',
+      finish: 'Finish Tour',
+      skip: 'Skip Guided Tour',
+      replay: 'Replay Tour'
+    },
+
+    missionChecklist: {
+      title: '6 Steps to a Scholarship',
+      subtitle: 'Official statutory progress recorded in MoTA ledger',
+      completed: 'Completed',
+      inProgress: 'In Progress',
+      actionRequired: 'Action Required',
+      pending: 'Pending',
+      step1: 'Complete Profile',
+      step2: 'Check Statutory Eligibility',
+      step3: 'Submit Application & Docs',
+      step4: 'Clear AI Pre-Scrutiny',
+      step5: 'Institutional & MoTA Scrutiny',
+      step6: 'Award Letter & PFMS DBT Disbursal',
+      resolveBtn: 'Resolve Deficiency'
+    },
+
+    whatHappensNext: {
+      DRAFT: 'You are currently drafting. MoTA officers cannot see this yet. Review your documents and submit when ready.',
+      SUBMITTED: 'Application received! Automated AI pre-scrutiny runs optical character recognition and tamper checks.',
+      AI_PRESCRUTINY: 'Automated verification running. Validating seal, date periods, and Article 342 gazette listings.',
+      DEFICIENT: 'A document defect was flagged. You have 14 days to upload a replacement before seniority lapses.',
+      RESUBMITTED: 'Replacement document received and verified by AI. Queued for Officer Review with original seniority intact.',
+      READY_FOR_REVIEW: 'AI pre-checks passed! Your case file is queued for human verification by Ministry Scrutiny Officer.',
+      UNDER_SCRUTINY: 'A Ministry Verification Officer is actively examining your case file in the dual-pane scrutiny desk.',
+      APPROVED: 'Officer approved! Your application is forwarded to the National Selection & Merit Committee.',
+      REJECTED: 'Application rejected during scrutiny. Clear statutory grounds are permanently logged in the audit ledger.',
+      AWARDED: 'Congratulations! Official Sanction Order & Award Letter generated. Download your signed slip below.',
+      QPR_ACTIVE: 'Fellowship active! Submit your Quarterly Progress Report every 3 months for timely stipend release.'
+    },
+
+    dataSaver: {
+      badge: '2G Low-Bandwidth Mode Active',
+      desc: 'Optimized for remote tribal areas. Heavy graphics disabled. Click previews to load on-demand.',
+      toggle: 'Toggle 2G Mode',
+      tapToLoad: 'Tap to view document preview'
+    },
+
+    tooltips: {
+      tribe: 'Must be recognized in the Central Gazette of Scheduled Tribes under Article 342 for your state.',
+      income: 'Must be within statutory ceiling for your scheme (NFST: ₹6.0 LPA; Top Class: ₹8.0 LPA; Post-Matric: ₹2.5 LPA).',
+      pvtg: 'Particularly Vulnerable Tribal Groups receive statutory relaxation and priority queue allocation.',
+      marks: 'Aggregate percentage in qualifying examination. Minimum criteria set dynamically by scheme configuration.',
+      aadhaar: 'Used for secure one-time Jan Parichay authentication and PFMS Aadhaar Payment Bridge (APB).'
+    }
   },
+
   hi: {
     portalTitle: 'विद्यासेतु',
     portalSubtitle: 'अनुसूचित जनजातियों के लिए एआई-सक्षम छात्रवृत्ति एवं फैलोशिप प्रबंधन प्रणाली',
@@ -71,8 +157,93 @@ export const I18N = {
     schemesNav: 'योजनाएं एवं अनुदान',
     eligibilityNav: 'पात्रता जांचकर्ता',
     governanceNav: 'सुशासन रोडमैप',
-    selectLang: 'भाषा / Language'
+    selectLang: 'भाषा / Language',
+
+    // Tutorial & Onboarding
+    welcomeTour: {
+      badge: 'विद्यासेतु में आपका स्वागत है',
+      slide1Title: 'जनजातीय शोधार्थियों के लिए ज्ञान का सेतु',
+      slide1Desc: 'विद्यासेतु एसटी विद्यार्थियों को जनजातीय कार्य मंत्रालय की 5 प्रमुख योजनाओं से जोड़ता है: प्री-मैट्रिक, पोस्ट-मैट्रिक, टॉप क्लास शिक्षा, एनएफएसटी, एवं एनओएस।',
+      slide2Title: 'आपकी 4-चरणीय छात्रवृत्ति यात्रा',
+      slide2Desc: 'वास्तविक समय ट्रैकिंग के साथ सरल, पारदर्शी और न्यायसंगत छात्रवृत्ति प्रक्रिया।',
+      step1: '1. पात्रता जांचें — 30 सेकंड में निष्पक्ष वैधानिक पात्रता मूल्यांकन',
+      step2: '2. आवेदन जमा करें — डिजीलॉकर या सीधे स्कैन द्वारा प्रमाण-पत्र अपलोड',
+      step3: '3. स्वचालित एआई संवीक्षा — 14-दिन के त्रुटि निवारण के साथ वास्तविक ओसीआर',
+      step4: '4. प्रत्यक्ष लाभ अंतरण — पीएफएमएस के माध्यम से त्वरित मेरिट चयन एवं मासिक वजीफा',
+      slide3Title: 'आवेदन से पूर्व आवश्यक दस्तावेज़',
+      slide3Desc: 'इन दस्तावेजों को तैयार रखें ताकि आपका आवेदन 10 मिनट में पूर्ण हो सके:',
+      doc1: 'आधार कार्ड (डिजीलॉकर केवाईसी हेतु मोबाइल लिंक)',
+      doc2: 'एसटी जाति प्रमाण पत्र (अनुच्छेद 342 के तहत अधिसूचित)',
+      doc3: 'आय प्रमाण पत्र (चालू वित्त वर्ष 2026-27 के लिए वैध)',
+      doc4: 'शैक्षणिक अंकपत्र / डिग्री प्रमाण पत्र',
+      doc5: 'प्रवेश पत्र एवं शुल्क रसीद',
+      next: 'आगे बढ़ें',
+      back: 'पीछे जाएं',
+      skip: 'टूर छोड़ें',
+      start: 'शुरू करें',
+      dontShowAgain: 'यह दोबारा न दिखाएं'
+    },
+
+    walkthrough: {
+      step1Title: 'वैधानिक योजना खोजकर्ता',
+      step1Text: 'बिना किसी पक्षपात के सभी 5 योजनाओं में अपनी योग्यता जांचने के लिए पात्रता जांचकर्ता का उपयोग करें।',
+      step2Title: 'लाइव मील का पत्थर ट्रैकर',
+      step2Text: 'आवेदन जमा करने से लेकर अंतिम स्वीकृति तक सभी 6 चरणों में अपनी प्रगति का अनुसरण करें।',
+      step3Title: 'दस्तावेज़ त्रुटि निवारण पटल',
+      step3Text: 'यदि एआई किसी दस्तावेज़ में दोष इंगित करता है, तो 14 दिनों के भीतर प्रतिस्थापन अपलोड करें।',
+      step4Title: 'दस्तावेज़ लॉकर एवं सत्यापन',
+      step4Text: 'अपनी आधिकारिक पावती पर्ची और क्यूआर-सत्यापित स्वीकृति पत्र कभी भी डाउनलोड करें।',
+      finish: 'टूर समाप्त',
+      skip: 'गाइडेड टूर छोड़ें',
+      replay: 'टूर पुनः देखें'
+    },
+
+    missionChecklist: {
+      title: 'छात्रवृत्ति के 6 चरण',
+      subtitle: 'जनजातीय कार्य मंत्रालय के लेज़र में दर्ज आधिकारिक वैधानिक प्रगति',
+      completed: 'पूर्ण',
+      inProgress: 'प्रगति पर',
+      actionRequired: 'कार्रवाई आवश्यक',
+      pending: 'लंबित',
+      step1: 'प्रोफ़ाइल पूर्ण करें',
+      step2: 'वैधानिक पात्रता जांचें',
+      step3: 'आवेदन एवं दस्तावेज जमा करें',
+      step4: 'एआई पूर्व-संवीक्षा पास करें',
+      step5: 'संस्थान एवं मंत्रालय संवीक्षा',
+      step6: 'स्वीकृति पत्र एवं डीबीटी भुगतान',
+      resolveBtn: 'त्रुटि निवारण करें'
+    },
+
+    whatHappensNext: {
+      DRAFT: 'आप वर्तमान में संपादन कर रहे हैं। मंत्रालय के अधिकारी अभी इसे नहीं देख सकते। तैयार होने पर जमा करें।',
+      SUBMITTED: 'आवेदन प्राप्त हुआ! स्वचालित एआई संवीक्षा दस्तावेज़ों के ओसीआर और सील की जांच कर रही है।',
+      AI_PRESCRUTINY: 'स्वचालित सत्यापन जारी है। प्रमाण-पत्र की वैधता अवधि और अनुच्छेद 342 अधिसूचना की पुष्टि की जा रही है।',
+      DEFICIENT: 'दस्तावेज़ में त्रुटि पाई गई है। वरिष्ठता सुरक्षित रखने के लिए 14 दिनों के भीतर प्रतिस्थापन अपलोड करें।',
+      RESUBMITTED: 'प्रतिस्थापन दस्तावेज़ प्राप्त और सत्यापित हुआ। मूल वरिष्ठता के साथ अधिकारी संवीक्षा कतार में अग्रसारित।',
+      READY_FOR_REVIEW: 'एआई जांच सफल! आपका आवेदन मंत्रालय संवीक्षा अधिकारी द्वारा मानवीय सत्यापन हेतु कतार में है।',
+      UNDER_SCRUTINY: 'मंत्रालय संवीक्षा अधिकारी द्वारा आपके आवेदन की सक्रिय रूप से जांच की जा रही है।',
+      APPROVED: 'अधिकारी द्वारा अनुमोदित! आपका आवेदन राष्ट्रीय चयन एवं मेरिट समिति को भेजा गया है।',
+      REJECTED: 'संवीक्षा के दौरान आवेदन अस्वीकृत हुआ। वैधानिक कारण ऑडिट लेज़र में सुरक्षित हैं।',
+      AWARDED: 'बधाई हो! आधिकारिक स्वीकृति आदेश एवं पत्र जारी कर दिया गया है। नीचे से डाउनलोड करें।',
+      QPR_ACTIVE: 'फैलोशिप सक्रिय है! समय पर मासिक वजीफा प्राप्त करने के लिए प्रत्येक 3 माह में प्रगति रिपोर्ट (QPR) जमा करें।'
+    },
+
+    dataSaver: {
+      badge: '2G कम-बैंडविड्थ मोड सक्रिय',
+      desc: 'दूरदराज के जनजातीय क्षेत्रों के लिए अनुकूलित। भारी ग्राफिक्स बंद हैं। पूर्वावलोकन के लिए टैप करें।',
+      toggle: '2G मोड टॉगल करें',
+      tapToLoad: 'पूर्वावलोकन देखने के लिए टैप करें'
+    },
+
+    tooltips: {
+      tribe: 'आपके राज्य के लिए संविधान के अनुच्छेद 342 के तहत केंद्रीय एसटी राजपत्र में अधिसूचित होना अनिवार्य है।',
+      income: 'आपकी योजना के लिए वैधानिक सीमा के भीतर होना चाहिए (एनएफएसटी: ₹6 लाख; टॉप क्लास: ₹8 लाख; पोस्ट-मैट्रिक: ₹2.5 लाख)।',
+      pvtg: 'विशेष रूप से कमजोर जनजातीय समूहों (PVTG) को वैधानिक छूट और प्राथमिकता कतार दी जाती है।',
+      marks: 'पात्रता परीक्षा में प्राप्त कुल प्रतिशत। योजना नियमों द्वारा निर्धारित न्यूनतम कट-ऑफ लागू।',
+      aadhaar: 'जन परिचय प्रमाणीकरण और पीएफएमएस आधार भुगतान प्रणाली (एपीबी) के लिए प्रयुक्त।'
+    }
   },
+
   or: {
     portalTitle: 'ବିଦ୍ୟାସେତୁ',
     portalSubtitle: 'ଜନଜାତି ଛାତ୍ରବୃତ୍ତି ଏବଂ ଫେଲୋସିପ୍ ପାଇଁ AI-ସମର୍ଥିତ ପରିଚାଳନା ପ୍ରଣାଳୀ',
@@ -154,7 +325,7 @@ export const I18N = {
     scrutinyDesk: 'పరిశీలన విభాగం',
     meritEngine: 'ఎంపిక & మెరిట్ ఇంజిన్',
     dbtDisbursal: 'DBT చెల్లింపుల కేంద్రం',
-    schemeConfig: 'పథకాల కాన్ఫిగరేషన్',
+    schemeConfig: 'పథకాల కాన్ఫిଗరేషన్',
     analytics: 'జాతీయ గణాంకాలు',
     trackApplication: 'దరఖాస్తు స్థితి పరిశీలన',
     applyNow: 'దరఖాస్తు చేసుకోండి',

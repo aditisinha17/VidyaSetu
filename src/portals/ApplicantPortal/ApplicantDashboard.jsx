@@ -22,6 +22,11 @@ import { ApplicationTracker } from './ApplicationTracker';
 import { DeficiencyDesk } from './DeficiencyDesk';
 import { FellowshipLifecycle } from './FellowshipLifecycle';
 import { AiSchemeMatcher } from './AiSchemeMatcher';
+import { MissionChecklist } from '../../components/MissionChecklist';
+import { ContextHelp, WhatHappensNextCard } from '../../components/ContextHelp';
+import { LiteApplicantDashboard } from './LiteApplicantDashboard';
+import { ApiClient } from '../../services/apiClient';
+import { I18N } from '../../data/i18n';
 
 export function ApplicantDashboard({ 
   applicants, 
@@ -34,11 +39,33 @@ export function ApplicantDashboard({
   onResolveDeficiency,
   onOpenGrievances,
   onOpenAuditTrail,
-  onSwitchToOfficer
+  onSwitchToOfficer,
+  lang = 'en',
+  lowBandwidth = false,
+  setLowBandwidth,
+  onReplayTour
 }) {
   const [activeTab, setActiveTab] = useState('overview'); // 'overview', 'matcher', 'tracker', 'deficiency', 'lifecycle'
 
   const currentApplicant = applicants.find(a => a.id === selectedApplicantId) || applicants[0];
+
+  if (lowBandwidth) {
+    return (
+      <LiteApplicantDashboard
+        applicants={applicants}
+        schemes={schemes}
+        selectedApplicantId={selectedApplicantId}
+        setSelectedApplicantId={setSelectedApplicantId}
+        onStartNewApplication={onStartNewApplication}
+        onViewDoc={onViewDoc}
+        onViewAwardLetter={onViewAwardLetter}
+        onResolveDeficiency={onResolveDeficiency}
+        onOpenGrievances={onOpenGrievances}
+        onSwitchToStandard={() => setLowBandwidth && setLowBandwidth(false)}
+        lang={lang}
+      />
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 space-y-6">
@@ -73,6 +100,53 @@ export function ApplicantDashboard({
           </div>
         </div>
       </div>
+
+      {/* Quick Action Strip: Tour, 2G Data Saver, Official Slips */}
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-3 rounded-2xl border border-slate-200 shadow-xs text-xs">
+        <div className="flex flex-wrap items-center gap-2">
+          {onReplayTour && (
+            <button
+              type="button"
+              onClick={onReplayTour}
+              className="px-3 py-1.5 bg-blue-50 text-blue-900 border border-blue-200 rounded-xl font-bold hover:bg-blue-100 flex items-center space-x-1.5 transition-colors"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-blue-600" />
+              <span>{lang === 'hi' ? 'गाइडेड टूर देखें' : 'Replay Guided Tour'}</span>
+            </button>
+          )}
+
+          {setLowBandwidth && (
+            <button
+              type="button"
+              onClick={() => setLowBandwidth(true)}
+              className="px-3 py-1.5 bg-amber-50 text-amber-900 border border-amber-200 rounded-xl font-bold hover:bg-amber-100 flex items-center space-x-1.5 transition-colors"
+            >
+              <Zap className="w-3.5 h-3.5 text-amber-600" />
+              <span>{lang === 'hi' ? '⚡ 2G डेटा सेवर मोड' : '⚡ 2G Data Saver Mode'}</span>
+            </button>
+          )}
+        </div>
+
+        <div className="flex items-center gap-2">
+          <a
+            href={ApiClient.getApplicationSlipUrl(currentApplicant?.id, 'acknowledgment')}
+            target="_blank"
+            rel="noreferrer"
+            className="px-3 py-1.5 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 flex items-center space-x-1.5 shadow-xs transition-colors"
+          >
+            <FileText className="w-3.5 h-3.5 text-amber-400" />
+            <span>{lang === 'hi' ? 'पावती पर्ची (QR Code)' : 'Official Slip (QR Code)'}</span>
+          </a>
+        </div>
+      </div>
+
+      {/* Mission Checklist Widget: 6 Steps to a Scholarship */}
+      <MissionChecklist
+        applicant={currentApplicant}
+        lang={lang}
+        onResolveDeficiency={() => setActiveTab('deficiency')}
+        onViewAwardLetter={onViewAwardLetter}
+      />
 
       {/* Demo Profile Selector Switcher */}
       <div className="bg-white p-3 rounded-2xl border border-slate-200 shadow-xs">
@@ -321,6 +395,9 @@ export function ApplicantDashboard({
                     </div>
                   </div>
 
+                  {/* Plain-Language What Happens Next Card */}
+                  <WhatHappensNextCard status={currentApplicant?.status} lang={lang} />
+
                   {/* Statutory Clause & Eligibility Breakdown Card */}
                   <div className="p-3.5 bg-blue-50/70 border border-blue-200 rounded-xl text-xs space-y-2">
                     <div className="flex justify-between items-center">
@@ -334,20 +411,32 @@ export function ApplicantDashboard({
                     </div>
 
                     <div className="grid grid-cols-2 gap-1.5 text-[10px]">
-                      <div className="p-2 bg-white rounded border border-blue-100 flex justify-between">
-                        <span className="text-slate-600">ST Category:</span>
+                      <div className="p-2 bg-white rounded border border-blue-100 flex items-center justify-between">
+                        <span className="text-slate-600 flex items-center">
+                          ST Category
+                          <ContextHelp text={I18N[lang]?.tooltips?.tribe || I18N.en.tooltips.tribe} lang={lang} />:
+                        </span>
                         <strong className="text-emerald-700">✓ Article 342 Pass</strong>
                       </div>
-                      <div className="p-2 bg-white rounded border border-blue-100 flex justify-between">
-                        <span className="text-slate-600">Income Ceiling:</span>
+                      <div className="p-2 bg-white rounded border border-blue-100 flex items-center justify-between">
+                        <span className="text-slate-600 flex items-center">
+                          Income Ceiling
+                          <ContextHelp text={I18N[lang]?.tooltips?.income || I18N.en.tooltips.income} lang={lang} />:
+                        </span>
                         <strong className="text-emerald-700">✓ ₹{(currentApplicant?.annualIncome || 0).toLocaleString()} (Pass)</strong>
                       </div>
-                      <div className="p-2 bg-white rounded border border-blue-100 flex justify-between">
-                        <span className="text-slate-600">Age Eligibility:</span>
+                      <div className="p-2 bg-white rounded border border-blue-100 flex items-center justify-between">
+                        <span className="text-slate-600 flex items-center">
+                          Age Eligibility
+                          <ContextHelp text="Maximum age limits derived dynamically from statutory scheme rules version in database." lang={lang} />:
+                        </span>
                         <strong className="text-emerald-700">✓ {currentApplicant?.age || 26} Yrs (Pass)</strong>
                       </div>
-                      <div className="p-2 bg-white rounded border border-blue-100 flex justify-between">
-                        <span className="text-slate-600">Academic Score:</span>
+                      <div className="p-2 bg-white rounded border border-blue-100 flex items-center justify-between">
+                        <span className="text-slate-600 flex items-center">
+                          Academic Score
+                          <ContextHelp text={I18N[lang]?.tooltips?.marks || I18N.en.tooltips.marks} lang={lang} />:
+                        </span>
                         <strong className="text-blue-950 font-bold">✓ {currentApplicant?.pgMarks || 78}% (Pass)</strong>
                       </div>
                     </div>

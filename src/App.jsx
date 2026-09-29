@@ -9,6 +9,8 @@ import { VidyaMitraChatbot } from './components/VidyaMitraChatbot';
 import { GrievanceManagementModal } from './components/GrievanceManagementModal';
 import { AuditTrailModal } from './components/AuditTrailModal';
 import { NotificationDrawer } from './components/NotificationDrawer';
+import { WelcomeTourModal } from './components/WelcomeTourModal';
+import { InteractiveWalkthrough } from './components/InteractiveWalkthrough';
 
 // Student Portal Components
 import { ApplicantDashboard } from './portals/ApplicantPortal/ApplicantDashboard';
@@ -57,6 +59,8 @@ export function App() {
   const [auditApp, setAuditApp] = useState(null);
   const [isGrievanceModalOpen, setIsGrievanceModalOpen] = useState(false);
   const [isNotificationDrawerOpen, setIsNotificationDrawerOpen] = useState(false);
+  const [isWelcomeTourOpen, setIsWelcomeTourOpen] = useState(false);
+  const [isWalkthroughOpen, setIsWalkthroughOpen] = useState(false);
 
   // Toast
   const [toastMessage, setToastMessage] = useState(null);
@@ -113,6 +117,9 @@ export function App() {
     if (loginData.type === 'student') {
       setSelectedApplicantId(loginData.user.id);
       showToast(`Welcome back, ${loginData.user.name}! Jan Parichay session authenticated.`);
+      if (loginData.user.tutorial_completed !== true) {
+        setIsWalkthroughOpen(true);
+      }
     } else {
       setRole('scrutiny');
       showToast(`Officer session active: ${loginData.user.name} (${loginData.user.roleLabel})`);
@@ -447,6 +454,7 @@ export function App() {
         onOpenNotifications={() => setIsNotificationDrawerOpen(true)}
         onOpenGrievances={() => setIsGrievanceModalOpen(true)}
         onSwitchWorkspace={handleSwitchWorkspace}
+        onOpenTour={() => setIsWelcomeTourOpen(true)}
       />
 
       {/* Offline Demo Mode Banner if backend is not reachable */}
@@ -491,6 +499,10 @@ export function App() {
                 onOpenGrievances={() => setIsGrievanceModalOpen(true)}
                 onOpenAuditTrail={(app) => setAuditApp(app)}
                 onSwitchToOfficer={() => handleSwitchWorkspace('admin')}
+                lang={lang}
+                lowBandwidth={lowBandwidth}
+                setLowBandwidth={setLowBandwidth}
+                onReplayTour={() => setIsWalkthroughOpen(true)}
               />
             )}
           </>
@@ -593,6 +605,22 @@ export function App() {
       <NotificationDrawer
         isOpen={isNotificationDrawerOpen}
         onClose={() => setIsNotificationDrawerOpen(false)}
+      />
+
+      {/* First-Time User Tutorial: Welcome Tour (3 Slides) */}
+      <WelcomeTourModal
+        isOpen={isWelcomeTourOpen}
+        onClose={(dontShowAgain) => setIsWelcomeTourOpen(false)}
+        lang={lang}
+        setLang={setLang}
+      />
+
+      {/* First-Time User Tutorial: Interactive Guided Walkthrough */}
+      <InteractiveWalkthrough
+        isOpen={isWalkthroughOpen}
+        onClose={() => setIsWalkthroughOpen(false)}
+        user={auth?.user}
+        lang={lang}
       />
 
       {/* Footer */}

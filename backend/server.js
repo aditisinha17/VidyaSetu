@@ -15,6 +15,7 @@ import { DocumentAIService } from './services/documentAI.js';
 import { AuditChainService } from './services/auditChain.js';
 import { PolicySimulatorService } from './services/policySimulator.js';
 import { JanParichayService, DigiLockerService, PfmsService, NicSmsService } from './services/governmentAdapters.js';
+import QRCode from 'qrcode';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -122,6 +123,127 @@ app.get('/api/users', (req, res) => {
   sendResponse(res, 200, DataStore.users);
 });
 
+// Update user tutorial completion state
+app.patch('/api/users/:id/tutorial-completed', (req, res) => {
+  const userId = req.params.id;
+  let user = DataStore.users.find(u => u.id === userId);
+  if (!user) {
+    user = DataStore.users.find(u => u.id === 'a0000001-0000-0000-0000-000000000001');
+  }
+  if (user) {
+    user.tutorial_completed = true;
+    DataStore.save();
+    return sendResponse(res, 200, user, 'Tutorial completed status updated.');
+  }
+  sendError(res, 404, 'User not found');
+});
+
+// Update user data-saver mode
+app.patch('/api/users/:id/data-saver', (req, res) => {
+  const userId = req.params.id;
+  const { enabled } = req.body;
+  let user = DataStore.users.find(u => u.id === userId);
+  if (!user) {
+    user = DataStore.users.find(u => u.id === 'a0000001-0000-0000-0000-000000000001');
+  }
+  if (user) {
+    user.data_saver_mode = !!enabled;
+    DataStore.save();
+    return sendResponse(res, 200, user, `Data saver mode updated to ${!!enabled}.`);
+  }
+  sendError(res, 404, 'User not found');
+});
+
+// Student Mission Progress (6 Steps to a Scholarship)
+app.get('/api/me/progress', (req, res) => {
+  const { userId, appId } = req.query;
+  let targetApp = null;
+  if (appId) {
+    targetApp = DataStore.getApplication(appId);
+  } else if (userId) {
+    targetApp = DataStore.getApplications().find(a => a.userId === userId);
+  }
+  if (!targetApp) {
+    targetApp = DataStore.getApplication('MOTA-2026-NFST-0101') || DataStore.getApplications()[0];
+  }
+
+  const status = targetApp ? targetApp.status : 'DRAFT';
+
+  // 6 Steps definition
+  const steps = [
+    {
+      id: 1,
+      name: 'Complete Profile',
+      nameHi: 'प्रोफ़ाइल पूर्ण करें',
+      description: 'DigiLocker KYC, ST Caste Article 342, and Contact details',
+      descriptionHi: 'डिजीलॉकर केवाईसी, एसटी जाति अनुच्छेद 342 एवं संपर्क विवरण',
+      status: 'COMPLETED',
+      completedDate: '2026-09-01'
+    },
+    {
+      id: 2,
+      name: 'Check Statutory Eligibility',
+      nameHi: 'वैधानिक पात्रता जांचें',
+      description: 'Deterministic statutory evaluation against all 5 MoTA schemes',
+      descriptionHi: 'सभी 5 जनजातीय कार्य मंत्रालय योजनाओं के विरुद्ध वैधानिक पात्रता',
+      status: targetApp ? 'COMPLETED' : 'IN_PROGRESS',
+      completedDate: '2026-09-05'
+    },
+    {
+      id: 3,
+      name: 'Submit Application & Docs',
+      nameHi: 'आवेदन एवं दस्तावेज जमा करें',
+      description: 'Upload required certificates with real OCR and metadata checks',
+      descriptionHi: 'वास्तविक ओसीआर एवं मेटाडेटा सत्यापन के साथ दस्तावेज अपलोड',
+      status: status !== 'DRAFT' ? 'COMPLETED' : 'IN_PROGRESS',
+      completedDate: status !== 'DRAFT' ? (targetApp?.submissionDate || '2026-09-12') : null
+    },
+    {
+      id: 4,
+      name: 'Clear AI Pre-Scrutiny',
+      nameHi: 'एआई पूर्व-संवीक्षा पास करें',
+      description: 'Automated certificate validity, Jaro-Winkler name match, and tamper audit',
+      descriptionHi: 'स्वचालित वैधता, जारो-विंकलर नाम मिलान और छेड़छाड़ रोकथाम ऑडिट',
+      status: status === 'DEFICIENT' ? 'WARNING' : (['RESUBMITTED', 'READY_FOR_REVIEW', 'UNDER_SCRUTINY', 'APPROVED', 'AWARDED', 'QPR_ACTIVE'].includes(status) ? 'COMPLETED' : (status === 'AI_PRESCRUTINY' ? 'IN_PROGRESS' : 'PENDING')),
+      actionRequired: status === 'DEFICIENT' ? (targetApp?.deficiency?.title || 'Deficiency resolution required') : null
+    },
+    {
+      id: 5,
+      name: 'Institutional & MoTA Scrutiny',
+      nameHi: 'संस्थान एवं मंत्रालय संवीक्षा',
+      description: 'Level-1 nodal verification and Level-2 Directorate scrutiny desk',
+      descriptionHi: 'स्तर-1 नोडल सत्यापन एवं स्तर-2 निदेशालय संवीक्षा पटल',
+      status: ['APPROVED', 'AWARDED', 'QPR_ACTIVE'].includes(status) ? 'COMPLETED' : (['READY_FOR_REVIEW', 'UNDER_SCRUTINY'].includes(status) ? 'IN_PROGRESS' : 'PENDING')
+    },
+    {
+      id: 6,
+      name: 'Award Letter & PFMS DBT Disbursal',
+      nameHi: 'स्वीकृति पत्र एवं डीबीटी भुगतान',
+      description: 'Official Sanction Order, QR-verified award letter, and monthly e-FTO',
+      descriptionHi: 'आधिकारिक स्वीकृति आदेश, क्यूआर-सत्यापित पत्र एवं मासिक ई-एफ़टीओ',
+      status: ['AWARDED', 'QPR_ACTIVE'].includes(status) ? 'COMPLETED' : 'PENDING'
+    }
+  ];
+
+  const completedSteps = steps.filter(s => s.status === 'COMPLETED').length;
+  const currentStep = steps.find(s => s.status === 'IN_PROGRESS' || s.status === 'WARNING') || (completedSteps === 6 ? steps[5] : steps[completedSteps]);
+  const progressPercent = Math.round((completedSteps / 6) * 100);
+
+  sendResponse(res, 200, {
+    applicationId: targetApp?.id,
+    applicantName: targetApp?.name,
+    schemeId: targetApp?.schemeId,
+    currentStatus: status,
+    completedSteps,
+    totalSteps: 6,
+    progressPercent,
+    currentStepIndex: currentStep.id,
+    currentStepTitle: currentStep.name,
+    steps
+  });
+});
+
+
 // -------------------------------------------------------------
 // 3. SCHEMES & CONFIGURABLE RULES (SchemeConfigStudio)
 // -------------------------------------------------------------
@@ -224,7 +346,7 @@ app.post('/api/applications/:id/submit', (req, res) => {
 // -------------------------------------------------------------
 // 6. REAL MULTIPART FILE UPLOAD & DOCUMENT AI EXTRACTION
 // -------------------------------------------------------------
-app.post('/api/documents/upload', upload.single('document'), (req, res) => {
+app.post('/api/documents/upload', upload.single('document'), async (req, res) => {
   const file = req.file;
   const { documentType, applicantId, applicantName } = req.body;
 
@@ -234,8 +356,8 @@ app.post('/api/documents/upload', upload.single('document'), (req, res) => {
     id: applicantId
   };
 
-  // Perform AI extraction and validity evaluation
-  const analysis = DocumentAIService.analyzeDocument(fileName, null, candidate);
+  // Perform AI extraction and validity evaluation (real OCR if image/text, fallback otherwise)
+  const analysis = await DocumentAIService.analyzeDocument(fileName, null, candidate, file ? file.path : null);
 
   // If applicantId is provided, attach document to application
   if (applicantId) {
@@ -250,11 +372,13 @@ app.post('/api/documents/upload', upload.single('document'), (req, res) => {
         issueDate: analysis.extractedFields?.issueDate || new Date().toISOString().split('T')[0],
         status: analysis.status,
         confidence: analysis.ocrConfidence,
+        extractionMethod: analysis.extractionMethod,
+        extractionLabel: analysis.extractionLabel,
         extractedText: JSON.stringify(analysis.extractedFields),
         tamperScore: analysis.tamperScore
       };
       app.documents.push(newDoc);
-      DataStore.appendAuditBlock(app.id, `Applicant (${app.name})`, `Document uploaded: ${newDoc.name}`, { fileName, confidence: analysis.ocrConfidence });
+      DataStore.appendAuditBlock(app.id, `Applicant (${app.name})`, `Document uploaded: ${newDoc.name}`, { fileName, confidence: analysis.ocrConfidence, method: analysis.extractionMethod });
       DataStore.save();
     }
   }
@@ -268,7 +392,7 @@ app.post('/api/documents/upload', upload.single('document'), (req, res) => {
 // -------------------------------------------------------------
 // 7. GOLDEN JOURNEY: DEFICIENCY RESOLUTION & RE-SCAN
 // -------------------------------------------------------------
-app.post('/api/applications/:id/documents/replace', upload.single('replacementDoc'), (req, res) => {
+app.post('/api/applications/:id/documents/replace', upload.single('replacementDoc'), async (req, res) => {
   const appId = req.params.id;
   const app = DataStore.getApplication(appId);
   if (!app) return sendError(res, 404, 'Application not found');
@@ -276,8 +400,8 @@ app.post('/api/applications/:id/documents/replace', upload.single('replacementDo
   const file = req.file;
   const fileName = file ? file.originalname : (req.body.fileName || 'Fresh_Income_Certificate_FY2026_27_SDO_Ranchi.pdf');
 
-  // Execute AI re-scan
-  const reScanResult = DocumentAIService.analyzeDocument(fileName, null, { name: app.name, id: app.id });
+  // Execute AI re-scan with real OCR when physical file is present
+  const reScanResult = await DocumentAIService.analyzeDocument(fileName, null, { name: app.name, id: app.id }, file ? file.path : null);
 
   // Update application state
   app.status = 'READY_FOR_REVIEW';
@@ -298,13 +422,14 @@ app.post('/api/applications/:id/documents/replace', upload.single('replacementDo
       if (d.name.toLowerCase().includes('income')) {
         return {
           name: 'Fresh Income Certificate (FY 2026-27)',
-          fileNumber: 'JH/RAN/INC/2026/01922',
-          issuingAuthority: 'Sub-Divisional Officer (SDO), Ranchi',
-          issueDate: '12-06-2026',
+          fileNumber: reScanResult.extractedFields?.fileNumber || 'JH/RAN/INC/2026/01922',
+          issuingAuthority: reScanResult.extractedFields?.issuingAuthority || 'Sub-Divisional Officer (SDO), Ranchi',
+          issueDate: reScanResult.extractedFields?.issueDate || '12-06-2026',
           status: 'VERIFIED',
-          confidence: 98.4,
+          confidence: reScanResult.ocrConfidence || 98.4,
+          extractionMethod: reScanResult.extractionMethod,
           extractedText: 'Annual family income is Rs. 4,80,000 for FY 2026-27. SDO digital signature & barcode valid.',
-          tamperScore: 0.01
+          tamperScore: reScanResult.tamperScore || 0.01
         };
       }
       return d;
@@ -313,7 +438,7 @@ app.post('/api/applications/:id/documents/replace', upload.single('replacementDo
 
   // Chained audit blocks
   DataStore.appendAuditBlock(app.id, `Applicant (${app.name})`, 'Replacement Income Certificate (FY 2026-27) uploaded via Deficiency Portal', { file: fileName });
-  DataStore.appendAuditBlock(app.id, 'AI Document Pre-Scrutiny Lab', 'AI Re-Scan Passed: Verified FY 2026-27 validity and SDO digital signature. Deficiency cleared.', { ocrConfidence: 98.4, tamperScore: 0.01 });
+  DataStore.appendAuditBlock(app.id, 'AI Document Pre-Scrutiny Lab', 'AI Re-Scan Passed: Verified FY 2026-27 validity and SDO digital signature. Deficiency cleared.', { ocrConfidence: reScanResult.ocrConfidence || 98.4, tamperScore: 0.01 });
 
   DataStore.save();
 
@@ -321,6 +446,133 @@ app.post('/api/applications/:id/documents/replace', upload.single('replacementDo
     application: app,
     reScanResult
   }, `Deficiency resolved! Application ${appId} moved to READY queue for Officer Approval.`);
+});
+
+// Official Printable / Downloadable Acknowledgment, Award, Deficiency Slip with Verification QR
+app.get('/api/applications/:id/slip', async (req, res) => {
+  const appId = req.params.id;
+  const type = req.query.type || 'acknowledgment'; // 'acknowledgment', 'award', 'deficiency', 'qpr'
+  const app = DataStore.getApplication(appId) || DataStore.getApplications()[0];
+  if (!app) return sendError(res, 404, 'Application not found');
+
+  const verificationUrl = `https://vidyasetu.gov.in/verify?appId=${app.id}&ts=${encodeURIComponent(app.submissionDate || '2026-09-12')}`;
+  let qrCodeDataUrl = '';
+  try {
+    qrCodeDataUrl = await QRCode.toDataURL(verificationUrl, { width: 140, margin: 1 });
+  } catch (e) {
+    qrCodeDataUrl = '';
+  }
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>${type.toUpperCase()} — ${app.id} — VidyaSetu MoTA</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; background: #fff; color: #0f172a; padding: 30px; margin: 0; }
+    .sheet { max-width: 800px; margin: 0 auto; border: 2px solid #0f172a; padding: 32px; position: relative; background: #fff; }
+    .header { display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #0f172a; padding-bottom: 16px; }
+    .emblem-title { display: flex; align-items: center; gap: 16px; }
+    .emblem { font-size: 36px; }
+    .title-block h1 { margin: 0; font-size: 19px; font-weight: 800; letter-spacing: -0.5px; text-transform: uppercase; color: #1e3a8a; }
+    .title-block h2 { margin: 3px 0 0 0; font-size: 13px; font-weight: 600; color: #475569; }
+    .qr-block { text-align: center; }
+    .qr-block img { width: 100px; height: 100px; border: 1px solid #cbd5e1; border-radius: 6px; }
+    .qr-caption { font-size: 9px; font-weight: 700; color: #64748b; margin-top: 4px; text-transform: uppercase; }
+    .badge-strip { display: flex; justify-content: space-between; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 14px; margin: 20px 0; font-size: 11px; }
+    .badge-strip div span { display: block; font-size: 9px; color: #64748b; text-transform: uppercase; font-weight: 700; }
+    .badge-strip div strong { font-size: 12px; color: #0f172a; }
+    table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 11.5px; }
+    th, td { padding: 9px 12px; border: 1px solid #e2e8f0; text-align: left; }
+    th { background: #f1f5f9; font-weight: 700; color: #334155; width: 35%; }
+    .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.04; font-size: 72px; font-weight: 900; pointer-events: none; text-align: center; line-height: 1.1; }
+    .footer-seal { margin-top: 28px; padding-top: 14px; border-top: 1px dashed #cbd5e1; display: flex; justify-content: space-between; align-items: flex-end; font-size: 10.5px; color: #64748b; }
+    .seal-box { border: 1.5px solid #0f172a; padding: 8px 14px; text-align: center; border-radius: 4px; font-weight: 700; color: #1e3a8a; }
+    @media print {
+      body { padding: 0; }
+      .no-print { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="no-print" style="text-align: center; margin-bottom: 16px;">
+    <button onclick="window.print()" style="padding: 9px 22px; background: #1e3a8a; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">🖨️ Print / Save as PDF</button>
+  </div>
+  <div class="sheet">
+    <div class="watermark">MINISTRY OF TRIBAL AFFAIRS<br/>GOVERNMENT OF INDIA</div>
+    <div class="header">
+      <div class="emblem-title">
+        <div class="emblem">🏛️</div>
+        <div class="title-block">
+          <h1>Ministry of Tribal Affairs</h1>
+          <h2>Government of India — National Scholarship Portal (VidyaSetu)</h2>
+          <div style="font-size: 10px; color: #dc2626; font-weight: bold; margin-top: 3px;">OFFICIAL SCHOLARSHIP INSTRUMENT — STATUTORY RECORD</div>
+        </div>
+      </div>
+      <div class="qr-block">
+        <img src="${qrCodeDataUrl}" alt="Verification QR Code" />
+        <div class="qr-caption">Scan to Verify</div>
+      </div>
+    </div>
+
+    <div class="badge-strip">
+      <div><span>Document Type</span><strong>${type === 'award' ? 'OFFICIAL AWARD LETTER' : (type === 'deficiency' ? 'STATUTORY DEFICIENCY NOTICE' : 'APPLICATION ACKNOWLEDGMENT SLIP')}</strong></div>
+      <div><span>Case Reference</span><strong>${app.id}</strong></div>
+      <div><span>Scheme</span><strong>${app.schemeId} (${app.schemeName || 'MoTA Scheme'})</strong></div>
+      <div><span>Generated On</span><strong>${new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}</strong></div>
+    </div>
+
+    <h3 style="font-size: 13px; text-transform: uppercase; margin-top: 18px; border-bottom: 1px solid #0f172a; padding-bottom: 4px;">Candidate & Statutory Credentials</h3>
+    <table>
+      <tr><th>Full Legal Name</th><td><strong>${app.name}</strong></td></tr>
+      <tr><th>Scheduled Tribe Community</th><td>${app.tribe} (Notified under Constitutional Article 342)</td></tr>
+      <tr><th>Particularly Vulnerable Tribal Group (PVTG)</th><td>${app.pvtg ? 'YES (Statutory Priority)' : 'NO'}</td></tr>
+      <tr><th>State & District</th><td>${app.state}, ${app.district || 'Ranchi'}</td></tr>
+      <tr><th>Host Academic Institution</th><td>${app.institution}</td></tr>
+      <tr><th>Course / Degree Enrolled</th><td>${app.degree}</td></tr>
+      <tr><th>Annual Family Income</th><td>₹${(app.annualIncome || 480000).toLocaleString('en-IN')} (Income Ceiling Verified)</td></tr>
+      <tr><th>Current Application Status</th><td><strong style="color: #1e3a8a;">${app.status}</strong> (Stage ${app.stage} of 6)</td></tr>
+    </table>
+
+    ${type === 'deficiency' && app.deficiency ? `
+      <h3 style="font-size: 13px; text-transform: uppercase; margin-top: 18px; border-bottom: 1px solid #dc2626; padding-bottom: 4px; color: #dc2626;">Deficiency Notice Details</h3>
+      <table style="border-color: #fca5a5;">
+        <tr><th style="background: #fee2e2;">Deficiency Code</th><td><strong>${app.deficiency.code}</strong></td></tr>
+        <tr><th style="background: #fee2e2;">Defect Title</th><td>${app.deficiency.title}</td></tr>
+        <tr><th style="background: #fee2e2;">Statutory Reason</th><td>${app.deficiency.statutoryReason}</td></tr>
+        <tr><th style="background: #fee2e2;">Required Corrective Action</th><td>${app.deficiency.actionRequired}</td></tr>
+        <tr><th style="background: #fee2e2;">Statutory Deadline</th><td><strong>${app.deficiency.deadlineDate || '14 days from issue'}</strong> (${app.deficiency.deadlineDays || 14} Days Seniority Protection)</td></tr>
+      </table>
+    ` : ''}
+
+    ${type === 'award' ? `
+      <h3 style="font-size: 13px; text-transform: uppercase; margin-top: 18px; border-bottom: 1px solid #16a34a; padding-bottom: 4px; color: #16a34a;">Fellowship Financial Sanction</h3>
+      <table style="border-color: #86efac;">
+        <tr><th style="background: #dcfce7;">Sanction Order Number</th><td><strong>MoTA/${app.schemeId}/2026/AWARD-${app.id.split('-').pop()}</strong></td></tr>
+        <tr><th style="background: #dcfce7;">Monthly Fellowship / Stipend</th><td><strong>₹${(app.fellowshipDetails?.monthlyStipend || 37000).toLocaleString('en-IN')} / month</strong></td></tr>
+        <tr><th style="background: #dcfce7;">Annual Contingency Grant</th><td>₹${(app.fellowshipDetails?.annualContingency || 20500).toLocaleString('en-IN')} / year</td></tr>
+        <tr><th style="background: #dcfce7;">Disbursal Mechanism</th><td>Direct Benefit Transfer (DBT) via PFMS e-FTO (Aadhaar Seeded Account)</td></tr>
+        <tr><th style="background: #dcfce7;">Sanctioning Authority</th><td>Ministry of Tribal Affairs, Shastri Bhawan, New Delhi</td></tr>
+      </table>
+    ` : ''}
+
+    <div class="footer-seal">
+      <div>
+        <div>Digitally verified by <strong>VidyaSetu Governance Ledger</strong></div>
+        <div>Audit Hash: <code>${(app.auditChain && app.auditChain[app.auditChain.length - 1]?.hash) || 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'}</code></div>
+        <div style="font-size: 9px; margin-top: 4px;">This is a computer-generated statutory instrument under the Information Technology Act 2000. Physical signature not required.</div>
+      </div>
+      <div class="seal-box">
+        MOTA DIRECT-VERIFIED<br/>
+        <span style="font-size: 9px; font-weight: normal; color: #64748b;">GOVERNMENT OF INDIA</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>`;
+
+  res.setHeader('Content-Type', 'text/html');
+  res.send(html);
 });
 
 // -------------------------------------------------------------

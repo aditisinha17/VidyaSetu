@@ -933,10 +933,10 @@ export const INITIAL_APPLICATIONS = [
 ];
 
 export const INITIAL_USERS = [
-  { id: 'a0000001-0000-0000-0000-000000000001', name: 'Birsa Hemrom', email: 'birsa.hemrom@research.iitkgp.ac.in', role: 'student', mobile: '+91 94311 02847', state: 'Jharkhand', district: 'Ranchi', tribe: 'Santhal', isPvtg: false },
-  { id: 'a0000001-0000-0000-0000-000000000010', name: 'Dr. Anil Toppo', email: 'registrar@ranchiuniv.ac.in', role: 'institute_officer', roleLabel: 'Nodal Verification Officer (University Registrar)', state: 'Jharkhand' },
-  { id: 'a0000001-0000-0000-0000-000000000020', name: 'Dr. Rajeshwar Meena', email: 'director.fellowship@tribal.gov.in', role: 'ministry_officer', roleLabel: 'MoTA Scrutiny Officer (Directorate)', state: 'New Delhi' },
-  { id: 'a0000001-0000-0000-0000-000000000030', name: 'System Administrator', email: 'admin@vidyasetu.gov.in', role: 'admin', roleLabel: 'National Platform Administrator' }
+  { id: 'a0000001-0000-0000-0000-000000000001', name: 'Birsa Hemrom', email: 'birsa.hemrom@research.iitkgp.ac.in', role: 'student', mobile: '+91 94311 02847', state: 'Jharkhand', district: 'Ranchi', tribe: 'Santhal', isPvtg: false, tutorial_completed: false, data_saver_mode: false },
+  { id: 'a0000001-0000-0000-0000-000000000010', name: 'Dr. Anil Toppo', email: 'registrar@ranchiuniv.ac.in', role: 'institute_officer', roleLabel: 'Nodal Verification Officer (University Registrar)', state: 'Jharkhand', tutorial_completed: false, data_saver_mode: false },
+  { id: 'a0000001-0000-0000-0000-000000000020', name: 'Dr. Rajeshwar Meena', email: 'director.fellowship@tribal.gov.in', role: 'ministry_officer', roleLabel: 'MoTA Scrutiny Officer (Directorate)', state: 'New Delhi', tutorial_completed: false, data_saver_mode: false },
+  { id: 'a0000001-0000-0000-0000-000000000030', name: 'System Administrator', email: 'admin@vidyasetu.gov.in', role: 'admin', roleLabel: 'National Platform Administrator', tutorial_completed: true, data_saver_mode: false }
 ];
 
 export const INITIAL_NOTIFICATIONS = [
