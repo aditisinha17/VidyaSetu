@@ -13,8 +13,9 @@ import {
 import { PublicAwardVerificationModal } from './PublicAwardVerificationModal';
 
 export function AwardLetterModal({ applicant, onClose }) {
-  if (!applicant) return null;
   const [showVerifyModal, setShowVerifyModal] = React.useState(false);
+
+  if (!applicant) return null;
 
   const handlePrint = () => {
     window.print();

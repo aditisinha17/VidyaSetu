@@ -117,7 +117,7 @@ export function App() {
     if (loginData.type === 'student') {
       setSelectedApplicantId(loginData.user.id);
       showToast(`Welcome back, ${loginData.user.name}! Jan Parichay session authenticated.`);
-      if (loginData.user.tutorial_completed !== true) {
+      if (loginData.forceWalkthrough || loginData.user.id === 'MOTA-2026-NFST-0101' || loginData.user.tutorial_completed !== true) {
         setIsWalkthroughOpen(true);
       }
     } else {
@@ -248,7 +248,8 @@ export function App() {
       }
     });
     setSelectedApplicantId(birsa.id);
-    showToast('🚀 Golden Demo Activated: Logged in as Birsa Hemrom (Case File MOTA-2026-NFST-0101).');
+    setIsWalkthroughOpen(true);
+    showToast('⚡ Quick Demo Activated: Logged in as Birsa Hemrom (Case MOTA-2026-NFST-0101).');
   };
 
   const handleLaunchOfficerDemo = () => {

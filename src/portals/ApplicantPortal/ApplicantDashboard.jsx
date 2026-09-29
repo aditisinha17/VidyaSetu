@@ -16,7 +16,8 @@ import {
   HelpCircle,
   TrendingUp,
   Award,
-  ShieldCheck
+  ShieldCheck,
+  Zap
 } from 'lucide-react';
 import { ApplicationTracker } from './ApplicationTracker';
 import { DeficiencyDesk } from './DeficiencyDesk';

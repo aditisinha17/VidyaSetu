@@ -65,10 +65,11 @@ export function LoginPanel({
   const [admin2FA, setAdmin2FA] = useState('482910');
 
   // Handle Student Login
-  const handleStudentLogin = (appId = selectedDemoApplicant) => {
+  const handleStudentLogin = (appId = selectedDemoApplicant, forceWalkthrough = false) => {
     const applicant = INITIAL_APPLICANTS.find(a => a.id === appId) || INITIAL_APPLICANTS[0];
     onLoginSuccess({
       type: 'student',
+      forceWalkthrough: forceWalkthrough || appId === 'MOTA-2026-NFST-0101',
       user: {
         id: applicant.id,
         name: applicant.name,
@@ -437,22 +438,39 @@ export function LoginPanel({
                 )}
 
                 {/* Quick Demonstration Student Profiles */}
-                <div className="pt-4 border-t border-slate-200 space-y-2">
+                <div className="pt-4 border-t border-slate-200 space-y-2.5">
                   <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wide flex items-center space-x-1">
                     <Sparkles className="w-3.5 h-3.5 text-amber-500" />
                     <span>Quick Access Applicant Profiles (1-Click Sign In):</span>
                   </div>
 
+                  {/* Primary SIH 2026 Golden Demo Persona Button */}
+                  <button
+                    type="button"
+                    onClick={() => handleStudentLogin('MOTA-2026-NFST-0101', true)}
+                    className="w-full py-2.5 px-3.5 bg-gradient-to-r from-amber-500 via-amber-600 to-amber-500 hover:from-amber-600 hover:to-amber-700 text-blue-950 font-black rounded-xl shadow-md transition flex items-center justify-between text-xs border border-amber-300 ring-2 ring-amber-400/50 cursor-pointer"
+                  >
+                    <span className="flex items-center space-x-2">
+                      <Sparkles className="w-4 h-4 text-blue-950 shrink-0" />
+                      <span className="truncate">⚡ Quick Demo (Birsa Hemrom - Case MOTA-2026-NFST-0101)</span>
+                    </span>
+                    <span className="text-[10px] bg-blue-950 text-amber-300 font-bold px-2 py-0.5 rounded-full shrink-0">
+                      Launch Scholar Desk →
+                    </span>
+                  </button>
+
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px]">
                     <button
-                      onClick={() => handleStudentLogin('MOTA-2026-NFST-0101')}
-                      className="p-2 border rounded-lg bg-slate-50 hover:bg-blue-50 hover:border-blue-300 text-left transition"
+                      type="button"
+                      onClick={() => handleStudentLogin('MOTA-2026-NFST-0101', true)}
+                      className="p-2 border rounded-lg bg-blue-50/70 border-blue-200 hover:bg-blue-100 hover:border-blue-400 text-left transition"
                     >
-                      <div className="font-bold text-slate-800">Birsa Hemrom</div>
-                      <div className="text-[10px] text-slate-500">NFST IIT Kharagpur (Stage 4)</div>
+                      <div className="font-bold text-blue-950">Birsa Hemrom</div>
+                      <div className="text-[10px] text-blue-700">NFST IIT Kharagpur (Stage 4)</div>
                     </button>
 
                     <button
+                      type="button"
                       onClick={() => handleStudentLogin('MOTA-2026-NOS-0042')}
                       className="p-2 border rounded-lg bg-slate-50 hover:bg-blue-50 hover:border-blue-300 text-left transition"
                     >
@@ -461,6 +479,7 @@ export function LoginPanel({
                     </button>
 
                     <button
+                      type="button"
                       onClick={() => handleStudentLogin('MOTA-2026-NFST-0199')}
                       className="p-2 border rounded-lg bg-rose-50 border-rose-200 text-left hover:bg-rose-100 transition"
                     >

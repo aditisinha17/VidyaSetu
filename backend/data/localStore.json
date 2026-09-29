@@ -321,7 +321,7 @@
   ],
   "applications": [
     {
-      "id": "MOTA-2026-NFST-5356",
+      "id": "MOTA-2026-NFST-4605",
       "userId": "a0000001-0000-0000-0000-000000000001",
       "name": "Rani Bodra",
       "email": "applicant@tribal.gov.in",
@@ -386,48 +386,48 @@
       "auditTrail": [
         {
           "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
-          "timestamp": "2026-09-29T06:07:30.442Z",
+          "timestamp": "2026-09-29T06:28:39.709Z",
           "actor": "Applicant (Rani Bodra)",
           "action": "Application created and submitted via National Portal",
-          "payload": "{\"appId\":\"MOTA-2026-NFST-5356\",\"schemeId\":\"NFST\"}",
-          "hash": "2252a30ef6ae2b261413f929c822b8f0ad93546e0f8c903f5e58ee9016c76192",
-          "shortHash": "2252a30e...6192"
+          "payload": "{\"appId\":\"MOTA-2026-NFST-4605\",\"schemeId\":\"NFST\"}",
+          "hash": "92c9d9823e3a66e3381ead512169f81da197720c990d29d90fca9a9c5b7c0fb2",
+          "shortHash": "92c9d982...0fb2"
         },
         {
-          "prevHash": "2252a30ef6ae2b261413f929c822b8f0ad93546e0f8c903f5e58ee9016c76192",
-          "timestamp": "2026-09-29T06:07:30.456Z",
+          "prevHash": "92c9d9823e3a66e3381ead512169f81da197720c990d29d90fca9a9c5b7c0fb2",
+          "timestamp": "2026-09-29T06:28:39.722Z",
           "actor": "Applicant (Rani Bodra)",
           "action": "Document uploaded: Annual Family Income Certificate",
           "payload": "{\"fileName\":\"valid_income_cert_FY2026_27.txt\",\"confidence\":98.4,\"method\":\"FALLBACK_EXTRACTION\"}",
-          "hash": "111cd9d1f1f54381f3013639117a72087b0775b061d33ad741f3193610c560fe",
-          "shortHash": "111cd9d1...60fe"
+          "hash": "e01a33de3304b64dea0702030c258a809edb3bb40bb0621c18ea0ac6cb3f5b4a",
+          "shortHash": "e01a33de...5b4a"
         },
         {
-          "prevHash": "111cd9d1f1f54381f3013639117a72087b0775b061d33ad741f3193610c560fe",
-          "timestamp": "2026-09-29T06:07:30.471Z",
+          "prevHash": "e01a33de3304b64dea0702030c258a809edb3bb40bb0621c18ea0ac6cb3f5b4a",
+          "timestamp": "2026-09-29T06:28:39.735Z",
           "actor": "Applicant (Rani Bodra)",
           "action": "Document uploaded: Previous Income Certificate",
           "payload": "{\"fileName\":\"expired_income_cert_2023.txt\",\"confidence\":96.4,\"method\":\"FALLBACK_EXTRACTION\"}",
-          "hash": "bf796ba1330fab093420c7a45ba1a79971841faf3b09fe00547ddca8c2ee5e9c",
-          "shortHash": "bf796ba1...5e9c"
+          "hash": "e02f60a39971dea3137c3713d370702d381bb281ec19a6efa1e4fdd3e52bc516",
+          "shortHash": "e02f60a3...c516"
         },
         {
-          "prevHash": "bf796ba1330fab093420c7a45ba1a79971841faf3b09fe00547ddca8c2ee5e9c",
-          "timestamp": "2026-09-29T06:07:30.485Z",
+          "prevHash": "e02f60a39971dea3137c3713d370702d381bb281ec19a6efa1e4fdd3e52bc516",
+          "timestamp": "2026-09-29T06:28:39.752Z",
           "actor": "Applicant (Rani Bodra)",
           "action": "Replacement Income Certificate (FY 2026-27) uploaded via Deficiency Portal",
           "payload": "{\"file\":\"Fresh_Income_Certificate_FY2026_27_SDO_Ranchi.pdf\"}",
-          "hash": "c9d5dcd6117a140a52b1cc5752acac055881cc9cf006beebb05d26e7fe882931",
-          "shortHash": "c9d5dcd6...2931"
+          "hash": "413e9d5f8606f114608bcd4d41a72de0f2cd397c512f69833d9627db19a8272a",
+          "shortHash": "413e9d5f...272a"
         },
         {
-          "prevHash": "c9d5dcd6117a140a52b1cc5752acac055881cc9cf006beebb05d26e7fe882931",
-          "timestamp": "2026-09-29T06:07:30.488Z",
+          "prevHash": "413e9d5f8606f114608bcd4d41a72de0f2cd397c512f69833d9627db19a8272a",
+          "timestamp": "2026-09-29T06:28:39.754Z",
           "actor": "AI Document Pre-Scrutiny Lab",
           "action": "AI Re-Scan Passed: Verified FY 2026-27 validity and SDO digital signature. Deficiency cleared.",
           "payload": "{\"ocrConfidence\":98.4,\"tamperScore\":0.01}",
-          "hash": "56b175b1dcec590fd246ec15d2dd329f74815e383d798bbb5a5b9d0706308716",
-          "shortHash": "56b175b1...8716"
+          "hash": "99e9174785afbf885a65f6e4fc9649bb9aa946ad3277bd013f948cc5ed8ab190",
+          "shortHash": "99e91747...b190"
         }
       ],
       "fellowshipDetails": null
@@ -456,12 +456,12 @@
       "netScore": "UGC-NET Qualified (Roll: JH04100234)",
       "annualIncome": 480000,
       "submissionDate": "2026-09-12",
-      "status": "AWARDED",
-      "stage": 6,
-      "progressPercent": 100,
+      "status": "UNDER_SCRUTINY",
+      "stage": 4,
+      "progressPercent": 70,
       "triageCategory": "READY",
       "aiRiskLevel": "LOW",
-      "aiVerdict": "Level-1 & Level-2 Scrutiny Approved by MoTA Officer. Forwarded to Merit Committee for Sanction Order.",
+      "aiVerdict": "Replacement Income Certificate (FY 2026-27) scanned successfully. All deficiencies resolved. Queued for Officer Scrutiny approval.",
       "deterministicRuleAudit": {
         "status": "PASS",
         "stStatus": "PASS",
@@ -488,7 +488,8 @@
           "issueDate": "12-06-2026",
           "status": "VERIFIED",
           "confidence": 98.4,
-          "extractedText": "Annual family income from all sources is Rs. 4,80,000 for FY 2026-27. Digital Barcode verified.",
+          "extractionMethod": "FALLBACK_EXTRACTION",
+          "extractedText": "Annual family income is Rs. 4,80,000 for FY 2026-27. SDO digital signature & barcode valid.",
           "tamperScore": 0.01
         },
         {
@@ -539,7 +540,7 @@
         "status": "RESOLVED",
         "deadlineDays": 14,
         "raisedBy": "AI_PRESCRUTINY",
-        "resolutionNote": "Fresh FY 2026-27 certificate issued by SDO Ranchi uploaded on 2026-09-18. AI re-scan validated."
+        "resolutionNote": "Replacement document verified via AI re-scan. SDO Ranchi barcode verified."
       },
       "auditTrail": [
         {
@@ -598,30 +599,66 @@
         },
         {
           "prevHash": "b0cca335837b21b506c73510d1017359a5fc2cd6776fb5a24191d119a8643fab",
-          "timestamp": "2026-09-29T06:07:30.511Z",
+          "timestamp": "2026-09-29T06:28:39.767Z",
           "actor": "Ministry Scrutiny Officer",
           "action": "Application picked up from priority queue for active dual-pane scrutiny review",
           "payload": "",
-          "hash": "baf2f19862be66ce56dbd021051d1a23708eb1b1971ae1688dcfd3e02b293e7d",
-          "shortHash": "baf2f198...3e7d"
+          "hash": "90b8773eea240e29ef6be981614c467abf3cb482f6f19466c4bb212b5ba10efb",
+          "shortHash": "90b8773e...0efb"
         },
         {
-          "prevHash": "baf2f19862be66ce56dbd021051d1a23708eb1b1971ae1688dcfd3e02b293e7d",
-          "timestamp": "2026-09-29T06:07:30.522Z",
+          "prevHash": "90b8773eea240e29ef6be981614c467abf3cb482f6f19466c4bb212b5ba10efb",
+          "timestamp": "2026-09-29T06:28:39.776Z",
           "actor": "Ministry Scrutiny Officer (Dr. Rajeshwar Meena)",
           "action": "Application verified and approved under statutory guidelines",
           "payload": "{\"officer\":\"director.fellowship@tribal.gov.in\",\"action\":\"STATUTORY_APPROVAL\"}",
-          "hash": "0f86c82e54e688ce7255d0c141e5331a14950782051a3f5186749fbb4c1ae211",
-          "shortHash": "0f86c82e...e211"
+          "hash": "db55d09588b3dda8f43f3b7235210cfc1bd294c690459314757045df781b017a",
+          "shortHash": "db55d095...017a"
         },
         {
-          "prevHash": "0f86c82e54e688ce7255d0c141e5331a14950782051a3f5186749fbb4c1ae211",
-          "timestamp": "2026-09-29T06:07:30.535Z",
+          "prevHash": "db55d09588b3dda8f43f3b7235210cfc1bd294c690459314757045df781b017a",
+          "timestamp": "2026-09-29T06:28:39.785Z",
           "actor": "National Selection Committee",
           "action": "Official Award Sanctioned: MoTA/NFST/2026/AWARD-0101",
           "payload": "{\"sanctionNo\":\"MoTA/NFST/2026/AWARD-0101\",\"status\":\"AWARDED\"}",
-          "hash": "c97827a61863b68c4a549b6ee6069e566e947f544d025ea0201e180c8a267505",
-          "shortHash": "c97827a6...7505"
+          "hash": "8307e9ed85c697ea0959f06236aca03a169e08b98287d45079e71c7225bc0720",
+          "shortHash": "8307e9ed...0720"
+        },
+        {
+          "prevHash": "8307e9ed85c697ea0959f06236aca03a169e08b98287d45079e71c7225bc0720",
+          "timestamp": "2026-09-29T06:28:44.774Z",
+          "actor": "Applicant (Birsa Hemrom)",
+          "action": "Replacement Income Certificate (FY 2026-27) uploaded via Deficiency Portal",
+          "payload": "{\"file\":\"Fresh_Income_Certificate_FY2026_27_SDO_Ranchi.pdf\"}",
+          "hash": "1854f40ed0268cbdca0119c9ef7305ff78a09b0f67b4933fb6bb7fca8970f141",
+          "shortHash": "1854f40e...f141"
+        },
+        {
+          "prevHash": "1854f40ed0268cbdca0119c9ef7305ff78a09b0f67b4933fb6bb7fca8970f141",
+          "timestamp": "2026-09-29T06:28:44.776Z",
+          "actor": "AI Document Pre-Scrutiny Lab",
+          "action": "AI Re-Scan Passed: Verified FY 2026-27 validity and SDO digital signature. Deficiency cleared.",
+          "payload": "{\"ocrConfidence\":98.4,\"tamperScore\":0.01}",
+          "hash": "4331e163ff92fabface032e503843e673a2752fb1ab0de8033c26f3c3042e514",
+          "shortHash": "4331e163...e514"
+        },
+        {
+          "prevHash": "4331e163ff92fabface032e503843e673a2752fb1ab0de8033c26f3c3042e514",
+          "timestamp": "2026-09-29T06:28:44.794Z",
+          "actor": "Ministry Scrutiny Officer",
+          "action": "Application picked up from priority queue for active dual-pane scrutiny review",
+          "payload": "",
+          "hash": "26d278d0e46978f34ca29a8549c50e47144a0df315802af548c2a1eec1b30696",
+          "shortHash": "26d278d0...0696"
+        },
+        {
+          "prevHash": "26d278d0e46978f34ca29a8549c50e47144a0df315802af548c2a1eec1b30696",
+          "timestamp": "2026-09-29T06:28:44.803Z",
+          "actor": "Ministry Scrutiny Officer",
+          "action": "Human Officer Override Executed: Exceptional Clearance",
+          "payload": "{\"reason\":\"SDO Ranchi revenue seal and digital signature manually cross-verified.\",\"officer\":\"director.fellowship@tribal.gov.in\"}",
+          "hash": "2e3cae810c84d263f4b419a62d3a22c9aa93e7dc4c022f87e7b9eed503a41748",
+          "shortHash": "2e3cae81...1748"
         }
       ],
       "anomalyFlags": [],
@@ -1223,8 +1260,8 @@
       "district": "Ranchi",
       "tribe": "Santhal",
       "isPvtg": false,
-      "tutorial_completed": false,
-      "data_saver_mode": false
+      "tutorial_completed": true,
+      "data_saver_mode": true
     },
     {
       "id": "a0000001-0000-0000-0000-000000000010",
@@ -1327,5 +1364,5 @@
       "disbursedAt": "2026-09-01T10:30:00Z"
     }
   ],
-  "lastSaved": "2026-09-29T06:07:30.538Z"
+  "lastSaved": "2026-09-29T06:29:10.014Z"
 }

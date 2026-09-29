@@ -351,7 +351,7 @@ export function PublicHomePage({
                 onClick={() => onLaunchGoldenDemo ? onLaunchGoldenDemo() : (onOpenRegister && onOpenRegister())}
                 className="px-6 py-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-blue-950 font-black rounded-2xl shadow-xl transition flex items-center space-x-2 text-sm ring-2 ring-amber-300 cursor-pointer"
               >
-                <span>🚀 Run 7-Minute Golden Demo (Birsa Hemrom)</span>
+                <span>⚡ Quick Demo (Birsa Hemrom - Case MOTA-2026-NFST-0101)</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
 
@@ -910,7 +910,7 @@ export function PublicHomePage({
                   }}
                   className="px-5 py-2.5 bg-blue-900 hover:bg-blue-800 text-white font-bold rounded-xl shadow-md flex items-center space-x-1.5"
                 >
-                  <span>Run Golden Demo as Birsa Hemrom ➔</span>
+                  <span>⚡ Quick Demo (Birsa Hemrom - Case MOTA-2026-NFST-0101) ➔</span>
                 </button>
               </div>
             </div>
