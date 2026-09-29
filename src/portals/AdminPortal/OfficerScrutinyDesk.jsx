@@ -134,7 +134,7 @@ export function OfficerScrutinyDesk({
         {/* Left Column: Prioritized Applications Queue (4 cols) */}
         <div className="lg:col-span-4 bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col h-[820px] overflow-hidden">
           {/* Search & Filter Bar */}
-          <div className="p-3.5 border-b border-slate-200 space-y-2.5 bg-slate-50">
+          <div data-tour="officer-filters" className="p-3.5 border-b border-slate-200 space-y-2.5 bg-slate-50">
             <div className="relative">
               <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
               <input
@@ -169,7 +169,7 @@ export function OfficerScrutinyDesk({
           </div>
 
           {/* Queue List */}
-          <div className="flex-1 overflow-y-auto divide-y divide-slate-100">
+          <div data-tour="officer-table" className="flex-1 overflow-y-auto divide-y divide-slate-100">
             {filteredList.map((app) => {
               const isSelected = app.id === selectedApp?.id;
               const isDeficient = app.status === 'Deficiency Pending' || app.triageCategory === 'DEFICIENT';
@@ -247,7 +247,7 @@ export function OfficerScrutinyDesk({
                 </div>
 
                 {/* Scrutiny Action Buttons with Officer Override */}
-                <div className="flex items-center space-x-2">
+                <div data-tour="officer-actions" className="flex items-center space-x-2">
                   <button
                     onClick={() => setIsOverrideModalOpen(true)}
                     className="flex items-center space-x-1.5 px-3 py-2 bg-purple-50 hover:bg-purple-100 text-purple-900 border border-purple-200 rounded-xl text-xs font-bold transition"

@@ -109,7 +109,7 @@ export function Header({
           </button>
 
           {/* Language Selector */}
-          <div className="flex items-center space-x-1 border rounded px-1.5 py-0.5 bg-white/60">
+          <div data-tour="language-toggle" className="flex items-center space-x-1 border rounded px-1.5 py-0.5 bg-white/60">
             <Languages className="w-3.5 h-3.5 text-blue-800" />
             <select 
               value={lang} 
@@ -158,15 +158,16 @@ export function Header({
 
         {/* Action Controls & Authenticated User Status */}
         <div className="flex items-center space-x-2.5">
-          {/* Welcome Tour Trigger */}
+          {/* Welcome / Page Tour Trigger */}
           {onOpenTour && (
             <button
+              data-tour="page-help"
               onClick={onOpenTour}
               className="px-2.5 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-900 border border-blue-200 transition flex items-center space-x-1 text-xs font-bold"
-              title="Welcome Tour & Guidelines"
+              title="Page Help & Guided Tour"
             >
               <Sparkles className="w-3.5 h-3.5 text-blue-600" />
-              <span className="hidden md:inline">{lang === 'hi' ? 'टूर' : 'Tour'}</span>
+              <span className="hidden md:inline">{lang === 'hi' ? 'पेज सहायता (ⓘ)' : 'Page Help (ⓘ)'}</span>
             </button>
           )}
 
@@ -183,6 +184,7 @@ export function Header({
 
           {/* Notification Bell */}
           <button
+            data-tour="notifications-bell"
             onClick={onOpenNotifications}
             className="relative p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition"
             title="Multi-Channel Notifications (SMS/Email/Portal)"
@@ -219,7 +221,7 @@ export function Header({
           )}
 
           {/* Authenticated User Card */}
-          <div className={`p-2 rounded-xl border flex items-center space-x-2.5 ${contrast ? 'bg-zinc-900 border-yellow-500' : 'bg-slate-50 border-slate-300'}`}>
+          <div data-tour="profile-menu" className={`p-2 rounded-xl border flex items-center space-x-2.5 ${contrast ? 'bg-zinc-900 border-yellow-500' : 'bg-slate-50 border-slate-300'}`}>
             <div className={`w-8 h-8 rounded-full text-white flex items-center justify-center font-bold text-xs shadow-inner ${
               isStudent ? 'bg-blue-900' : 'bg-purple-950'
             }`}>

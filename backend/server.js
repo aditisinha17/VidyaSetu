@@ -153,6 +153,18 @@ app.post('/api/auth/register', (req, res) => {
   };
 
   DataStore.users.push(newUser);
+  
+  // Create 1 genuine welcome notification for the fresh user (Empty-by-default Principle 7)
+  const welcomeNotif = {
+    id: `NOTIF-${Date.now()}`,
+    userId: newUser.id,
+    channel: 'PORTAL',
+    title: 'Welcome to VidyaSetu MoTA Scholarship Portal',
+    message: `Namaste ${newUser.name}, your citizen account is verified. Start by checking your statutory eligibility across all 5 MoTA schemes or complete your application profile.`,
+    time: 'Just now',
+    type: 'INFO'
+  };
+  DataStore.addNotification(welcomeNotif);
   DataStore.save();
 
   const token = `token-${newUser.id}-${Date.now()}`;
@@ -172,7 +184,11 @@ app.post('/api/auth/login', (req, res) => {
     return sendError(res, 400, 'Email and password are required');
   }
 
-  const user = DataStore.users.find(u => u.email.toLowerCase() === email.toLowerCase());
+  const user = DataStore.users.find(u => 
+    u.email.toLowerCase() === email.toLowerCase() || 
+    (u.demoEmail && u.demoEmail.toLowerCase() === email.toLowerCase()) ||
+    (email.toLowerCase() === 'demo@vidyasetu.in' && u.id === 'a0000001-0000-0000-0000-000000000001')
+  );
   if (!user) {
     return sendError(res, 401, 'Invalid credentials');
   }
@@ -226,6 +242,28 @@ app.get('/api/users', (req, res) => {
   sendResponse(res, 200, DataStore.users);
 });
 
+// Per-user, per-page Tour Progress API (Spotlight Guided Tour)
+app.get('/api/users/:userId/tour-progress', (req, res) => {
+  const userId = req.params.userId;
+  const progress = DataStore.getUserTourProgress(userId);
+  sendResponse(res, 200, progress);
+});
+
+app.post('/api/users/:userId/tour-progress', (req, res) => {
+  const userId = req.params.userId;
+  const { pageKey, completed = true } = req.body || {};
+  if (!pageKey) return sendError(res, 400, 'pageKey is required');
+  const progress = DataStore.setUserTourProgress(userId, pageKey, completed);
+  sendResponse(res, 200, progress, `Tour progress updated for ${pageKey}`);
+});
+
+app.post('/api/users/:userId/tour-progress/reset', (req, res) => {
+  const userId = req.params.userId;
+  const { pageKey } = req.body || {};
+  const progress = DataStore.resetUserTourProgress(userId, pageKey);
+  sendResponse(res, 200, progress, `Tour progress reset for ${pageKey || 'all pages'}`);
+});
+
 // Update user tutorial completion state
 app.patch('/api/users/:id/tutorial-completed', (req, res) => {
   const userId = req.params.id;
@@ -257,20 +295,34 @@ app.patch('/api/users/:id/data-saver', (req, res) => {
   sendError(res, 404, 'User not found');
 });
 
-// Student Mission Progress (6 Steps to a Scholarship)
+// Student Mission Progress (6 Steps to a Scholarship - Strict Isolation)
 app.get('/api/me/progress', (req, res) => {
   const { userId, appId } = req.query;
+  const authHeader = req.headers.authorization || '';
+  const token = authHeader.replace(/^Bearer\s+/i, '');
+  let resolvedUserId = userId;
+  let requester = null;
+  if (token && activeSessions.has(token)) {
+    const requesterId = activeSessions.get(token);
+    requester = DataStore.users.find(u => u.id === requesterId);
+    if (requester && requester.role === 'student') {
+      resolvedUserId = requester.id;
+    }
+  }
+
   let targetApp = null;
   if (appId) {
     targetApp = DataStore.getApplication(appId);
-  } else if (userId) {
-    targetApp = DataStore.getApplications().find(a => a.userId === userId);
+  } else if (resolvedUserId) {
+    targetApp = DataStore.getApplications().find(a => a.userId === resolvedUserId);
   }
-  if (!targetApp) {
+
+  // Only fallback to Birsa if unauthenticated and no user specified (for inspection)
+  if (!targetApp && !resolvedUserId && !appId) {
     targetApp = DataStore.getApplication('MOTA-2026-NFST-0101') || DataStore.getApplications()[0];
   }
 
-  const status = targetApp ? targetApp.status : 'DRAFT';
+  const status = targetApp ? targetApp.status : 'NEW';
 
   // 6 Steps definition
   const steps = [
@@ -280,8 +332,8 @@ app.get('/api/me/progress', (req, res) => {
       nameHi: 'प्रोफ़ाइल पूर्ण करें',
       description: 'DigiLocker KYC, ST Caste Article 342, and Contact details',
       descriptionHi: 'डिजीलॉकर केवाईसी, एसटी जाति अनुच्छेद 342 एवं संपर्क विवरण',
-      status: 'COMPLETED',
-      completedDate: '2026-09-01'
+      status: targetApp ? 'COMPLETED' : (resolvedUserId ? 'IN_PROGRESS' : 'PENDING'),
+      completedDate: targetApp ? '2026-09-01' : null
     },
     {
       id: 2,
@@ -289,8 +341,8 @@ app.get('/api/me/progress', (req, res) => {
       nameHi: 'वैधानिक पात्रता जांचें',
       description: 'Deterministic statutory evaluation against all 5 MoTA schemes',
       descriptionHi: 'सभी 5 जनजातीय कार्य मंत्रालय योजनाओं के विरुद्ध वैधानिक पात्रता',
-      status: targetApp ? 'COMPLETED' : 'IN_PROGRESS',
-      completedDate: '2026-09-05'
+      status: targetApp ? 'COMPLETED' : 'PENDING',
+      completedDate: targetApp ? '2026-09-05' : null
     },
     {
       id: 3,
@@ -298,8 +350,8 @@ app.get('/api/me/progress', (req, res) => {
       nameHi: 'आवेदन एवं दस्तावेज जमा करें',
       description: 'Upload required certificates with real OCR and metadata checks',
       descriptionHi: 'वास्तविक ओसीआर एवं मेटाडेटा सत्यापन के साथ दस्तावेज अपलोड',
-      status: status !== 'DRAFT' ? 'COMPLETED' : 'IN_PROGRESS',
-      completedDate: status !== 'DRAFT' ? (targetApp?.submissionDate || '2026-09-12') : null
+      status: targetApp && status !== 'DRAFT' ? 'COMPLETED' : 'PENDING',
+      completedDate: targetApp && status !== 'DRAFT' ? (targetApp?.submissionDate || '2026-09-12') : null
     },
     {
       id: 4,
@@ -307,7 +359,7 @@ app.get('/api/me/progress', (req, res) => {
       nameHi: 'एआई पूर्व-संवीक्षा पास करें',
       description: 'Automated certificate validity, Jaro-Winkler name match, and tamper audit',
       descriptionHi: 'स्वचालित वैधता, जारो-विंकलर नाम मिलान और छेड़छाड़ रोकथाम ऑडिट',
-      status: status === 'DEFICIENT' ? 'WARNING' : (['RESUBMITTED', 'READY_FOR_REVIEW', 'UNDER_SCRUTINY', 'APPROVED', 'AWARDED', 'QPR_ACTIVE'].includes(status) ? 'COMPLETED' : (status === 'AI_PRESCRUTINY' ? 'IN_PROGRESS' : 'PENDING')),
+      status: targetApp ? (status === 'DEFICIENT' ? 'WARNING' : (['RESUBMITTED', 'READY_FOR_REVIEW', 'UNDER_SCRUTINY', 'APPROVED', 'AWARDED', 'QPR_ACTIVE'].includes(status) ? 'COMPLETED' : (status === 'AI_PRESCRUTINY' ? 'IN_PROGRESS' : 'PENDING'))) : 'PENDING',
       actionRequired: status === 'DEFICIENT' ? (targetApp?.deficiency?.title || 'Deficiency resolution required') : null
     },
     {
@@ -316,7 +368,7 @@ app.get('/api/me/progress', (req, res) => {
       nameHi: 'संस्थान एवं मंत्रालय संवीक्षा',
       description: 'Level-1 nodal verification and Level-2 Directorate scrutiny desk',
       descriptionHi: 'स्तर-1 नोडल सत्यापन एवं स्तर-2 निदेशालय संवीक्षा पटल',
-      status: ['APPROVED', 'AWARDED', 'QPR_ACTIVE'].includes(status) ? 'COMPLETED' : (['READY_FOR_REVIEW', 'UNDER_SCRUTINY'].includes(status) ? 'IN_PROGRESS' : 'PENDING')
+      status: targetApp ? (['APPROVED', 'AWARDED', 'QPR_ACTIVE'].includes(status) ? 'COMPLETED' : (['READY_FOR_REVIEW', 'UNDER_SCRUTINY'].includes(status) ? 'IN_PROGRESS' : 'PENDING')) : 'PENDING'
     },
     {
       id: 6,
@@ -324,7 +376,7 @@ app.get('/api/me/progress', (req, res) => {
       nameHi: 'स्वीकृति पत्र एवं डीबीटी भुगतान',
       description: 'Official Sanction Order, QR-verified award letter, and monthly e-FTO',
       descriptionHi: 'आधिकारिक स्वीकृति आदेश, क्यूआर-सत्यापित पत्र एवं मासिक ई-एफ़टीओ',
-      status: ['AWARDED', 'QPR_ACTIVE'].includes(status) ? 'COMPLETED' : 'PENDING'
+      status: targetApp && ['AWARDED', 'QPR_ACTIVE'].includes(status) ? 'COMPLETED' : 'PENDING'
     }
   ];
 
@@ -333,9 +385,9 @@ app.get('/api/me/progress', (req, res) => {
   const progressPercent = Math.round((completedSteps / 6) * 100);
 
   sendResponse(res, 200, {
-    applicationId: targetApp?.id,
-    applicantName: targetApp?.name,
-    schemeId: targetApp?.schemeId,
+    applicationId: targetApp?.id || null,
+    applicantName: targetApp?.name || requester?.name || null,
+    schemeId: targetApp?.schemeId || null,
     currentStatus: status,
     completedSteps,
     totalSteps: 6,
@@ -385,7 +437,19 @@ app.post('/api/eligibility/check', (req, res) => {
 // 5. APPLICATIONS INTAKE & CASE FILE RETRIEVAL
 // -------------------------------------------------------------
 app.get('/api/applications', (req, res) => {
-  const { schemeId, status, userId } = req.query;
+  const { schemeId, status } = req.query;
+  let { userId } = req.query;
+
+  const authHeader = req.headers.authorization || '';
+  const token = authHeader.replace(/^Bearer\s+/i, '');
+  if (token && activeSessions.has(token)) {
+    const requesterId = activeSessions.get(token);
+    const requester = DataStore.users.find(u => u.id === requesterId);
+    if (requester && requester.role === 'student') {
+      userId = requester.id;
+    }
+  }
+
   const apps = DataStore.getApplications({ schemeId, status, userId });
   // Attach calculated health score
   const enriched = apps.map(a => ({
@@ -1043,7 +1107,17 @@ app.post('/api/grievances', (req, res) => {
 });
 
 app.get('/api/notifications', (req, res) => {
-  sendResponse(res, 200, DataStore.getNotifications(req.query.userId));
+  let { userId } = req.query;
+  const authHeader = req.headers.authorization || '';
+  const token = authHeader.replace(/^Bearer\s+/i, '');
+  if (token && activeSessions.has(token)) {
+    const requesterId = activeSessions.get(token);
+    const requester = DataStore.users.find(u => u.id === requesterId);
+    if (requester && requester.role === 'student') {
+      userId = requester.id;
+    }
+  }
+  sendResponse(res, 200, DataStore.getNotifications(userId));
 });
 
 // -------------------------------------------------------------

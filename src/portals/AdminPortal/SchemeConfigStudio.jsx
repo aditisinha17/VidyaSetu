@@ -78,6 +78,7 @@ export function SchemeConfigStudio({ schemes, onUpdateScheme }) {
 
         <div className="flex items-center space-x-3">
           <button
+            data-tour="studio-publish"
             onClick={handleSave}
             className="flex items-center space-x-2 px-5 py-2.5 bg-blue-900 hover:bg-blue-800 text-white rounded-xl text-xs font-bold shadow-md transition"
           >
@@ -97,7 +98,7 @@ export function SchemeConfigStudio({ schemes, onUpdateScheme }) {
       )}
 
       {/* Scheme Selector Pills */}
-      <div className="flex space-x-2 overflow-x-auto pb-1">
+      <div data-tour="studio-schemes" className="flex space-x-2 overflow-x-auto pb-1">
         {schemes.map(sch => (
           <button
             key={sch.id}
@@ -153,7 +154,7 @@ export function SchemeConfigStudio({ schemes, onUpdateScheme }) {
 
       {/* TAB 1: Eligibility, Slots & Budget */}
       {activeTab === 'rules' && (
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-6">
+        <div data-tour="studio-criteria" className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 text-xs">
             <div>
               <label className="block font-bold text-slate-700 mb-1">Scheme Display Name</label>

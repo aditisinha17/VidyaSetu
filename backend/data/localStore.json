@@ -1053,6 +1053,7 @@
       "id": "a0000001-0000-0000-0000-000000000001",
       "name": "Birsa Hemrom",
       "email": "birsa.hemrom@research.iitkgp.ac.in",
+      "demoEmail": "demo@vidyasetu.in",
       "role": "student",
       "mobile": "+91 94311 02847",
       "state": "Jharkhand",
@@ -1163,5 +1164,6 @@
       "disbursedAt": "2026-09-01T10:30:00Z"
     }
   ],
-  "lastSaved": "2026-09-29T07:28:54.073Z"
+  "userTourProgress": {},
+  "lastSaved": "2026-09-29T07:55:35.003Z"
 }

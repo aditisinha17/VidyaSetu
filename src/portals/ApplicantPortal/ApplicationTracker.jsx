@@ -10,7 +10,9 @@ import {
   ChevronRight,
   UserCheck,
   Building,
-  GraduationCap
+  GraduationCap,
+  Landmark,
+  ArrowRight
 } from 'lucide-react';
 
 const STAGES = [
@@ -22,21 +24,63 @@ const STAGES = [
   { id: 6, label: 'Award & DBT Active', desc: 'Sanction Order & Monthly Stipend' }
 ];
 
-export function ApplicationTracker({ applicant, onViewDoc, onViewAwardLetter, onOpenDeficiency }) {
-  if (!applicant) return null;
+export function ApplicationTracker({ applicant, onViewDoc, onViewAwardLetter, onOpenDeficiency, onStartApplication }) {
+  if (!applicant) {
+    return (
+      <div className="space-y-6">
+        <div data-tour="seniority-badge" className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm text-center space-y-3">
+          <Clock className="w-10 h-10 text-blue-900 mx-auto" />
+          <h2 className="text-base font-bold text-slate-900">No Application Currently in Pipeline</h2>
+          <p className="text-xs text-slate-500 max-w-md mx-auto">
+            Once you submit an application, you will be assigned a permanent Queue Seniority timestamp protected under MoTA guidelines Section 4.1.
+          </p>
+        </div>
+
+        <div data-tour="tracker-timeline" className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm">
+          <h3 className="text-sm font-bold text-slate-900 mb-6 flex items-center space-x-2">
+            <Sparkles className="w-4 h-4 text-blue-900" />
+            <span>Standard 6-Stage MoTA Verification Pipeline</span>
+          </h3>
+          <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
+            {STAGES.map((s) => (
+              <div key={s.id} className="p-3.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-600">
+                <div className="text-[10px] font-mono font-bold text-slate-400">STAGE {s.id}</div>
+                <div className="font-bold text-xs mt-1 text-slate-800">{s.label}</div>
+                <div className="text-[10px] mt-2 text-slate-500">{s.desc}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div data-tour="disbursal-status" className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm">
+          <h3 className="text-sm font-bold text-slate-900 mb-2 flex items-center space-x-2">
+            <Landmark className="w-4 h-4 text-blue-900" />
+            <span>PFMS Direct Benefit Transfer (DBT) Status</span>
+          </h3>
+          <p className="text-xs text-slate-500">
+            Aadhaar Payment Bridge (APB) mandate will automatically activate upon Selection Committee approval and Sanction Order issuance.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   const currentStage = applicant.stage || 1;
-  const isSelected = applicant.status === 'Selected';
-  const hasDeficiency = applicant.status === 'Deficiency Pending';
+  const isSelected = applicant.status === 'Selected' || applicant.status === 'AWARDED';
+  const hasDeficiency = applicant.status === 'Deficiency Pending' || applicant.status === 'DEFICIENT';
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-in fade-in duration-200">
       {/* Top Application Summary Banner */}
       <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-4">
         <div>
-          <div className="flex items-center space-x-2">
+          <div data-tour="seniority-badge" className="flex flex-wrap items-center gap-2">
             <span className="text-xs font-mono font-bold px-2.5 py-0.5 rounded bg-blue-100 text-blue-900 border border-blue-200">
               {applicant.id}
+            </span>
+            <span className="text-xs font-mono font-bold px-2.5 py-0.5 rounded bg-emerald-50 text-emerald-900 border border-emerald-300 flex items-center space-x-1">
+              <span>Queue Seniority:</span>
+              <strong className="text-emerald-700">{applicant.submissionDate || '2026-09-01'} (Protected)</strong>
             </span>
             <span className={`text-xs px-2.5 py-0.5 rounded-full font-bold flex items-center space-x-1 ${
               isSelected 
@@ -50,7 +94,7 @@ export function ApplicationTracker({ applicant, onViewDoc, onViewAwardLetter, on
             </span>
             {applicant.pvtg && (
               <span className="text-[11px] px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 font-bold border border-purple-200">
-                PVTG Candidate
+                PVTG Priority Candidate
               </span>
             )}
           </div>
@@ -62,7 +106,7 @@ export function ApplicationTracker({ applicant, onViewDoc, onViewAwardLetter, on
         </div>
 
         <div className="flex items-center space-x-3">
-          {hasDeficiency && (
+          {hasDeficiency && onOpenDeficiency && (
             <button
               onClick={() => onOpenDeficiency(applicant)}
               className="flex items-center space-x-1.5 px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold rounded-xl shadow transition"
@@ -72,20 +116,20 @@ export function ApplicationTracker({ applicant, onViewDoc, onViewAwardLetter, on
             </button>
           )}
 
-          {isSelected && (
+          {isSelected && onViewAwardLetter && (
             <button
               onClick={() => onViewAwardLetter(applicant)}
               className="flex items-center space-x-1.5 px-4 py-2 bg-blue-900 hover:bg-blue-800 text-white text-xs font-bold rounded-xl shadow-md transition"
             >
               <Download className="w-4 h-4 text-amber-300" />
-              <span>Download Award Letter</span>
+              <span>Download Official Award Letter</span>
             </button>
           )}
         </div>
       </div>
 
       {/* Visual Interactive Pipeline */}
-      <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm">
+      <div data-tour="tracker-timeline" className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm">
         <h3 className="text-sm font-bold text-slate-900 mb-6 flex items-center space-x-2">
           <Sparkles className="w-4 h-4 text-blue-900" />
           <span>Real-Time Multi-Stage Scrutiny & Award Pipeline</span>
@@ -100,33 +144,24 @@ export function ApplicationTracker({ applicant, onViewDoc, onViewAwardLetter, on
             return (
               <div
                 key={s.id}
-                className={`p-3.5 rounded-xl border flex flex-col justify-between transition-all ${
+                className={`p-3.5 rounded-xl border transition-all ${
                   isCompleted
-                    ? 'bg-emerald-50/60 border-emerald-300 text-emerald-950'
+                    ? 'border-emerald-500 bg-emerald-50/50 text-emerald-900'
                     : isCurrent
                       ? hasDeficiency
-                        ? 'bg-rose-50 border-rose-400 text-rose-950 shadow-md ring-2 ring-rose-300'
-                        : 'bg-blue-50 border-blue-400 text-blue-950 shadow-md ring-2 ring-blue-300'
-                      : 'bg-slate-50 border-slate-200 text-slate-400 opacity-75'
+                        ? 'border-rose-500 bg-rose-50/50 text-rose-900 ring-2 ring-rose-500/20'
+                        : 'border-blue-900 bg-blue-50/50 text-blue-900 ring-2 ring-blue-900/20'
+                      : 'border-slate-200 bg-slate-50 text-slate-400'
                 }`}
               >
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-[10px] font-bold font-mono">Stage 0{s.id}</span>
-                    {isCompleted ? (
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                    ) : isCurrent ? (
-                      hasDeficiency ? (
-                        <AlertTriangle className="w-4 h-4 text-rose-600 animate-bounce" />
-                      ) : (
-                        <div className="w-3 h-3 rounded-full bg-blue-600 animate-ping"></div>
-                      )
-                    ) : (
-                      <div className="w-3 h-3 rounded-full bg-slate-300"></div>
-                    )}
-                  </div>
-                  <div className="text-xs font-bold leading-tight">{s.label}</div>
+                <div className="flex items-center justify-between text-[11px] font-mono font-bold">
+                  <span>STAGE {s.id}</span>
+                  {isCompleted && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />}
+                  {isCurrent && (
+                    <span className="w-2 h-2 rounded-full bg-blue-600 animate-ping"></span>
+                  )}
                 </div>
+                <div className="font-bold text-xs mt-1 text-slate-900">{s.label}</div>
                 <div className="text-[10px] mt-2 opacity-80">{s.desc}</div>
               </div>
             );
@@ -140,54 +175,87 @@ export function ApplicationTracker({ applicant, onViewDoc, onViewAwardLetter, on
           </div>
           <div>
             <div className="font-bold text-slate-900">AI Scrutiny & Governance Log:</div>
-            <p className="text-slate-600 mt-0.5">{applicant.aiVerdict}</p>
+            <p className="text-slate-600 mt-0.5">{applicant.aiVerdict || 'Application in active MoTA verification pipeline.'}</p>
             <div className="mt-2 flex items-center space-x-4 text-[11px] text-slate-500 font-mono">
-              <span>AI Confidence: <strong className="text-slate-800">{applicant.aiScore}%</strong></span>
+              <span>AI Health Score: <strong className="text-slate-800">{applicant.healthScore?.finalScore || applicant.aiScore || 92}%</strong></span>
               <span>•</span>
-              <span>Risk Tier: <strong className="text-emerald-700">{applicant.aiRiskLevel}</strong></span>
+              <span>Risk Tier: <strong className="text-emerald-700">{applicant.aiRiskLevel || 'LOW'}</strong></span>
               <span>•</span>
-              <span>Last Audit: <strong>{applicant.submissionDate}</strong></span>
+              <span>Submission Date: <strong>{applicant.submissionDate || '2026-09-01'}</strong></span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Submitted Documents & AI Extraction View */}
-      <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm">
-        <h3 className="text-sm font-bold text-slate-900 mb-4 flex items-center space-x-2">
-          <FileText className="w-4 h-4 text-blue-900" />
-          <span>Submitted Verification Documents (Click to inspect AI OCR overlay)</span>
-        </h3>
+      {/* PFMS DBT Disbursal Card */}
+      <div data-tour="disbursal-status" className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-bold text-slate-900 flex items-center space-x-2">
+            <Landmark className="w-4 h-4 text-blue-900" />
+            <span>PFMS DBT Disbursal & Bank Verification</span>
+          </h3>
+          <span className="text-xs font-mono font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 px-2.5 py-0.5 rounded-full">
+            Aadhaar Payment Bridge Seeded
+          </span>
+        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {applicant.documents.map((doc, idx) => (
-            <div
-              key={idx}
-              onClick={() => onViewDoc(doc, applicant)}
-              className="p-3.5 rounded-xl border border-slate-200 hover:border-blue-400 bg-white hover:bg-blue-50/30 cursor-pointer transition flex items-center justify-between group shadow-2xs"
-            >
-              <div className="flex items-center space-x-3">
-                <div className={`p-2 rounded-lg ${doc.status === 'VERIFIED' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}`}>
-                  <FileText className="w-4 h-4" />
-                </div>
-                <div>
-                  <div className="text-xs font-bold text-slate-900 group-hover:text-blue-900">{doc.name}</div>
-                  <div className="text-[11px] text-slate-500">Ref: {doc.fileNumber} • {doc.issuingAuthority}</div>
-                </div>
-              </div>
-
-              <div className="flex items-center space-x-2">
-                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                  doc.status === 'VERIFIED' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'
-                }`}>
-                  {doc.status}
-                </span>
-                <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-blue-900" />
-              </div>
-            </div>
-          ))}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+          <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
+            <span className="text-[11px] text-slate-500">Bank Account & IFSC</span>
+            <div className="font-bold text-slate-900 mt-0.5">State Bank of India (SBI)</div>
+            <div className="font-mono text-[11px] text-slate-600">SBIN0000166 • ****8192</div>
+          </div>
+          <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
+            <span className="text-[11px] text-slate-500">Monthly Entitlement</span>
+            <div className="font-bold text-emerald-700 mt-0.5">₹37,000 / Month (JRF)</div>
+            <div className="text-[11px] text-slate-500">+ Annual Contingency ₹20,500</div>
+          </div>
+          <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
+            <span className="text-[11px] text-slate-500">Next Disbursement Batch</span>
+            <div className="font-bold text-blue-900 mt-0.5">PFMS e-FTO Active</div>
+            <div className="text-[11px] text-slate-500">Subject to quarterly progress report (QPR)</div>
+          </div>
         </div>
       </div>
+
+      {/* Submitted Documents & AI Extraction View */}
+      {applicant.documents && applicant.documents.length > 0 && (
+        <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm">
+          <h3 className="text-sm font-bold text-slate-900 mb-4 flex items-center space-x-2">
+            <FileText className="w-4 h-4 text-blue-900" />
+            <span>Submitted Verification Documents (Click to inspect AI OCR overlay)</span>
+          </h3>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {applicant.documents.map((doc, idx) => (
+              <div
+                key={idx}
+                onClick={() => onViewDoc && onViewDoc(doc, applicant)}
+                className="p-3.5 rounded-xl border border-slate-200 hover:border-blue-400 bg-white hover:bg-blue-50/30 cursor-pointer transition flex items-center justify-between group shadow-2xs"
+              >
+                <div className="flex items-center space-x-3">
+                  <div className={`p-2 rounded-lg ${doc.status === 'VERIFIED' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}`}>
+                    <FileText className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="text-xs font-bold text-slate-900 group-hover:text-blue-900">{doc.name}</div>
+                    <div className="text-[11px] text-slate-500">Ref: {doc.fileNumber || 'DOC-REG'} • {doc.issuingAuthority}</div>
+                  </div>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                    doc.status === 'VERIFIED' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'
+                  }`}>
+                    {doc.status}
+                  </span>
+                  <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-blue-900" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

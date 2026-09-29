@@ -7,6 +7,87 @@ const API_BASE = 'http://localhost:5001/api';
 export const ApiClient = {
   isBackendConnected: false,
 
+  getToken() {
+    try {
+      return localStorage.getItem('vidyasetu_token') || '';
+    } catch {
+      return '';
+    }
+  },
+
+  setToken(token) {
+    try {
+      if (token) localStorage.setItem('vidyasetu_token', token);
+      else localStorage.removeItem('vidyasetu_token');
+    } catch {}
+  },
+
+  getAuthHeaders() {
+    const token = this.getToken();
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+    return headers;
+  },
+
+  /**
+   * Real Auth: Citizen Registration
+   */
+  async register(userData) {
+    try {
+      const res = await fetch(`${API_BASE}/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userData),
+        signal: AbortSignal.timeout(3000)
+      });
+      const data = await res.json();
+      if (data && data.success && data.data?.token) {
+        this.setToken(data.data.token);
+      }
+      return data;
+    } catch (e) {
+      console.warn('API error register:', e);
+      return { success: false, error: e.message };
+    }
+  },
+
+  /**
+   * Real Auth: User Login
+   */
+  async login(email, password) {
+    try {
+      const res = await fetch(`${API_BASE}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+        signal: AbortSignal.timeout(3000)
+      });
+      const data = await res.json();
+      if (data && data.success && data.data?.token) {
+        this.setToken(data.data.token);
+      }
+      return data;
+    } catch (e) {
+      console.warn('API error login:', e);
+      return { success: false, error: e.message };
+    }
+  },
+
+  /**
+   * Real Auth: User Logout
+   */
+  async logout() {
+    try {
+      await fetch(`${API_BASE}/auth/logout`, {
+        method: 'POST',
+        headers: this.getAuthHeaders(),
+        signal: AbortSignal.timeout(2000)
+      });
+    } catch {}
+    this.setToken('');
+    return { success: true };
+  },
+
   /**
    * Health check to probe backend connectivity.
    */
@@ -35,7 +116,13 @@ export const ApiClient = {
         body: JSON.stringify(body),
         signal: AbortSignal.timeout(2000)
       });
-      if (res.ok) return await res.json();
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.data?.token) {
+          this.setToken(data.data.token);
+        }
+        return data;
+      }
     } catch (e) {
       console.warn('API error demoLogin:', e);
     }
@@ -95,7 +182,10 @@ export const ApiClient = {
     try {
       const params = new URLSearchParams(query).toString();
       const url = `${API_BASE}/applications${params ? `?${params}` : ''}`;
-      const res = await fetch(url, { signal: AbortSignal.timeout(2500) });
+      const res = await fetch(url, { 
+        headers: this.getAuthHeaders(),
+        signal: AbortSignal.timeout(2500) 
+      });
       if (res.ok) return await res.json();
     } catch (e) {
       console.warn('API error getApplications:', e);
@@ -105,7 +195,10 @@ export const ApiClient = {
 
   async getApplication(appId) {
     try {
-      const res = await fetch(`${API_BASE}/applications/${appId}`, { signal: AbortSignal.timeout(2000) });
+      const res = await fetch(`${API_BASE}/applications/${appId}`, { 
+        headers: this.getAuthHeaders(),
+        signal: AbortSignal.timeout(2000) 
+      });
       if (res.ok) return await res.json();
     } catch (e) {
       console.warn('API error getApplication:', e);
@@ -434,7 +527,10 @@ export const ApiClient = {
   async getNotifications(userId = null) {
     try {
       const url = userId ? `${API_BASE}/notifications?userId=${userId}` : `${API_BASE}/notifications`;
-      const res = await fetch(url, { signal: AbortSignal.timeout(2000) });
+      const res = await fetch(url, { 
+        headers: this.getAuthHeaders(),
+        signal: AbortSignal.timeout(2000) 
+      });
       if (res.ok) return await res.json();
     } catch (e) {
       console.warn('API error getNotifications:', e);
@@ -467,7 +563,10 @@ export const ApiClient = {
       if (userId) params.append('userId', userId);
       if (appId) params.append('appId', appId);
       const url = `${API_BASE}/me/progress${params.toString() ? `?${params.toString()}` : ''}`;
-      const res = await fetch(url, { signal: AbortSignal.timeout(2000) });
+      const res = await fetch(url, { 
+        headers: this.getAuthHeaders(),
+        signal: AbortSignal.timeout(2000) 
+      });
       if (res.ok) return await res.json();
     } catch (e) {
       console.warn('API error getProgress:', e);
@@ -508,6 +607,57 @@ export const ApiClient = {
       console.warn('API error updateDataSaver:', e);
     }
     return null;
+  },
+
+  /**
+   * Get per-user, per-page tour progress
+   */
+  async getUserTourProgress(userId) {
+    try {
+      const res = await fetch(`${API_BASE}/users/${userId}/tour-progress`, {
+        signal: AbortSignal.timeout(2500)
+      });
+      if (res.ok) return await res.json();
+    } catch (e) {
+      console.warn('API error getUserTourProgress:', e);
+    }
+    return { success: false, data: {} };
+  },
+
+  /**
+   * Save per-user, per-page tour progress
+   */
+  async setUserTourProgress(userId, pageKey, completed = true) {
+    try {
+      const res = await fetch(`${API_BASE}/users/${userId}/tour-progress`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pageKey, completed }),
+        signal: AbortSignal.timeout(2500)
+      });
+      if (res.ok) return await res.json();
+    } catch (e) {
+      console.warn('API error setUserTourProgress:', e);
+    }
+    return { success: false, data: {} };
+  },
+
+  /**
+   * Reset tour progress for a specific page or all pages
+   */
+  async resetUserTourProgress(userId, pageKey = null) {
+    try {
+      const res = await fetch(`${API_BASE}/users/${userId}/tour-progress/reset`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pageKey }),
+        signal: AbortSignal.timeout(2500)
+      });
+      if (res.ok) return await res.json();
+    } catch (e) {
+      console.warn('API error resetUserTourProgress:', e);
+    }
+    return { success: false, data: {} };
   },
 
   /**

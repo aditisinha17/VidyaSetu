@@ -94,3 +94,15 @@ This log records major technical and architectural decisions made during develop
   - Integrate `qrcode` library on backend.
   - Implement `GET /api/applications/:id/slip?type=acknowledgment|award|deficiency` generating print-ready HTML documents with embedded cryptographic QR codes pointing to public verification, Ashoka watermark, and official MoTA seals.
 
+---
+
+### DECISION 011: Interactive Highlighted-Box Spotlight Tour Engine & Empty-by-Default Isolation
+* **Context:** User requirements locked in two strict rules:
+  1. Highlighted-box spotlight overlay with transparent cutout mask, pointing at each clickable element across all 7 role-based pages (`student_dashboard`, `student_eligibility`, `student_application_wizard`, `student_documents`, `student_tracker`, `officer_queue`, `admin_studio`), with Next/Back/Skip, pro-tips, bilingual en/hi toggle, 2G lite list mode fallback, and per-user, per-page DB persistence (`/api/users/:userId/tour-progress`).
+  2. Zero pre-filled mock data for new users: A newly registered student starts with a completely empty personal workspace (0 applications, 0 documents, blank forms in wizard/eligibility, 0/6 steps completed, 1 genuine welcome notification).
+* **Decision:**
+  - Build `SpotlightTour.jsx` and `tourSteps.js` using client DOM bounding rects (`targetEl.getBoundingClientRect()`), SVG dark overlay with transparent cutout mask, clamped position-aware tooltips, and keyboard navigation.
+  - Expose REST endpoints `GET /api/users/:userId/tour-progress`, `POST /api/users/:userId/tour-progress`, and `POST /api/users/:userId/tour-progress/reset` in `backend/server.js` backed by `backend/data/store.js`.
+  - Isolate student data by JWT token: fresh students see an empty workspace with guidance prompts and clean forms ("⚡ Fill Sample Data" available for evaluator convenience without polluting new accounts), while Birsa Hemrom (`MOTA-2026-NFST-0101`) and officer review dockets remain fully preserved for evaluator review.
+
+

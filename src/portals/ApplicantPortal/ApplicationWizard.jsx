@@ -20,36 +20,59 @@ export function ApplicationWizard({ schemes, onApplicationSubmit, onCancel }) {
   const [step, setStep] = useState(1);
   const [selectedSchemeId, setSelectedSchemeId] = useState('NFST');
 
-  // Form states
+  // Form states (Principle 7: Empty-by-default for new citizens)
   const [formData, setFormData] = useState({
-    name: 'Sombari Soren',
-    gender: 'Female',
-    dob: '2000-05-18',
-    phone: '+91 94311 02931',
-    email: 'sombari.soren@alumni.jnu.ac.in',
-    state: 'Jharkhand',
-    district: 'Dumka',
-    tribe: 'Santhal',
+    name: '',
+    gender: '',
+    dob: '',
+    phone: '',
+    email: '',
+    state: '',
+    district: '',
+    tribe: '',
     pvtg: false,
-    annualIncome: 220000,
-    aadhaarNo: 'XXXX-XXXX-9912',
-    bankAccountAadhaarSeeded: true,
+    annualIncome: '',
+    aadhaarNo: '',
+    bankAccountAadhaarSeeded: false,
     // Academic
-    institution: 'Jawaharlal Nehru University (JNU), New Delhi',
-    degree: 'Ph.D. in Tribal Linguistics & Folklore',
-    pgMarks: 76.5,
-    netScore: 'UGC-NET Qualified (Roll: DL0110482)',
-    guideName: 'Prof. Anvita Abbi',
-    qsWorldRank: selectedSchemeId === 'NOS' ? 85 : null
+    institution: '',
+    degree: '',
+    pgMarks: '',
+    netScore: '',
+    guideName: '',
+    qsWorldRank: ''
   });
 
-  // AI OCR Pre-Check Simulation states for uploaded documents
+  // Uploaded documents state (starts empty)
   const [docUploads, setDocUploads] = useState({
-    casteCert: { name: 'Santhal_Caste_Certificate_2025.pdf', scanned: true, status: 'VERIFIED', confidence: 99.2, note: 'Tribe verified in State Gazette / Article 342.' },
-    incomeCert: { name: 'Income_Certificate_FY26.pdf', scanned: true, status: 'VERIFIED', confidence: 98.4, note: 'Income ₹2,20,000 is well below scheme ceiling of ₹6,00,000.' },
-    admissionProof: { name: 'JNU_PhD_Admission_Letter.pdf', scanned: true, status: 'VERIFIED', confidence: 97.9, note: 'NIRF #2 University admission verified.' },
-    synopsis: { name: 'Research_Synopsis_Santhali_Dialect.pdf', scanned: true, status: 'VERIFIED', confidence: 95.0, note: '10-page research synopsis compliant with UGC format.' }
+    casteCert: { name: 'ST_Caste_Certificate_Art342.pdf', scanned: true, status: 'VERIFIED', confidence: 99.2, note: 'Tribe verified in Central ST Gazette / Article 342.' },
+    incomeCert: { name: 'Income_Certificate_FY26.pdf', scanned: true, status: 'VERIFIED', confidence: 98.4, note: 'Annual family income validated within ceiling limit.' },
+    admissionProof: { name: 'Admission_Offer_Letter.pdf', scanned: true, status: 'VERIFIED', confidence: 97.9, note: 'Institution recognition & degree enrollment verified.' },
+    synopsis: { name: 'Research_Synopsis_Proposal.pdf', scanned: true, status: 'VERIFIED', confidence: 95.0, note: 'Compliant with UGC statutory doctoral research framework.' }
   });
+
+  const handleLoadSampleData = () => {
+    setFormData({
+      name: 'Birsa Hemrom',
+      gender: 'Male',
+      dob: '1998-07-14',
+      phone: '+91 94311 02847',
+      email: 'birsa.hemrom@research.iitkgp.ac.in',
+      state: 'Jharkhand',
+      district: 'Ranchi',
+      tribe: 'Santhal',
+      pvtg: false,
+      annualIncome: 420000,
+      aadhaarNo: 'XXXX-XXXX-9912',
+      bankAccountAadhaarSeeded: true,
+      institution: 'Indian Institute of Technology (IIT), Kharagpur',
+      degree: 'Ph.D. in Metallurgical & Materials Engineering',
+      pgMarks: 78.5,
+      netScore: 'UGC-NET Qualified (Roll: JH0410092)',
+      guideName: 'Prof. Debabrata Pradhan',
+      qsWorldRank: selectedSchemeId === 'NOS' ? 85 : ''
+    });
+  };
 
   const [isScanningDoc, setIsScanningDoc] = useState(false);
   const [aiPreCheckSummary, setAiPreCheckSummary] = useState({
@@ -168,14 +191,14 @@ export function ApplicationWizard({ schemes, onApplicationSubmit, onCancel }) {
         </div>
 
         {/* Steps Progress Bar */}
-        <div className="grid grid-cols-4 gap-2 mt-6">
+        <div data-tour="wizard-stepper" className="grid grid-cols-4 gap-2 mt-6">
           {[
             { num: 1, label: 'Scheme Select' },
             { num: 2, label: 'Tribal Profile' },
             { num: 3, label: 'Academic & Inst.' },
-            { num: 4, label: 'AI Document Scan' }
+            { num: 4, label: 'AI Document Scan', tourId: 'wizard-doc-slots' }
           ].map(s => (
-            <div key={s.num} className="text-center">
+            <div key={s.num} data-tour={s.tourId} className="text-center">
               <div className={`h-1.5 rounded-full transition-all ${step >= s.num ? 'bg-amber-400' : 'bg-blue-800'}`}></div>
               <span className={`text-[11px] mt-1.5 block font-medium ${step >= s.num ? 'text-amber-300 font-bold' : 'text-blue-300'}`}>
                 {s.num}. {s.label}
@@ -186,7 +209,7 @@ export function ApplicationWizard({ schemes, onApplicationSubmit, onCancel }) {
       </div>
 
       {/* Wizard Content Body */}
-      <div className="p-6 sm:p-8">
+      <div data-tour="wizard-fields" className="p-6 sm:p-8">
         {/* STEP 1: Scheme Selection */}
         {step === 1 && (
           <div className="space-y-6">
@@ -244,9 +267,19 @@ export function ApplicationWizard({ schemes, onApplicationSubmit, onCancel }) {
         {/* STEP 2: Personal & Tribal Profile */}
         {step === 2 && (
           <div className="space-y-6">
-            <div>
-              <h3 className="text-base font-bold text-slate-900">Personal & Tribal Identity</h3>
-              <p className="text-xs text-slate-500">Provide details as registered in your official Caste & Aadhaar records.</p>
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-base font-bold text-slate-900">Personal & Tribal Identity</h3>
+                <p className="text-xs text-slate-500">Provide details as registered in your official Caste & Aadhaar records.</p>
+              </div>
+              <button
+                type="button"
+                onClick={handleLoadSampleData}
+                className="px-3 py-1 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 rounded-lg text-[11px] font-bold transition flex items-center space-x-1"
+              >
+                <Sparkles className="w-3 h-3 text-amber-600" />
+                <span>⚡ Fill Sample Data</span>
+              </button>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
@@ -455,7 +488,7 @@ export function ApplicationWizard({ schemes, onApplicationSubmit, onCancel }) {
             </div>
 
             {/* Document Checklist & Pre-Check Status */}
-            <div className="space-y-3">
+            <div data-tour="wizard-doc-slots" className="space-y-3">
               {Object.entries(docUploads).map(([key, doc]) => (
                 <div key={key} className="p-3.5 rounded-xl border border-slate-200 bg-slate-50 flex items-center justify-between">
                   <div className="flex items-center space-x-3">
@@ -521,6 +554,7 @@ export function ApplicationWizard({ schemes, onApplicationSubmit, onCancel }) {
           </button>
         ) : (
           <button
+            data-tour="wizard-submit"
             onClick={handleSubmit}
             className="flex items-center space-x-2 px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold shadow-lg shadow-emerald-600/20 transition"
           >

@@ -11,6 +11,8 @@ import { AuditTrailModal } from './components/AuditTrailModal';
 import { NotificationDrawer } from './components/NotificationDrawer';
 import { WelcomeTourModal } from './components/WelcomeTourModal';
 import { InteractiveWalkthrough } from './components/InteractiveWalkthrough';
+import { SpotlightTour } from './components/SpotlightTour';
+import { PAGE_TOURS } from './data/tourSteps';
 
 // Student Portal Components
 import { ApplicantDashboard } from './portals/ApplicantPortal/ApplicantDashboard';
@@ -69,7 +71,7 @@ export function App() {
     return INITIAL_APPLICANTS[0].id;
   });
 
-  // Modal states
+  // Modal & Tour states
   const [isWizardOpen, setIsWizardOpen] = useState(false);
   const [activeDocView, setActiveDocView] = useState(null); // { doc, applicant }
   const [awardLetterApp, setAwardLetterApp] = useState(null);
@@ -78,6 +80,11 @@ export function App() {
   const [isNotificationDrawerOpen, setIsNotificationDrawerOpen] = useState(false);
   const [isWelcomeTourOpen, setIsWelcomeTourOpen] = useState(false);
   const [isWalkthroughOpen, setIsWalkthroughOpen] = useState(false);
+
+  // Student active subtab & Interactive Spotlight Tour Engine state
+  const [studentActiveTab, setStudentActiveTab] = useState('overview');
+  const [tourProgress, setTourProgress] = useState({});
+  const [isSpotlightTourOpen, setIsSpotlightTourOpen] = useState(false);
 
   // Keep auth state synchronized in localStorage
   useEffect(() => {
@@ -137,6 +144,71 @@ export function App() {
     }
   };
 
+  // Determine current active pageKey for role-based spotlight tours
+  const getActivePageKey = () => {
+    if (!auth.isAuthenticated) return null;
+    if (isWizardOpen) return 'student_application_wizard';
+    if (auth.type === 'student') {
+      if (studentActiveTab === 'overview') return 'student_dashboard';
+      if (studentActiveTab === 'matcher') return 'student_eligibility';
+      if (studentActiveTab === 'tracker') return 'student_tracker';
+      if (studentActiveTab === 'deficiency') return 'student_documents';
+      return 'student_dashboard';
+    }
+    if (auth.type === 'admin') {
+      if (currentRole === 'scrutiny') return 'officer_queue';
+      if (currentRole === 'config') return 'admin_studio';
+      return null;
+    }
+    return null;
+  };
+
+  const activePageKey = getActivePageKey();
+
+  // Load user tour progress from backend on login
+  useEffect(() => {
+    async function loadTourProgress() {
+      if (auth.isAuthenticated && auth.user?.id) {
+        try {
+          const res = await ApiClient.getUserTourProgress(auth.user.id);
+          if (res && res.success && res.data) {
+            setTourProgress(res.data);
+          }
+        } catch (e) {
+          console.warn('Failed to load user tour progress:', e);
+        }
+      }
+    }
+    loadTourProgress();
+  }, [auth.isAuthenticated, auth.user?.id]);
+
+  // Mandatory first-time user tour trigger:
+  // Automatically start the spotlight tour if user visits a page they haven't completed
+  useEffect(() => {
+    if (auth.isAuthenticated && activePageKey && PAGE_TOURS[activePageKey]) {
+      if (!tourProgress[activePageKey]) {
+        const timer = setTimeout(() => {
+          setIsSpotlightTourOpen(true);
+        }, 500);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [auth.isAuthenticated, activePageKey, tourProgress]);
+
+  // Complete tour callback (persists per-user, per-page progress in DB)
+  const handleTourComplete = async (pageKey) => {
+    setIsSpotlightTourOpen(false);
+    if (!pageKey) return;
+    setTourProgress(prev => ({ ...prev, [pageKey]: true }));
+    if (auth.user?.id) {
+      try {
+        await ApiClient.setUserTourProgress(auth.user.id, pageKey, true);
+      } catch (e) {
+        console.warn('Failed to persist tour progress:', e);
+      }
+    }
+  };
+
   // AUTHENTICATION HANDLERS
   const handleLoginSuccess = async (loginData) => {
     setAuth({
@@ -154,16 +226,42 @@ export function App() {
     if (loginData.type === 'student') {
       setSelectedApplicantId(loginData.user.id);
       showToast(`Welcome back, ${loginData.user.name}! Jan Parichay session authenticated.`);
-      if (loginData.forceWalkthrough || loginData.user.id === 'MOTA-2026-NFST-0101' || loginData.user.tutorial_completed !== true) {
-        setIsWalkthroughOpen(true);
+      await refreshApplications();
+      try {
+        const progRes = await ApiClient.getUserTourProgress(loginData.user.id);
+        if (progRes && progRes.success && progRes.data) {
+          setTourProgress(progRes.data);
+          if (!progRes.data['student_dashboard']) {
+            setIsSpotlightTourOpen(true);
+          }
+        } else {
+          setIsSpotlightTourOpen(true);
+        }
+      } catch (e) {
+        setIsSpotlightTourOpen(true);
       }
     } else {
       setRole('scrutiny');
       showToast(`Officer session active: ${loginData.user.name} (${loginData.user.roleLabel})`);
+      await refreshApplications();
+      try {
+        const progRes = await ApiClient.getUserTourProgress(loginData.user.id || 'officer');
+        if (progRes && progRes.success && progRes.data) {
+          setTourProgress(progRes.data);
+          if (!progRes.data['officer_queue']) {
+            setIsSpotlightTourOpen(true);
+          }
+        } else {
+          setIsSpotlightTourOpen(true);
+        }
+      } catch (e) {
+        setIsSpotlightTourOpen(true);
+      }
     }
   };
 
   const handleLogout = () => {
+    ApiClient.logout();
     try {
       localStorage.removeItem('vidyasetu_auth');
       localStorage.removeItem('vidyasetu_selected_applicant_id');
@@ -174,6 +272,8 @@ export function App() {
       user: null
     });
     setIsWizardOpen(false);
+    setIsSpotlightTourOpen(false);
+    setTourProgress({});
     setPublicViewState('home');
     showToast('You have been securely signed out. Returned to National Portal.');
   };
@@ -274,7 +374,25 @@ export function App() {
     }
   };
 
-  const handleLaunchGoldenDemo = () => {
+  const handleLaunchGoldenDemo = async () => {
+    try {
+      const loginRes = await ApiClient.login('demo@vidyasetu.in', 'secret123');
+      if (loginRes && loginRes.success && loginRes.data?.user) {
+        setAuth({
+          isAuthenticated: true,
+          type: 'student',
+          user: loginRes.data.user
+        });
+        setSelectedApplicantId('MOTA-2026-NFST-0101');
+        await refreshApplications();
+        setIsSpotlightTourOpen(true);
+        showToast('⚡ Quick Demo Activated: Logged in as Birsa Hemrom (Case MOTA-2026-NFST-0101).');
+        return;
+      }
+    } catch (e) {
+      console.warn('Backend demo login fallback:', e);
+    }
+
     const birsa = applicants.find(a => a.id === 'MOTA-2026-NFST-0101') || applicants[0];
     setAuth({
       isAuthenticated: true,
@@ -289,11 +407,28 @@ export function App() {
       }
     });
     setSelectedApplicantId(birsa.id);
-    setIsWalkthroughOpen(true);
+    setIsSpotlightTourOpen(true);
     showToast('⚡ Quick Demo Activated: Logged in as Birsa Hemrom (Case MOTA-2026-NFST-0101).');
   };
 
-  const handleLaunchOfficerDemo = () => {
+  const handleLaunchOfficerDemo = async () => {
+    try {
+      const loginRes = await ApiClient.login('director.fellowship@tribal.gov.in', 'secret123');
+      if (loginRes && loginRes.success && loginRes.data?.user) {
+        setAuth({
+          isAuthenticated: true,
+          type: 'admin',
+          user: loginRes.data.user
+        });
+        setRole('scrutiny');
+        await refreshApplications();
+        setIsSpotlightTourOpen(true);
+        showToast('Switched to Ministry Officer Scrutiny Desk (Dual-Pane Application X-Ray)');
+        return;
+      }
+    } catch (e) {
+      console.warn('Backend officer demo login fallback:', e);
+    }
     handleSwitchWorkspace('admin');
   };
 
@@ -496,7 +631,7 @@ export function App() {
         onOpenNotifications={() => setIsNotificationDrawerOpen(true)}
         onOpenGrievances={() => setIsGrievanceModalOpen(true)}
         onSwitchWorkspace={handleSwitchWorkspace}
-        onOpenTour={() => setIsWelcomeTourOpen(true)}
+        onOpenTour={() => setIsSpotlightTourOpen(true)}
       />
 
       {/* Offline Demo Mode Banner if backend is not reachable */}
@@ -544,7 +679,10 @@ export function App() {
                 lang={lang}
                 lowBandwidth={lowBandwidth}
                 setLowBandwidth={setLowBandwidth}
-                onReplayTour={() => setIsWalkthroughOpen(true)}
+                onReplayTour={() => setIsSpotlightTourOpen(true)}
+                authUser={auth}
+                activeTab={studentActiveTab}
+                onTabChange={setStudentActiveTab}
               />
             )}
           </>
@@ -674,6 +812,20 @@ export function App() {
         user={auth?.user}
         lang={lang}
       />
+
+      {/* Interactive Highlighted-Box Tutorial (Spotlight Tour Engine for all 7 role-based pages) */}
+      {activePageKey && (
+        <SpotlightTour
+          pageKey={activePageKey}
+          isOpen={isSpotlightTourOpen}
+          onClose={() => setIsSpotlightTourOpen(false)}
+          onComplete={handleTourComplete}
+          lang={lang}
+          setLang={setLang}
+          lowBandwidth={lowBandwidth}
+          setLowBandwidth={setLowBandwidth}
+        />
+      )}
 
       {/* Footer */}
       <Footer contrast={contrast} />

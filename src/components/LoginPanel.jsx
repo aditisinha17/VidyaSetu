@@ -39,28 +39,42 @@ export function LoginPanel({
 
   // Student Login Tab
   const [studentAuthMethod, setStudentAuthMethod] = useState('digilocker'); // 'digilocker' | 'otp' | 'aadhaar'
-  const [mobileNo, setMobileNo] = useState('+91 94311 02931');
-  const [aadhaarNo, setAadhaarNo] = useState('5421 8890 9912');
+  const [mobileNo, setMobileNo] = useState('');
+  const [aadhaarNo, setAadhaarNo] = useState('');
   const [otpSent, setOtpSent] = useState(false);
-  const [otpInput, setOtpInput] = useState('784210');
+  const [otpInput, setOtpInput] = useState('');
   const [selectedDemoApplicant, setSelectedDemoApplicant] = useState(INITIAL_APPLICANTS[0].id);
 
-  // New Student Registration Tab
-  const [regName, setRegName] = useState('Rohan Marandi');
-  const [regAadhaar, setRegAadhaar] = useState('6543 8921 4452');
-  const [regMobile, setRegMobile] = useState('+91 97712 34567');
-  const [regEmail, setRegEmail] = useState('rohan.marandi@univ.ac.in');
-  const [regTribe, setRegTribe] = useState('Santhal');
-  const [regState, setRegState] = useState('Jharkhand');
+  // New Student Registration Tab (Principle 7: Empty-by-default for new citizens)
+  const [regName, setRegName] = useState('');
+  const [regAadhaar, setRegAadhaar] = useState('');
+  const [regMobile, setRegMobile] = useState('');
+  const [regEmail, setRegEmail] = useState('');
+  const [regTribe, setRegTribe] = useState('');
+  const [regState, setRegState] = useState('');
   const [regScheme, setRegScheme] = useState('NFST');
-  const [regIncome, setRegIncome] = useState('280000');
-  const [regPassword, setRegPassword] = useState('••••••••');
-  const [regOtpVerified, setRegOtpVerified] = useState(true);
+  const [regIncome, setRegIncome] = useState('');
+  const [regPassword, setRegPassword] = useState('');
+  const [regOtpVerified, setRegOtpVerified] = useState(false);
+
+  // Helper for SIH judges / quick testing
+  const handleLoadSampleCitizen = () => {
+    setRegName('Rohan Marandi');
+    setRegAadhaar('6543 8921 4452');
+    setRegMobile('+91 97712 34567');
+    setRegEmail('rohan.marandi@univ.ac.in');
+    setRegTribe('Santhal');
+    setRegState('Jharkhand');
+    setRegScheme('NFST');
+    setRegIncome('280000');
+    setRegPassword('secret123');
+    setRegOtpVerified(true);
+  };
 
   // Admin Login Tab
   const [adminRole, setAdminRole] = useState('mota_central'); // 'mota_central' | 'institute' | 'district' | 'pfms_ddo' | 'superadmin'
   const [adminEmail, setAdminEmail] = useState('director.fellowship@tribal.gov.in');
-  const [adminPassword, setAdminPassword] = useState('••••••••••••');
+  const [adminPassword, setAdminPassword] = useState('secret123');
   const [showPassword, setShowPassword] = useState(false);
   const [admin2FA, setAdmin2FA] = useState('482910');
 
@@ -84,88 +98,50 @@ export function LoginPanel({
     });
   };
 
-  // Handle New Registration
-  const handleCompleteRegistration = (e) => {
+  // Handle New Registration (Clean Empty Account Creation)
+  const handleCompleteRegistration = async (e) => {
     e.preventDefault();
-    const newAppId = `MOTA-2026-${regScheme}-${Math.floor(1000 + Math.random() * 9000)}`;
+    if (!regName || !regEmail) return;
+
     const selectedTribeObj = TRIBAL_COMMUNITIES.find(t => t.name === regTribe);
     const isPvtg = selectedTribeObj?.pvtg || false;
 
-    const newApplicant = {
-      id: newAppId,
-      name: regName,
-      email: regEmail,
-      phone: regMobile,
-      gender: 'Male',
-      age: 24,
-      dob: '2002-04-12',
-      tribe: regTribe,
-      pvtg: isPvtg,
-      state: regState,
-      schemeId: regScheme,
-      status: 'Submitted',
-      currentStage: 2,
-      appliedDate: new Date().toISOString().split('T')[0],
-      qualification: 'M.Sc. Physics (First Class)',
-      qualifyingMarks: 82.5,
-      income: Number(regIncome),
-      aadhaarSeeded: true,
-      documents: [
-        { name: 'ST Caste Certificate', type: 'caste', status: 'Verified', confidence: 99.1, docNumber: 'JH/ST/2026/8912', issueDate: '2024-05-10', gazetteMatched: true },
-        { name: 'Income Certificate', type: 'income', status: 'Verified', confidence: 98.4, docNumber: 'REV/INC/2026/4102', issueDate: '2025-08-15', gazetteMatched: true },
-        { name: 'Post-Graduation Degree', type: 'degree', status: 'Verified', confidence: 99.0, docNumber: 'PG/CERT/2025/119', issueDate: '2025-06-20', gazetteMatched: true },
-        { name: 'Admission / Offer Letter', type: 'admission', status: 'Pending Review', confidence: 95.2, docNumber: 'ADM/2026/901', issueDate: '2026-01-10', gazetteMatched: true },
-        { name: 'Research Synopsis', type: 'synopsis', status: 'Pending Review', confidence: 94.0, docNumber: 'SYN/PHYS/2026', issueDate: '2026-01-12', gazetteMatched: true },
-        { name: 'Aadhaar Card (APB Seeded)', type: 'aadhaar', status: 'Verified', confidence: 99.8, docNumber: regAadhaar, issueDate: '2023-01-01', gazetteMatched: true }
-      ],
-      institution: regScheme === 'NOS' ? 'University of Oxford' : 'Central University of Jharkhand',
-      supervisor: 'Prof. S. K. Mahato',
-      proposedTopic: 'Advanced Quantum Materials & Condensed Matter Physics',
-      bankDetails: {
-        accountNo: '39482910482',
-        ifsc: 'SBIN0001234',
-        bankName: 'State Bank of India',
-        apbSeeded: true
-      },
-      aiMatchScore: 92,
-      meritScore: {
-        composite: 84.5,
-        rank: 18,
-        breakdown: {
-          marksScore: 41.25,
-          tierScore: 18.0,
-          testScore: 12.0,
-          equityScore: isPvtg ? 15.0 : 5.0
-        }
-      },
-      timeline: [
-        { stage: 'Application Registered', date: new Date().toISOString().split('T')[0], status: 'completed' },
-        { stage: 'AI Document Pre-Verification', date: new Date().toISOString().split('T')[0], status: 'in-progress' },
-        { stage: 'Institute Verification', date: 'Pending', status: 'upcoming' },
-        { stage: 'MoTA Central Scrutiny', date: 'Pending', status: 'upcoming' },
-        { stage: 'Selection Committee Review', date: 'Pending', status: 'upcoming' },
-        { stage: 'Award & DBT Active', date: 'Pending', status: 'upcoming' }
-      ],
-      stipendHistory: [],
-      qprReports: []
-    };
-
-    if (onRegisterApplicant) {
-      onRegisterApplicant(newApplicant);
+    // Register with backend real auth
+    let backendUser = null;
+    try {
+      const regRes = await ApiClient.register({
+        name: regName,
+        email: regEmail,
+        password: regPassword || 'secret123',
+        phone: regMobile,
+        tribe: regTribe || 'Santhal',
+        state: regState || 'Jharkhand',
+        pvtg: isPvtg,
+        role: 'student'
+      });
+      if (regRes && regRes.success && regRes.data?.user) {
+        backendUser = regRes.data.user;
+      }
+    } catch (err) {
+      console.warn('Backend registration failed, proceeding in offline mode:', err);
     }
 
+    const userId = backendUser?.id || `user-${Date.now()}`;
+
+    // EMPTY-BY-DEFAULT (Principle 7): 0 applications, 0 pre-verified documents
     onLoginSuccess({
       type: 'student',
+      forceWalkthrough: true, // first-time user gets guided tour!
       user: {
-        id: newApplicant.id,
-        name: newApplicant.name,
-        email: newApplicant.email,
-        phone: newApplicant.phone,
-        tribe: newApplicant.tribe,
-        pvtg: newApplicant.pvtg,
-        state: newApplicant.state,
-        schemeId: newApplicant.schemeId,
-        applicantData: newApplicant
+        id: userId,
+        name: regName,
+        email: regEmail,
+        phone: regMobile,
+        tribe: regTribe || 'Scheduled Tribe',
+        pvtg: isPvtg,
+        state: regState || 'Jharkhand',
+        schemeId: regScheme,
+        tutorial_completed: false
       }
     });
   };
@@ -504,11 +480,21 @@ export function LoginPanel({
             {/* TAB 2: NEW STUDENT REGISTRATION / SIGN-UP VIEW */}
             {portalType === 'register' && (
               <form onSubmit={handleCompleteRegistration} className="space-y-4 text-xs">
-                <div>
-                  <h2 className="text-lg font-bold text-slate-900 font-serif">New ST Scholar Registration 2026-27</h2>
-                  <p className="text-xs text-slate-500">
-                    Create your permanent National MoTA Fellowship Account with Aadhaar e-KYC and DigiLocker integration.
-                  </p>
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div>
+                    <h2 className="text-lg font-bold text-slate-900 font-serif">New ST Scholar Registration 2026-27</h2>
+                    <p className="text-xs text-slate-500">
+                      Create your permanent National MoTA Fellowship Account with Aadhaar e-KYC and DigiLocker integration.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleLoadSampleCitizen}
+                    className="px-3 py-1 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 rounded-lg text-[11px] font-bold transition flex items-center space-x-1"
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+                    <span>⚡ Fill Sample Citizen Details</span>
+                  </button>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

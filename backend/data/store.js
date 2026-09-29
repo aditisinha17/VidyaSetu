@@ -933,7 +933,7 @@ export const INITIAL_APPLICATIONS = [
 ];
 
 export const INITIAL_USERS = [
-  { id: 'a0000001-0000-0000-0000-000000000001', name: 'Birsa Hemrom', email: 'birsa.hemrom@research.iitkgp.ac.in', role: 'student', mobile: '+91 94311 02847', state: 'Jharkhand', district: 'Ranchi', tribe: 'Santhal', isPvtg: false, tutorial_completed: false, data_saver_mode: false },
+  { id: 'a0000001-0000-0000-0000-000000000001', name: 'Birsa Hemrom', email: 'birsa.hemrom@research.iitkgp.ac.in', demoEmail: 'demo@vidyasetu.in', role: 'student', mobile: '+91 94311 02847', state: 'Jharkhand', district: 'Ranchi', tribe: 'Santhal', isPvtg: false, tutorial_completed: false, data_saver_mode: false },
   { id: 'a0000001-0000-0000-0000-000000000010', name: 'Dr. Anil Toppo', email: 'registrar@ranchiuniv.ac.in', role: 'institute_officer', roleLabel: 'Nodal Verification Officer (University Registrar)', state: 'Jharkhand', tutorial_completed: false, data_saver_mode: false },
   { id: 'a0000001-0000-0000-0000-000000000020', name: 'Dr. Rajeshwar Meena', email: 'director.fellowship@tribal.gov.in', role: 'ministry_officer', roleLabel: 'MoTA Scrutiny Officer (Directorate)', state: 'New Delhi', tutorial_completed: false, data_saver_mode: false },
   { id: 'a0000001-0000-0000-0000-000000000030', name: 'System Administrator', email: 'admin@vidyasetu.gov.in', role: 'admin', roleLabel: 'National Platform Administrator', tutorial_completed: true, data_saver_mode: false }
@@ -1024,6 +1024,7 @@ class Store {
     this.grievances = [];
     this.qprReports = [];
     this.disbursements = [];
+    this.userTourProgress = {};
     this.initialized = false;
   }
 
@@ -1042,6 +1043,7 @@ class Store {
         this.grievances = data.grievances || INITIAL_GRIEVANCES;
         this.qprReports = data.qprReports || INITIAL_QPR_REPORTS;
         this.disbursements = data.disbursements || INITIAL_DISBURSEMENTS;
+        this.userTourProgress = data.userTourProgress || {};
         this.initialized = true;
         return;
       } catch (err) {
@@ -1063,6 +1065,7 @@ class Store {
         grievances: this.grievances,
         qprReports: this.qprReports,
         disbursements: this.disbursements,
+        userTourProgress: this.userTourProgress,
         lastSaved: new Date().toISOString()
       };
       fs.writeFileSync(LOCAL_STORE_FILE, JSON.stringify(payload, null, 2), 'utf-8');
@@ -1079,7 +1082,38 @@ class Store {
     this.grievances = JSON.parse(JSON.stringify(INITIAL_GRIEVANCES));
     this.qprReports = JSON.parse(JSON.stringify(INITIAL_QPR_REPORTS));
     this.disbursements = JSON.parse(JSON.stringify(INITIAL_DISBURSEMENTS));
+    this.userTourProgress = {};
     this.save();
+  }
+
+  // Tour progress methods
+  getUserTourProgress(userId) {
+    this.init();
+    if (!this.userTourProgress) this.userTourProgress = {};
+    return this.userTourProgress[userId] || {};
+  }
+
+  setUserTourProgress(userId, pageKey, completed = true) {
+    this.init();
+    if (!this.userTourProgress) this.userTourProgress = {};
+    if (!this.userTourProgress[userId]) this.userTourProgress[userId] = {};
+    this.userTourProgress[userId][pageKey] = completed;
+    this.save();
+    return this.userTourProgress[userId];
+  }
+
+  resetUserTourProgress(userId, pageKey = null) {
+    this.init();
+    if (!this.userTourProgress) this.userTourProgress = {};
+    if (pageKey) {
+      if (this.userTourProgress[userId]) {
+        delete this.userTourProgress[userId][pageKey];
+      }
+    } else {
+      this.userTourProgress[userId] = {};
+    }
+    this.save();
+    return this.userTourProgress[userId] || {};
   }
 
   // Scheme queries
@@ -1215,7 +1249,7 @@ class Store {
   // Notifications
   getNotifications(userId = null) {
     this.init();
-    if (userId) return this.notifications.filter(n => n.userId === userId || !n.userId);
+    if (userId) return this.notifications.filter(n => n.userId === userId || n.userId === 'ALL');
     return this.notifications;
   }
 
